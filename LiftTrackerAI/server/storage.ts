@@ -7,6 +7,9 @@ import {
   type WorkoutStats
 } from "@shared/schema";
 import { randomUUID } from "crypto";
+import fs from "fs";
+import path from "path";
+import { execSync } from "child_process";
 
 export interface IStorage {
   // Users
@@ -80,21 +83,55 @@ export class MemStorage implements IStorage {
     this.seedData();
   }
 
-  private seedData() {
-    // Seed exercises
-    const exerciseData = [
-      { name: "Bench Press", category: "chest", muscleGroups: ["chest", "triceps", "shoulders"], equipment: "barbell", instructions: "Lie on bench, lower bar to chest, press up", tips: "Keep feet flat on floor, maintain arch" },
-      { name: "Squat", category: "legs", muscleGroups: ["quadriceps", "glutes", "hamstrings"], equipment: "barbell", instructions: "Stand with bar on back, squat down, stand up", tips: "Keep knees aligned with toes" },
-      { name: "Deadlift", category: "back", muscleGroups: ["hamstrings", "glutes", "back"], equipment: "barbell", instructions: "Lift bar from floor to standing", tips: "Keep back straight, hinge at hips" },
-      { name: "Pull-ups", category: "back", muscleGroups: ["lats", "biceps"], equipment: "pull-up bar", instructions: "Hang from bar, pull up until chin over bar", tips: "Full range of motion" },
-      { name: "Push-ups", category: "chest", muscleGroups: ["chest", "triceps", "shoulders"], equipment: "bodyweight", instructions: "Lower chest to floor, push up", tips: "Keep body straight" },
-      { name: "Overhead Press", category: "shoulders", muscleGroups: ["shoulders", "triceps"], equipment: "barbell", instructions: "Press bar overhead from shoulders", tips: "Keep core tight" },
-    ];
+  private loadExercisesFromDb(): boolean {
+    const dbPath = path.join(process.cwd(), "workout_exercises.db");
+    if (!fs.existsSync(dbPath)) return false;
 
-    exerciseData.forEach(ex => {
-      const exercise: Exercise = { id: randomUUID(), ...ex };
-      this.exercises.set(exercise.id, exercise);
-    });
+    try {
+      const sql = `SELECT e.id, e.name, bp.name AS category, e.targeted_muscle, eq.name AS equipment, GROUP_CONCAT(s.text, ' ') AS instructions FROM exercises e LEFT JOIN body_parts bp ON e.body_part_id = bp.id LEFT JOIN equipment eq ON e.equipment_id = eq.id LEFT JOIN steps s ON s.exercise_id = e.id GROUP BY e.id;`;
+      const result = execSync(`sqlite3 ${dbPath} -json "${sql}"`, {
+        encoding: "utf-8",
+        maxBuffer: 10 * 1024 * 1024,
+      });
+      const rows = JSON.parse(result);
+
+      rows.forEach((row: any) => {
+        const exercise: Exercise = {
+          id: row.id.toString(),
+          name: row.name,
+          category: (row.category || "").toLowerCase(),
+          muscleGroups: row.targeted_muscle ? row.targeted_muscle.split(/,\s*/) : [],
+          equipment: row.equipment || null,
+          instructions: row.instructions || null,
+          tips: null,
+        };
+        this.exercises.set(exercise.id, exercise);
+      });
+
+      return this.exercises.size > 0;
+    } catch {
+      console.error("Failed to load exercises from database");
+      return false;
+    }
+  }
+
+  private seedData() {
+    // Seed exercises from SQLite database if available, otherwise use defaults
+    if (!this.loadExercisesFromDb()) {
+      const exerciseData = [
+        { name: "Bench Press", category: "chest", muscleGroups: ["chest", "triceps", "shoulders"], equipment: "barbell", instructions: "Lie on bench, lower bar to chest, press up", tips: "Keep feet flat on floor, maintain arch" },
+        { name: "Squat", category: "legs", muscleGroups: ["quadriceps", "glutes", "hamstrings"], equipment: "barbell", instructions: "Stand with bar on back, squat down, stand up", tips: "Keep knees aligned with toes" },
+        { name: "Deadlift", category: "back", muscleGroups: ["hamstrings", "glutes", "back"], equipment: "barbell", instructions: "Lift bar from floor to standing", tips: "Keep back straight, hinge at hips" },
+        { name: "Pull-ups", category: "back", muscleGroups: ["lats", "biceps"], equipment: "pull-up bar", instructions: "Hang from bar, pull up until chin over bar", tips: "Full range of motion" },
+        { name: "Push-ups", category: "chest", muscleGroups: ["chest", "triceps", "shoulders"], equipment: "bodyweight", instructions: "Lower chest to floor, push up", tips: "Keep body straight" },
+        { name: "Overhead Press", category: "shoulders", muscleGroups: ["shoulders", "triceps"], equipment: "barbell", instructions: "Press bar overhead from shoulders", tips: "Keep core tight" },
+      ];
+
+      exerciseData.forEach(ex => {
+        const exercise: Exercise = { id: randomUUID(), ...ex };
+        this.exercises.set(exercise.id, exercise);
+      });
+    }
 
     // Seed template workout plans
     const planData = [
