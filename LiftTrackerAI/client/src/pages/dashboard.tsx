@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSettings } from "@/contexts/settings-context";
 import ProgressChart from "@/components/workout/progress-chart";
+import PedometerCard from "@/components/pedometer/pedometer-card";
 import { 
   Home, 
   Calendar, 
@@ -85,7 +86,7 @@ export default function Dashboard() {
 
       <div className="p-4 lg:p-6 space-y-6">
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           <Card className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -153,6 +154,8 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+
+          <PedometerCard weightKg={70} />
         </div>
 
         {/* Active Workout Card */}
