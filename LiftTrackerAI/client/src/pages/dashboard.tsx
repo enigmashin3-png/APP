@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSettings } from "@/contexts/settings-context";
 import ProgressChart from "@/components/workout/progress-chart";
+import { useLocation } from "wouter";
 import { 
   Home, 
   Calendar, 
@@ -24,6 +25,7 @@ const MOCK_USER_ID = "user-1";
 
 export default function Dashboard() {
   const { formatWeight, convertWeight } = useSettings();
+  const [, setLocation] = useLocation();
   
   const { data: stats, isLoading: statsLoading } = useQuery<WorkoutStats>({
     queryKey: ["/api/users", MOCK_USER_ID, "stats"],
@@ -42,8 +44,7 @@ export default function Dashboard() {
   });
 
   const handleStartWorkout = () => {
-    // TODO: Navigate to workout start flow
-    console.log("Start workout");
+    setLocation("/workout");
   };
 
   const formatDuration = (seconds: number) => {
