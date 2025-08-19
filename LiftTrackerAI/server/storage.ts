@@ -202,12 +202,12 @@ export class MemStorage implements IStorage {
 
   async createWorkoutPlan(insertPlan: InsertWorkoutPlan): Promise<WorkoutPlan> {
     const id = randomUUID();
-    const plan: WorkoutPlan = { 
-      ...insertPlan, 
+    const plan: WorkoutPlan = {
+      ...insertPlan,
       id,
-      userId: insertPlan.userId || null,
-      description: insertPlan.description || null,
-      isTemplate: insertPlan.isTemplate || null
+      userId: insertPlan.userId ?? null,
+      description: insertPlan.description ?? null,
+      isTemplate: insertPlan.isTemplate ?? false
     };
     this.workoutPlans.set(id, plan);
     return plan;
@@ -297,15 +297,15 @@ export class MemStorage implements IStorage {
 
   async createWorkoutSession(insertSession: InsertWorkoutSession): Promise<WorkoutSession> {
     const id = randomUUID();
-    const session: WorkoutSession = { 
-      ...insertSession, 
+    const session: WorkoutSession = {
+      ...insertSession,
       id,
-      workoutPlanId: insertSession.workoutPlanId || null,
-      completedAt: insertSession.completedAt || null,
-      duration: insertSession.duration || null,
-      totalVolume: insertSession.totalVolume || null,
-      notes: insertSession.notes || null,
-      rating: insertSession.rating || null
+      workoutPlanId: insertSession.workoutPlanId ?? null,
+      completedAt: insertSession.completedAt ?? null,
+      duration: insertSession.duration ?? null,
+      totalVolume: insertSession.totalVolume ?? null,
+      notes: insertSession.notes ?? null,
+      rating: insertSession.rating ?? null
     };
     this.workoutSessions.set(id, session);
     return session;
@@ -338,11 +338,11 @@ export class MemStorage implements IStorage {
 
   async createWorkoutSet(insertSet: InsertWorkoutSet): Promise<WorkoutSet> {
     const id = randomUUID();
-    const set: WorkoutSet = { 
-      ...insertSet, 
+    const set: WorkoutSet = {
+      ...insertSet,
       id,
-      weight: insertSet.weight || null,
-      restTime: insertSet.restTime || null
+      weight: insertSet.weight ?? null,
+      restTime: insertSet.restTime ?? null
     };
     this.workoutSets.set(id, set);
     return set;
