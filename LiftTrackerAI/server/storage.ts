@@ -202,12 +202,12 @@ export class MemStorage implements IStorage {
 
   async createWorkoutPlan(insertPlan: InsertWorkoutPlan): Promise<WorkoutPlan> {
     const id = randomUUID();
-    const plan: WorkoutPlan = { 
-      ...insertPlan, 
+    const plan: WorkoutPlan = {
+      ...insertPlan,
       id,
-      userId: insertPlan.userId || null,
-      description: insertPlan.description || null,
-      isTemplate: insertPlan.isTemplate || null
+      userId: insertPlan.userId ?? null,
+      description: insertPlan.description ?? null,
+      isTemplate: insertPlan.isTemplate ?? false
     };
     this.workoutPlans.set(id, plan);
     return plan;
