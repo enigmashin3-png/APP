@@ -2,6 +2,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import pLimit from "p-limit";
 import fs from "fs/promises";
+import { fileURLToPath } from "url";
 
 const BASE = "https://www.muscleandstrength.com";
 const LIST_URL = `${BASE}/exercises`;
@@ -160,3 +161,33 @@ async function scrapeOne(url, tries = 2) {
     const $ = cheerio.load(html);
     const data = parseExercise($);
     if (!data.name) throw new Error("No exercise name found");
+    return { url, ...data };
+  } catch (e) {
+    console.warn(`Error scraping ${url}: ${e.message}`);
+    if (tries > 0) {
+      console.log(`Retrying ${url} (${tries} left)...`);
+      return scrapeOne(url, tries - 1);
+    }
+    return null;
+  }
+}
+
+export async function main() {
+  const links = await getAllExerciseLinks();
+  console.log(`Found ${links.length} exercise pages`);
+  const limit = pLimit(CONCURRENCY);
+  const results = await Promise.all(
+    links.map(url => limit(() => scrapeOne(url)))
+  );
+  const exercises = results.filter(Boolean);
+  await fs.writeFile(OUT_FILE, JSON.stringify(exercises, null, 2));
+  console.log(`Wrote ${exercises.length} exercises to ${OUT_FILE}`);
+  return exercises;
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+}
