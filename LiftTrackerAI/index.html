@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💪 Workout Tracker</h1>
+            <p>Track your exercises and progress</p>
+        </header>
+
+        <div class="controls">
+            <button onclick="toggleExerciseForm()">➕ Add Exercise</button>
+            <button onclick="saveWorkout()">💾 Save Workout</button>
+            <button onclick="loadWorkout()">📂 Load Workout</button>
+            <button onclick="clearWorkout()" class="danger">🗑️ Clear Workout</button>
+            <button onclick="addSampleData()" class="secondary">🎯 Load Sample</button>
+        </div>
+
+        <form id="exercise-form" style="display: none;">
+            <h3>Add New Exercise</h3>
+            <div class="form-group">
+                <label for="exercise-name">Exercise Name:</label>
+                <input type="text" id="exercise-name" placeholder="e.g., Bench Press" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="sets">Sets:</label>
+                <input type="number" id="sets" placeholder="3" min="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="reps">Reps:</label>
+                <input type="number" id="reps" placeholder="10" min="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="weight">Weight (lbs):</label>
+                <input type="number" id="weight" placeholder="0" min="0">
+            </div>
+            
+            <button type="button" onclick="addExercise()">Add to Workout</button>
+            <button type="button" onclick="toggleExerciseForm()" class="secondary">Cancel</button>
+        </form>
+
+        <div class="workout-section">
+            <h2>Current Workout</h2>
+            <ul id="workout-list">
+                <li style="text-align: center; color: #666; padding: 20px;">
+                    No exercises yet. Add your first exercise!
+                </li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Built with ❤️ for fitness enthusiasts</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
