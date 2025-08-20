@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Globe, Weight, Moon, Sun, Bell, Smartphone, SettingsIcon } from "lucide-react";
@@ -27,6 +28,7 @@ export default function Settings() {
   const [darkMode, setDarkMode] = useState(localStorage.getItem('fitness-app-theme') === 'dark');
   const [notifications, setNotifications] = useState(localStorage.getItem('fitness-app-notifications') !== 'false');
   const [autoRest, setAutoRest] = useState(localStorage.getItem('fitness-app-auto-rest') !== 'false');
+  const [restInterval, setRestInterval] = useState(parseInt(localStorage.getItem('fitness-app-rest-interval') || '90', 10));
   const { toast } = useToast();
 
   const handleLanguageChange = (newLanguage: string) => {
@@ -72,6 +74,16 @@ export default function Settings() {
     toast({
       title: "Auto-rest updated",
       description: `Auto-rest timer ${enabled ? 'enabled' : 'disabled'}`,
+    });
+  };
+
+  const handleRestIntervalChange = (value: string) => {
+    const seconds = parseInt(value, 10) || 0;
+    setRestInterval(seconds);
+    localStorage.setItem('fitness-app-rest-interval', seconds.toString());
+    toast({
+      title: "Rest timer updated",
+      description: `Default rest time set to ${seconds}s`,
     });
   };
 
@@ -255,6 +267,22 @@ export default function Settings() {
                 id="auto-rest"
                 checked={autoRest}
                 onCheckedChange={handleAutoRestToggle}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div>
+                <Label htmlFor="rest-interval">Default Rest Time (s)</Label>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Used when exercise rest time isn't specified
+                </p>
+              </div>
+              <Input
+                id="rest-interval"
+                type="number"
+                value={restInterval}
+                onChange={(e) => handleRestIntervalChange(e.target.value)}
+                className="w-24"
               />
             </div>
           </CardContent>

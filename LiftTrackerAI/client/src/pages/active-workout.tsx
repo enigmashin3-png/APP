@@ -20,6 +20,8 @@ export default function ActiveWorkout() {
   const [workoutTime, setWorkoutTime] = useState(0);
   const [isWorkoutRunning, setIsWorkoutRunning] = useState(false);
   const [showRestTimer, setShowRestTimer] = useState(false);
+  const [restDuration, setRestDuration] = useState(0);
+  const [lastSetInfo, setLastSetInfo] = useState<WorkoutSet | null>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -156,7 +158,9 @@ export default function ActiveWorkout() {
     }
   };
 
-  const handleSetLogged = () => {
+  const handleSetLogged = ({ restTime, previousSet }: { restTime: number; previousSet?: WorkoutSet | null }) => {
+    setRestDuration(restTime);
+    setLastSetInfo(previousSet ?? null);
     setShowRestTimer(true);
     queryClient.invalidateQueries({ queryKey: ["/api/workout-sets"] });
   };
@@ -284,14 +288,16 @@ export default function ActiveWorkout() {
           {/* Exercise Logger */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Log Exercise</h3>
-            {showRestTimer ? (
-              <Timer
-                initialTime={120}
-                isRestTimer={true}
-                onComplete={handleRestComplete}
-              />
-            ) : (
-              <ExerciseLogger sessionId={activeSession.id} onSetLogged={handleSetLogged} />
+            <ExerciseLogger sessionId={activeSession.id} onSetLogged={handleSetLogged} />
+            {showRestTimer && (
+              <div className="mt-4">
+                <Timer
+                  initialTime={restDuration}
+                  isRestTimer={true}
+                  onComplete={handleRestComplete}
+                  previousSet={lastSetInfo}
+                />
+              </div>
             )}
           </div>
 
