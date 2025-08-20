@@ -1,68 +1,63 @@
 let currentWorkout = [];
-let workoutHistory = [];
 const workoutList = document.getElementById('workout-list');
 const exerciseForm = document.getElementById('exercise-form');
-const restTimerDisplay = document.getElementById('rest-timer');
-
-// Simple exercise database with basic form guidance
-const exerciseDatabase = {
-    'Push-Up': 'Keep a straight line from head to heels.',
-    'Squat': 'Keep your knees behind your toes and chest up.',
-    'Bench Press': 'Lower the bar to mid-chest with controlled motion.'
-};
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', function() {
+    exerciseForm.classList.add('hidden');
     loadWorkout();
-    exerciseForm.style.display = 'none';
 });
 
 function toggleExerciseForm() {
-    exerciseForm.style.display = exerciseForm.style.display === 'none' ? 'block' : 'none';
+    exerciseForm.classList.toggle('hidden');
 }
 
 function addExercise() {
-    const exerciseName = document.getElementById('exercise-name').value;
+    const exerciseName = document.getElementById('exercise-name').value.trim();
     const sets = document.getElementById('sets').value;
     const reps = document.getElementById('reps').value;
     const weight = document.getElementById('weight').value || '0';
-
-    // Show form guidance if exercise exists in database
-    if (exerciseDatabase[exerciseName]) {
-        alert(`Form tip: ${exerciseDatabase[exerciseName]}`);
-    }
 
     if (exerciseName && sets && reps) {
         const exercise = {
             name: exerciseName,
             sets: parseInt(sets),
             reps: parseInt(reps),
-            weight: parseInt(weight)
+            weight: parseInt(weight),
+            id: Date.now() // Unique ID for each exercise
         };
 
         currentWorkout = [...currentWorkout, exercise];
         renderWorkoutList();
-
+        
+        // Reset form
         document.getElementById('exercise-form').reset();
         toggleExerciseForm();
-
-        // Start a default 60 second rest timer
-        startRestTimer(60);
     } else {
-        alert('Please fill in all required fields (name, sets, reps)');
+        alert('Please fill in all required fields (Exercise Name, Sets, and Reps)');
     }
 }
 
 function renderWorkoutList() {
     workoutList.innerHTML = '';
     
+    if (currentWorkout.length === 0) {
+        workoutList.innerHTML = '<li class="exercise-item" style="text-align: center; color: #718096;">No exercises added yet. Click "Add Exercise" to get started!</li>';
+        return;
+    }
+    
     currentWorkout.forEach((exercise, index) => {
         const listItem = document.createElement('li');
         listItem.className = 'exercise-item';
         listItem.innerHTML = `
-            <span>${exercise.name} - ${exercise.sets}x${exercise.reps} 
-            ${exercise.weight > 0 ? `with ${exercise.weight} lbs` : ''}</span>
-            <button onclick="removeExercise(${index})" class="delete-btn">X</button>
+            <div class="exercise-info">
+                <div class="exercise-name">${exercise.name}</div>
+                <div class="exercise-details">
+                    ${exercise.sets} sets × ${exercise.reps} reps
+                    ${exercise.weight > 0 ? `• ${exercise.weight} lbs` : ''}
+                </div>
+            </div>
+            <button onclick="removeExercise(${index})" class="delete-btn">Remove</button>
         `;
         workoutList.appendChild(listItem);
     });
@@ -71,69 +66,49 @@ function renderWorkoutList() {
 function removeExercise(index) {
     currentWorkout = currentWorkout.filter((_, i) => i !== index);
     renderWorkoutList();
+    saveWorkout(); // Auto-save after removal
 }
 
 function saveWorkout() {
     if (currentWorkout.length === 0) {
-        alert('No exercises to save!');
+        alert('No exercises to save! Add some exercises first.');
         return;
     }
-
-    saveToHistory();
-    alert('Workout saved to history!');
+    
+    try {
+        localStorage.setItem('savedWorkout', JSON.stringify(currentWorkout));
+        alert('✅ Workout saved successfully! You can reload the page and your workout will be there.');
+    } catch (error) {
+        alert('❌ Error saving workout. Your browser may not support local storage.');
+    }
 }
 
 function loadWorkout() {
-    const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
-
-    if (history.length > 0) {
-        currentWorkout = history[history.length - 1].exercises;
-        renderWorkoutList();
+    try {
+        const savedData = localStorage.getItem('savedWorkout');
+        if (savedData) {
+            currentWorkout = JSON.parse(savedData);
+            renderWorkoutList();
+        }
+    } catch (error) {
+        console.error('Error loading workout:', error);
+        alert('Error loading saved workout. The data might be corrupted.');
     }
 }
 
 function clearWorkout() {
-    if (confirm('Are you sure you want to clear the current workout?')) {
+    if (confirm('Are you sure you want to clear your current workout? This cannot be undone.')) {
         currentWorkout = [];
-        workoutList.innerHTML = '';
+        localStorage.removeItem('savedWorkout');
+        renderWorkoutList();
+        alert('Workout cleared successfully!');
     }
 }
 
-function saveToHistory() {
-    if (currentWorkout.length === 0) return;
-
-    const workout = {
-        date: new Date().toISOString(),
-        exercises: [...currentWorkout]
-    };
-
-    const history = JSON.parse(localStorage.getItem('workoutHistory') || '[]');
-    history.push(workout);
-    localStorage.setItem('workoutHistory', JSON.stringify(history));
-
-    // Clear current workout after saving to history
-    clearWorkout();
-}
-
-let timerInterval;
-function startRestTimer(seconds) {
-    let remaining = seconds;
-    let display = restTimerDisplay;
-    if (!display) {
-        display = document.createElement('div');
-        display.id = 'rest-timer';
-        document.body.appendChild(display);
+// Add keyboard support
+document.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !exerciseForm.classList.contains('hidden')) {
+        addExercise();
     }
-    clearInterval(timerInterval);
-    display.textContent = `Rest: ${remaining}s`;
-    timerInterval = setInterval(() => {
-        remaining--;
-        display.textContent = `Rest: ${remaining}s`;
-        if (remaining <= 0) {
-            clearInterval(timerInterval);
-            display.textContent = '';
-            alert('Rest time over!');
-        }
-    }, 1000);
-}
+});
 
