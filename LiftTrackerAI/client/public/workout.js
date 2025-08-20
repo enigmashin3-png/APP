@@ -1,4 +1,5 @@
 let currentWorkout = [];
+let workoutHistory = [];
 let workoutList;
 
 // Load workout on page load
@@ -48,7 +49,8 @@ function renderWorkoutList() {
     currentWorkout.forEach((exercise, index) => {
         const listItem = document.createElement('li');
         listItem.className = 'exercise-item';
-        listItem.textContent = `${exercise.name} - ${exercise.sets}x${exercise.reps}${exercise.weight > 0 ? ` with ${exercise.weight} lbs` : ''} `;
+        const weightText = exercise.weight > 0 ? ` with ${exercise.weight} lbs` : '';
+        listItem.textContent = `${exercise.name} - ${exercise.sets}x${exercise.reps}${weightText} `;
 
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'X';
@@ -72,27 +74,38 @@ function saveWorkout() {
         alert('No exercises to save!');
         return;
     }
-    
-    // Save the data array, not HTML
-    localStorage.setItem('savedWorkout', JSON.stringify(currentWorkout));
+
+    const workout = {
+        id: Date.now(),
+        date: new Date().toISOString().split('T')[0],
+        exercises: currentWorkout,
+    };
+
+    workoutHistory = [...workoutHistory, workout];
+    localStorage.setItem('workoutHistory', JSON.stringify(workoutHistory));
     alert('Workout saved successfully!');
 }
 
 // Load workout
 function loadWorkout() {
-    const savedData = localStorage.getItem('savedWorkout');
-    
-    if (savedData) {
+    const storedHistory = localStorage.getItem('workoutHistory');
+
+    if (storedHistory) {
         try {
-            currentWorkout = JSON.parse(savedData);
-            renderWorkoutList();
-            alert('Workout loaded successfully!');
+            workoutHistory = JSON.parse(storedHistory);
+            if (workoutHistory.length > 0) {
+                currentWorkout = workoutHistory[workoutHistory.length - 1].exercises;
+                renderWorkoutList();
+                alert('Last workout loaded successfully!');
+            } else {
+                alert('No saved workouts found.');
+            }
         } catch (error) {
-            console.error('Error loading workout:', error);
-            alert('Error loading saved workout. Data might be corrupted.');
+            console.error('Error loading workout history:', error);
+            alert('Error loading workout history. Data might be corrupted.');
         }
     } else {
-        alert('No saved workout found.');
+        alert('No saved workouts found.');
     }
 }
 
@@ -103,7 +116,6 @@ function clearWorkout() {
         if (workoutList) {
             workoutList.innerHTML = '';
         }
-        localStorage.removeItem('savedWorkout');
     }
 }
 
