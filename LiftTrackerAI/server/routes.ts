@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertWorkoutSessionSchema, insertWorkoutSetSchema, insertWorkoutPlanSchema } from "@shared/schema";
+import { insertWorkoutSessionSchema, insertWorkoutSetSchema, insertWorkoutPlanSchema, updateWorkoutSetSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Exercises
@@ -183,24 +183,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/workout-sets", async (req, res) => {
-    try {
-      const validation = insertWorkoutSetSchema.safeParse(req.body);
-      if (!validation.success) {
-        return res.status(400).json({ message: "Invalid workout set data", errors: validation.error.issues });
-      }
-      
-      const set = await storage.createWorkoutSet(validation.data);
-      res.status(201).json(set);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to create workout set" });
-    }
-  });
+    app.post("/api/workout-sets", async (req, res) => {
+      try {
+        const validation = insertWorkoutSetSchema.safeParse(req.body);
+        if (!validation.success) {
+          return res.status(400).json({ message: "Invalid workout set data", errors: validation.error.issues });
+        }
 
-  // User Stats
-  app.get("/api/users/:userId/stats", async (req, res) => {
-    try {
-      const stats = await storage.getUserStats(req.params.userId);
+        const set = await storage.createWorkoutSet(validation.data);
+        res.status(201).json(set);
+      } catch (error) {
+        res.status(500).json({ message: "Failed to create workout set" });
+      }
+    });
+
+    app.patch("/api/workout-sets/:id", async (req, res) => {
+      try {
+        const validation = updateWorkoutSetSchema.safeParse(req.body);
+        if (!validation.success) {
+          return res.status(400).json({ message: "Invalid workout set data", errors: validation.error.issues });
+        }
+
+        const set = await storage.updateWorkoutSet(req.params.id, validation.data);
+        res.json(set);
+      } catch (error) {
+        res.status(500).json({ message: "Failed to update workout set" });
+      }
+    });
+
+    // User Stats
+    app.get("/api/users/:userId/stats", async (req, res) => {
+      try {
+        const stats = await storage.getUserStats(req.params.userId);
       res.json(stats);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch user stats" });
