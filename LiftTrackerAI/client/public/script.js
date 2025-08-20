@@ -41,7 +41,7 @@ function addExercise() {
         sets: parseInt(sets),
         reps: parseInt(reps),
         weight: parseInt(weight),
-        id: Date.now() // Unique ID
+        id: Date.now()
     };
 
     // Add to current workout
@@ -53,13 +53,11 @@ function addExercise() {
     // Reset and hide form
     document.getElementById('exercise-form').reset();
     toggleExerciseForm();
-    
-    console.log('Exercise added:', exercise);
 }
 
-// NEW FUNCTION: Render workout list
+// NEW FUNCTION: Render workout list to screen
 function renderWorkoutList() {
-    workoutList.innerHTML = ''; // Clear current list
+    workoutList.innerHTML = '';
     
     if (currentWorkout.length === 0) {
         workoutList.innerHTML = '<li style="text-align: center; color: #666; padding: 20px;">No exercises yet. Add your first exercise!</li>';
@@ -83,16 +81,16 @@ function renderWorkoutList() {
     });
 }
 
-// NEW FUNCTION: Remove exercise
+// NEW FUNCTION: Remove individual exercise
 function removeExercise(index) {
     if (confirm('Remove this exercise from your workout?')) {
         currentWorkout = currentWorkout.filter((_, i) => i !== index);
         renderWorkoutList();
-        saveWorkout(); // Auto-save after removal
+        saveWorkout();
     }
 }
 
-// FIXED: Save workout function
+// FIXED: Save workout to localStorage
 function saveWorkout() {
     if (currentWorkout.length === 0) {
         alert('No exercises to save! Add some exercises first.');
@@ -101,63 +99,39 @@ function saveWorkout() {
     
     try {
         localStorage.setItem('savedWorkout', JSON.stringify(currentWorkout));
-        alert('✅ Workout saved successfully! You can reload the page and your workout will be there.');
+        alert('✅ Workout saved successfully!');
     } catch (error) {
-        console.error('Save error:', error);
-        alert('❌ Error saving workout. Your browser may not support local storage.');
+        alert('❌ Error saving workout.');
     }
 }
 
-// FIXED: Load workout function
+// FIXED: Load workout from localStorage
 function loadWorkout() {
     try {
         const savedData = localStorage.getItem('savedWorkout');
         if (savedData) {
             currentWorkout = JSON.parse(savedData);
             renderWorkoutList();
-            console.log('Workout loaded:', currentWorkout);
         }
     } catch (error) {
-        console.error('Load error:', error);
-        alert('Error loading saved workout. The data might be corrupted.');
+        alert('Error loading saved workout.');
     }
 }
 
-// FIXED: Clear workout function
+// FIXED: Clear entire workout
 function clearWorkout() {
-    if (confirm('Are you sure you want to clear your entire workout? This cannot be undone.')) {
+    if (confirm('Are you sure you want to clear your entire workout?')) {
         currentWorkout = [];
         localStorage.removeItem('savedWorkout');
         renderWorkoutList();
-        alert('Workout cleared successfully!');
+        alert('Workout cleared!');
     }
 }
 
 // Keyboard shortcuts
 document.addEventListener('keydown', function(e) {
-    // Escape key to close form
     if (e.key === 'Escape' && exerciseForm.style.display === 'block') {
         toggleExerciseForm();
     }
-    
-    // Enter key to submit form (when form is visible and in input field)
-    if (e.key === 'Enter' && exerciseForm.style.display === 'block') {
-        const activeElement = document.activeElement;
-        if (['exercise-name', 'sets', 'reps', 'weight'].includes(activeElement.id)) {
-            addExercise();
-        }
-    }
 });
 
-// Optional: Sample data function
-function addSampleData() {
-    if (currentWorkout.length === 0 && confirm('Load sample workout data?')) {
-        currentWorkout = [
-            { name: 'Push-ups', sets: 3, reps: 15, weight: 0, id: 1 },
-            { name: 'Squats', sets: 4, reps: 12, weight: 0, id: 2 },
-            { name: 'Bench Press', sets: 3, reps: 10, weight: 135, id: 3 }
-        ];
-        renderWorkoutList();
-        alert('Sample workout loaded! Feel free to modify or clear it.');
-    }
-}
