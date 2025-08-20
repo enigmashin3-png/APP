@@ -14,30 +14,34 @@ document.addEventListener('DOMContentLoaded', () => {
 // Function to add exercise
 function addExercise() {
     const exerciseName = document.getElementById('exercise-name').value;
-    const sets = document.getElementById('sets').value;
-    const reps = document.getElementById('reps').value;
-    const weight = document.getElementById('weight').value;
+    const sets = parseInt(document.getElementById('sets').value, 10);
+    const reps = parseInt(document.getElementById('reps').value, 10);
+    const weightInput = document.getElementById('weight').value;
+    const weight = parseInt(weightInput, 10);
 
-    if (exerciseName && sets && reps) {
+    const validSets = !isNaN(sets) && sets > 0;
+    const validReps = !isNaN(reps) && reps > 0;
+
+    if (exerciseName && validSets && validReps) {
         // Create exercise object
         const exercise = {
             name: exerciseName,
             sets: sets,
             reps: reps,
-            weight: weight || '0' // Default to 0 if empty
+            weight: !isNaN(weight) ? weight : 0 // Default to 0 if empty or invalid
         };
 
         // Add to current workout array WITHOUT push
         currentWorkout = [...currentWorkout, exercise];
-        
+
         // Update the display
         renderWorkoutList();
-        
+
         // Reset form
         document.getElementById('exercise-form').reset();
         toggleExerciseForm();
     } else {
-        alert('Please fill in all required fields (name, sets, reps)');
+        alert('Please enter valid numbers greater than 0 for sets and reps');
     }
 }
 
