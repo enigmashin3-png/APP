@@ -3,9 +3,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import ExerciseLogger from "@/components/workout/exercise-logger";
 import Timer from "@/components/workout/timer";
-import { Play, Pause, Square, Clock, Weight, Repeat, CheckCircle } from "lucide-react";
+import { Play, Pause, Square, Clock, Weight, Repeat, CheckCircle, Pencil } from "lucide-react";
 import { formatDuration, formatTimeAgo } from "@/lib/workout-utils";
 import { calculateVolume } from "@/lib/progressive-overload";
 import { apiRequest } from "@/lib/queryClient";
@@ -21,6 +22,10 @@ export default function ActiveWorkout() {
   const [showRestTimer, setShowRestTimer] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  const [editingSetId, setEditingSetId] = useState<string | null>(null);
+  const [editWeight, setEditWeight] = useState("");
+  const [editReps, setEditReps] = useState("");
 
   const { data: activeSession } = useQuery<WorkoutSession | null>({
     queryKey: ["/api/workout-sessions/active", MOCK_USER_ID],
@@ -84,6 +89,39 @@ export default function ActiveWorkout() {
       });
     },
   });
+
+  const startEditing = (set: WorkoutSet) => {
+    setEditingSetId(set.id);
+    setEditWeight(set.weight?.toString() || "");
+    setEditReps(set.reps.toString());
+  };
+
+  const cancelEditing = () => {
+    setEditingSetId(null);
+    setEditWeight("");
+    setEditReps("");
+  };
+
+  const updateSetMutation = useMutation({
+    mutationFn: async ({ id, ...updates }: { id: string; weight?: number; reps?: number }) => {
+      const response = await apiRequest("PATCH", `/api/workout-sets/${id}`, updates);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/workout-sets"] });
+      toast({ title: "Set updated", description: "Your changes have been saved." });
+      cancelEditing();
+    },
+    onError: () => {
+      toast({ title: "Failed to update set", description: "Please try again", variant: "destructive" });
+    },
+  });
+
+  const saveEdit = (id: string) => {
+    const weight = editWeight === "" ? undefined : parseFloat(editWeight);
+    const reps = editReps === "" ? undefined : parseInt(editReps, 10);
+    updateSetMutation.mutate({ id, weight, reps });
+  };
 
   // Workout timer effect
   useEffect(() => {
@@ -272,19 +310,46 @@ export default function ActiveWorkout() {
                         </h4>
                         <Badge variant="secondary">{sets.length} sets</Badge>
                       </div>
-                      <div className="space-y-2">
-                        {sets.map((set, index) => (
-                          <div key={set.id} className="flex items-center justify-between text-sm">
-                            <span className="text-gray-500 dark:text-gray-400">Set {index + 1}</span>
-                            <div className="flex items-center space-x-4">
-                              <span className="text-gray-900 dark:text-white">
-                                {set.weight} lbs × {set.reps}
-                              </span>
-                              <CheckCircle className="h-4 w-4 text-success-600" />
+                        <div className="space-y-2">
+                          {sets.map((set, index) => (
+                            <div key={set.id} className="flex items-center justify-between text-sm">
+                              <span className="text-gray-500 dark:text-gray-400">Set {index + 1}</span>
+                              {editingSetId === set.id ? (
+                                <div className="flex items-center space-x-2">
+                                  <Input
+                                    type="number"
+                                    value={editWeight}
+                                    onChange={(e) => setEditWeight(e.target.value)}
+                                    className="w-20"
+                                  />
+                                  <span className="text-gray-900 dark:text-white">lbs ×</span>
+                                  <Input
+                                    type="number"
+                                    value={editReps}
+                                    onChange={(e) => setEditReps(e.target.value)}
+                                    className="w-14"
+                                  />
+                                  <Button size="sm" onClick={() => saveEdit(set.id)} disabled={updateSetMutation.isPending}>
+                                    Save
+                                  </Button>
+                                  <Button size="sm" variant="ghost" onClick={cancelEditing}>
+                                    Cancel
+                                  </Button>
+                                </div>
+                              ) : (
+                                <div className="flex items-center space-x-4">
+                                  <span className="text-gray-900 dark:text-white">
+                                    {set.weight} lbs × {set.reps}
+                                  </span>
+                                  <Button variant="ghost" size="sm" onClick={() => startEditing(set)}>
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                  <CheckCircle className="h-4 w-4 text-success-600" />
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
                     </CardContent>
                   </Card>
                 );

@@ -67,6 +67,7 @@ export interface IStorage {
   getWorkoutSets(sessionId: string): Promise<WorkoutSet[]>;
   getWorkoutSetsByExercise(exerciseId: string, userId: string): Promise<WorkoutSet[]>;
   createWorkoutSet(set: InsertWorkoutSet): Promise<WorkoutSet>;
+  updateWorkoutSet(id: string, updates: Partial<WorkoutSet>): Promise<WorkoutSet>;
   
   // Stats
   getUserStats(userId: string): Promise<WorkoutStats>;
@@ -375,14 +376,23 @@ export class MemStorage implements IStorage {
 
   async createWorkoutSet(insertSet: InsertWorkoutSet): Promise<WorkoutSet> {
     const id = randomUUID();
-    const set: WorkoutSet = { 
-      ...insertSet, 
+    const set: WorkoutSet = {
+      ...insertSet,
       id,
       weight: insertSet.weight || null,
       restTime: insertSet.restTime || null
     };
     this.workoutSets.set(id, set);
     return set;
+  }
+
+  async updateWorkoutSet(id: string, updates: Partial<WorkoutSet>): Promise<WorkoutSet> {
+    const set = this.workoutSets.get(id);
+    if (!set) throw new Error("Set not found");
+
+    const updated = { ...set, ...updates };
+    this.workoutSets.set(id, updated);
+    return updated;
   }
 
   // Stats

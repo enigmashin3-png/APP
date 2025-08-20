@@ -63,6 +63,11 @@ export const insertWorkoutPlanSchema = createInsertSchema(workoutPlans).omit({ i
 export const insertWorkoutSessionSchema = createInsertSchema(workoutSessions).omit({ id: true });
 export const insertWorkoutSetSchema = createInsertSchema(workoutSets).omit({ id: true });
 
+// Update schemas
+export const updateWorkoutSetSchema = insertWorkoutSetSchema
+  .pick({ weight: true, reps: true })
+  .partial();
+
 // Types
 export type User = typeof users.$inferSelect;
 export type Exercise = typeof exercises.$inferSelect;
@@ -75,6 +80,7 @@ export type InsertExercise = z.infer<typeof insertExerciseSchema>;
 export type InsertWorkoutPlan = z.infer<typeof insertWorkoutPlanSchema>;
 export type InsertWorkoutSession = z.infer<typeof insertWorkoutSessionSchema>;
 export type InsertWorkoutSet = z.infer<typeof insertWorkoutSetSchema>;
+export type UpdateWorkoutSet = z.infer<typeof updateWorkoutSetSchema>;
 
 // Additional types for complex data
 export type WorkoutPlanExercise = {
