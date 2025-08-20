@@ -37,9 +37,12 @@ function addExercise() {
         // Update the display
         renderWorkoutList();
 
-        // Reset form
-        document.getElementById('exercise-form').reset();
-        toggleExerciseForm();
+        // Reset form and hide it
+        const exerciseForm = document.getElementById('exercise-form');
+        if (exerciseForm) {
+            exerciseForm.reset();
+            hideExerciseForm();
+        }
     } else {
         alert('Please enter valid numbers greater than 0 for sets and reps');
     }
@@ -127,7 +130,27 @@ function clearWorkout() {
 function toggleExerciseForm() {
     const form = document.getElementById('exercise-form');
     if (form) {
-        form.classList.toggle('hidden');
+        if (form.classList.contains('hidden')) {
+            form.classList.remove('hidden');
+        } else {
+            form.classList.add('hidden');
+        }
+    }
+}
+
+// Hide the exercise form by adding the "hidden" class
+function hideExerciseForm() {
+    const form = document.getElementById('exercise-form');
+    if (form) {
+        form.classList.add('hidden');
+    }
+}
+
+// Show the exercise form by removing the "hidden" class
+function showExerciseForm() {
+    const form = document.getElementById('exercise-form');
+    if (form) {
+        form.classList.remove('hidden');
     }
 }
 
