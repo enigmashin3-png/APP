@@ -69,3 +69,20 @@ ul {
     display: none;
 }
 
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+        margin: 10px;
+    }
+
+    input {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    button {
+        width: 100%;
+        margin: 5px 0;
+    }
+}
+
