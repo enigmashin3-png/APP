@@ -1,18 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useState } from "react";
 import type { WorkoutSet, Exercise } from "@shared/schema";
-import { calculateOneRepMax } from "@/lib/progressive-overload";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip as ChartTooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
 
 const MOCK_USER_ID = "user-1";
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, ChartTooltip, Legend);
 
 interface ChartDataPoint {
   date: string;
   weight: number;
-  oneRepMax: number;
-  volume: number;
 }
 
 export default function ProgressChart() {
@@ -31,35 +40,69 @@ export default function ProgressChart() {
   const chartData: ChartDataPoint[] = exerciseSets
     ? exerciseSets
         .reduce((acc: ChartDataPoint[], set) => {
-          const date = new Date(set.completedAt).toISOString().split('T')[0];
-          const existingPoint = acc.find(point => point.date === date);
-          
+          const date = new Date(set.completedAt).toISOString().split("T")[0];
+          const existingPoint = acc.find((point) => point.date === date);
+
           if (existingPoint) {
-            // Update with heaviest set of the day
             if ((set.weight || 0) > existingPoint.weight) {
               existingPoint.weight = set.weight || 0;
-              existingPoint.oneRepMax = calculateOneRepMax(set.weight || 0, set.reps);
             }
-            existingPoint.volume += (set.weight || 0) * set.reps;
           } else {
             acc.push({
               date,
               weight: set.weight || 0,
-              oneRepMax: calculateOneRepMax(set.weight || 0, set.reps),
-              volume: (set.weight || 0) * set.reps,
             });
           }
-          
+
           return acc;
         }, [])
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-        .slice(-12) // Last 12 data points
+        .slice(-12)
     : [];
 
-  const selectedExercise = exercises?.find(ex => ex.id === selectedExerciseId);
-  const currentMax = chartData.length > 0 ? Math.max(...chartData.map(d => d.oneRepMax)) : 0;
-  const previousMax = chartData.length > 1 ? chartData[chartData.length - 2].oneRepMax : 0;
-  const progressPercentage = previousMax > 0 ? Math.round(((currentMax - previousMax) / previousMax) * 100) : 0;
+  const selectedExercise = exercises?.find((ex) => ex.id === selectedExerciseId);
+  const currentMax = chartData.length > 0 ? Math.max(...chartData.map((d) => d.weight)) : 0;
+  const previousMax = chartData.length > 1 ? chartData[chartData.length - 2].weight : 0;
+  const progressPercentage =
+    previousMax > 0 ? Math.round(((currentMax - previousMax) / previousMax) * 100) : 0;
+
+  const chartJsData = {
+    labels: chartData.map((d) =>
+      new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    ),
+    datasets: [
+      {
+        label: selectedExercise?.name ?? "Weight",
+        data: chartData.map((d) => d.weight),
+        borderColor: "hsl(var(--primary-600))",
+        backgroundColor: "hsl(var(--primary-600))",
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => `${Math.round(context.parsed.y)} lbs`,
+        },
+      },
+    },
+    scales: {
+      x: {
+        grid: { color: "#e5e7eb" },
+        ticks: { color: "#6b7280", font: { size: 12 } },
+      },
+      y: {
+        grid: { color: "#e5e7eb" },
+        ticks: { color: "#6b7280", font: { size: 12 } },
+      },
+    },
+  } as const;
 
   return (
     <Card className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700">
@@ -85,37 +128,12 @@ export default function ProgressChart() {
         {chartData.length > 0 ? (
           <>
             <div className="h-48 mb-4">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis 
-                    dataKey="date" 
-                    stroke="#6b7280"
-                    fontSize={12}
-                    tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  />
-                  <YAxis stroke="#6b7280" fontSize={12} />
-                  <Tooltip 
-                    labelFormatter={(value) => new Date(value).toLocaleDateString()}
-                    formatter={(value: number, name: string) => [
-                      `${Math.round(value)} lbs`,
-                      name === 'oneRepMax' ? '1RM' : name === 'weight' ? 'Weight' : 'Volume'
-                    ]}
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="oneRepMax" 
-                    stroke="hsl(var(--primary-600))" 
-                    strokeWidth={2}
-                    dot={{ fill: "hsl(var(--primary-600))", strokeWidth: 2, r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              <Line data={chartJsData} options={chartOptions} />
             </div>
             
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Current 1RM</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Current Max Weight</p>
                 <p className="text-xl font-bold text-gray-900 dark:text-white">{currentMax} lbs</p>
               </div>
               <div className="text-right">
