@@ -6,11 +6,13 @@ export interface SettingsContextType {
   darkMode: boolean;
   notifications: boolean;
   autoRest: boolean;
+  restInterval: number;
   setLanguage: (language: string) => void;
   setWeightUnit: (unit: 'lbs' | 'kg') => void;
   setDarkMode: (enabled: boolean) => void;
   setNotifications: (enabled: boolean) => void;
   setAutoRest: (enabled: boolean) => void;
+  setRestInterval: (seconds: number) => void;
   convertWeight: (weight: number, fromUnit?: string, toUnit?: string) => number;
   formatWeight: (weight: number) => string;
 }
@@ -42,8 +44,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
   const [notifications, setNotificationsState] = useState(() => 
     localStorage.getItem('fitness-app-notifications') !== 'false'
   );
-  const [autoRest, setAutoRestState] = useState(() => 
+  const [autoRest, setAutoRestState] = useState(() =>
     localStorage.getItem('fitness-app-auto-rest') !== 'false'
+  );
+  const [restInterval, setRestIntervalState] = useState(() =>
+    parseInt(localStorage.getItem('fitness-app-rest-interval') || '90', 10)
   );
 
   // Apply dark mode on initial load
@@ -77,6 +82,11 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     localStorage.setItem('fitness-app-auto-rest', enabled.toString());
   };
 
+  const setRestInterval = (seconds: number) => {
+    setRestIntervalState(seconds);
+    localStorage.setItem('fitness-app-rest-interval', seconds.toString());
+  };
+
   const convertWeight = (weight: number, fromUnit?: string, toUnit?: string): number => {
     const from = fromUnit || weightUnit;
     const to = toUnit || weightUnit;
@@ -97,11 +107,13 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     darkMode,
     notifications,
     autoRest,
+    restInterval,
     setLanguage,
     setWeightUnit,
     setDarkMode,
     setNotifications,
     setAutoRest,
+    setRestInterval,
     convertWeight,
     formatWeight,
   };

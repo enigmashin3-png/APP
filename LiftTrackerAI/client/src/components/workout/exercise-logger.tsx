@@ -15,7 +15,7 @@ import { Lightbulb } from "lucide-react";
 
 interface ExerciseLoggerProps {
   sessionId: string;
-  onSetLogged?: () => void;
+  onSetLogged?: (info: { restTime: number; previousSet?: WorkoutSet | null }) => void;
 }
 
 const MOCK_USER_ID = "user-1";
@@ -25,8 +25,9 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
   const [weight, setWeight] = useState("");
   const [reps, setReps] = useState("");
   const [setNumber, setSetNumber] = useState(1);
+  const [restTimes, setRestTimes] = useState<Record<string, number>>({});
   const { toast } = useToast();
-  const { weightUnit, formatWeight } = useSettings();
+  const { weightUnit, formatWeight, restInterval } = useSettings();
   const queryClient = useQueryClient();
 
   const { data: exercises } = useQuery<Exercise[]>({
@@ -46,30 +47,7 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
     mutationFn: async (setData: InsertWorkoutSet) => {
       const response = await apiRequest("POST", "/api/workout-sets", setData);
       return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Set logged successfully!",
-        description: "Keep up the great work!",
-      });
-      
-      // Reset form
-      setWeight("");
-      setReps("");
-      setSetNumber(prev => prev + 1);
-      
-      // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: ["/api/workout-sets"] });
-      
-      onSetLogged?.();
-    },
-    onError: () => {
-      toast({
-        title: "Failed to log set",
-        description: "Please try again",
-        variant: "destructive",
-      });
-    },
+    }
   });
 
   // Calculate current set number for selected exercise
@@ -93,12 +71,15 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
       return;
     }
 
+    const restTime = restTimes[selectedExerciseId] ?? restInterval;
+
     const setData: InsertWorkoutSet = {
       sessionId,
       exerciseId: selectedExerciseId,
       setNumber: currentSetNumber,
       reps: parseInt(reps),
       weight: parseFloat(weight),
+      restTime,
       completedAt: new Date(),
     };
 
@@ -112,7 +93,33 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
       return;
     }
 
-    logSetMutation.mutate(validation.data);
+    const previousSet = previousSets?.find(s => s.sessionId !== sessionId) || null;
+
+    logSetMutation.mutate(validation.data, {
+      onSuccess: () => {
+        toast({
+          title: "Set logged successfully!",
+          description: "Keep up the great work!",
+        });
+
+        // Reset form
+        setWeight("");
+        setReps("");
+        setSetNumber(prev => prev + 1);
+
+        // Invalidate relevant queries
+        queryClient.invalidateQueries({ queryKey: ["/api/workout-sets"] });
+
+        onSetLogged?.({ restTime, previousSet });
+      },
+      onError: () => {
+        toast({
+          title: "Failed to log set",
+          description: "Please try again",
+          variant: "destructive",
+        });
+      }
+    });
   };
 
   const applySuggestion = () => {
@@ -194,6 +201,23 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
               />
             </div>
           </div>
+
+          {selectedExerciseId && (
+            <div>
+              <Label htmlFor="rest">Rest Time (s)</Label>
+              <Input
+                id="rest"
+                type="number"
+                value={restTimes[selectedExerciseId] ?? restInterval}
+                onChange={(e) =>
+                  setRestTimes((prev) => ({
+                    ...prev,
+                    [selectedExerciseId]: parseInt(e.target.value) || 0,
+                  }))
+                }
+              />
+            </div>
+          )}
 
           {suggestion && (
             <Card className="bg-primary-50 dark:bg-primary-900 border-primary-200 dark:border-primary-800">
