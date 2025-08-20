@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -237,7 +238,7 @@ export default function WorkoutPlanForm() {
                 className="min-h-[80px]"
               />
             </div>
-            <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="level">Level</Label>
                 <Select value={level} onValueChange={setLevel}>
@@ -290,14 +291,19 @@ export default function WorkoutPlanForm() {
             {rows.length === 0 && (
               <p className="text-gray-500 dark:text-gray-400 text-sm">No exercises added yet.</p>
             )}
-            {rows.map((row, idx) => {
-              const exercise = exercises?.find((ex) => ex.id === row.exerciseId);
-              return (
-                <div
-                  key={idx}
-                  className="grid grid-cols-6 gap-3 items-end border rounded-lg p-3 mb-2 bg-gray-50 dark:bg-gray-800"
-                >
-                  <div className="col-span-2">
+              <AnimatePresence initial={false}>
+                {rows.map((row, idx) => {
+                  const exercise = exercises?.find((ex) => ex.id === row.exerciseId);
+                  return (
+                    <motion.div
+                      key={idx}
+                      layout
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="grid grid-cols-1 md:grid-cols-6 gap-3 md:items-end border rounded-lg p-3 mb-2 bg-gray-50 dark:bg-gray-800"
+                    >
+                  <div className="md:col-span-2">
                     <Label>Exercise</Label>
                     <Select
                       value={row.exerciseId}
@@ -358,22 +364,23 @@ export default function WorkoutPlanForm() {
                       onChange={(e) => updateRow(idx, "restTime", parseInt(e.target.value) || 60)}
                     />
                   </div>
-                  <div className="flex justify-end">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeRow(idx)}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
+                    <div className="flex justify-end">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => removeRow(idx)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </motion.div>
+                );
+              })}
+              </AnimatePresence>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
-  );
+    );
 }
