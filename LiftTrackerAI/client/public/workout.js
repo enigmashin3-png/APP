@@ -48,11 +48,14 @@ function renderWorkoutList() {
     currentWorkout.forEach((exercise, index) => {
         const listItem = document.createElement('li');
         listItem.className = 'exercise-item';
-        listItem.innerHTML = `
-            ${exercise.name} - ${exercise.sets}x${exercise.reps} 
-            ${exercise.weight > 0 ? `with ${exercise.weight} lbs` : ''}
-            <button onclick="removeExercise(${index})" class="delete-btn">X</button>
-        `;
+        listItem.textContent = `${exercise.name} - ${exercise.sets}x${exercise.reps}${exercise.weight > 0 ? ` with ${exercise.weight} lbs` : ''} `;
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'X';
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.addEventListener('click', () => removeExercise(index));
+
+        listItem.appendChild(deleteBtn);
         workoutList.appendChild(listItem);
     });
 }
