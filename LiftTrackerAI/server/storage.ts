@@ -66,6 +66,7 @@ export interface IStorage {
   // Workout Sets
   getWorkoutSets(sessionId: string): Promise<WorkoutSet[]>;
   getWorkoutSetsByExercise(exerciseId: string, userId: string): Promise<WorkoutSet[]>;
+  getRecentSets(userId: string, limit?: number): Promise<WorkoutSet[]>;
   createWorkoutSet(set: InsertWorkoutSet): Promise<WorkoutSet>;
   updateWorkoutSet(id: string, updates: Partial<WorkoutSet>): Promise<WorkoutSet>;
   
@@ -368,10 +369,20 @@ export class MemStorage implements IStorage {
   async getWorkoutSetsByExercise(exerciseId: string, userId: string): Promise<WorkoutSet[]> {
     const userSessions = await this.getWorkoutSessions(userId);
     const sessionIds = userSessions.map(s => s.id);
-    
+
     return Array.from(this.workoutSets.values())
       .filter(set => set.exerciseId === exerciseId && sessionIds.includes(set.sessionId))
       .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime());
+  }
+
+  async getRecentSets(userId: string, limit: number = 30): Promise<WorkoutSet[]> {
+    const sessions = await this.getWorkoutSessions(userId);
+    const sessionIds = new Set(sessions.map(s => s.id));
+
+    return Array.from(this.workoutSets.values())
+      .filter(set => sessionIds.has(set.sessionId))
+      .sort((a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime())
+      .slice(0, limit);
   }
 
   async createWorkoutSet(insertSet: InsertWorkoutSet): Promise<WorkoutSet> {
