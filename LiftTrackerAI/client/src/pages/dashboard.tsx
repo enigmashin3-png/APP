@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { useSettings } from "@/contexts/settings-context";
 import ProgressChart from "@/components/workout/progress-chart";
 import PedometerCard from "@/components/pedometer/pedometer-card";
+import CoachDock from "@/components/coach/Dock";
 import { 
   Home, 
   Calendar, 
@@ -62,6 +63,8 @@ export default function Dashboard() {
     if (diffDays === 1) return "Yesterday";
     return `${diffDays} days ago`;
   };
+
+  const getRecentSets = () => [] as any[];
 
   return (
     <div className="min-h-screen">
@@ -310,6 +313,7 @@ export default function Dashboard() {
           </div>
         </Card>
       </div>
+      <CoachDock getRecentSets={getRecentSets} />
     </div>
   );
 }
