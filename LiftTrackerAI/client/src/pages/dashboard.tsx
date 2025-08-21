@@ -6,7 +6,7 @@ import { useSettings } from "@/contexts/settings-context";
 import ProgressChart from "@/components/workout/progress-chart";
 import PedometerCard from "@/components/pedometer/pedometer-card";
 import CoachDock from "@/components/coach/Dock";
-import type { SetEntry } from "@/lib/coach/rules";
+import { useRecentSets } from "@/hooks/useLocalData";
 import { 
   Home, 
   Calendar, 
@@ -44,9 +44,7 @@ export default function Dashboard() {
     queryKey: ["/api/workout-sessions/active", MOCK_USER_ID],
   });
 
-  const { data: recentSets } = useQuery<SetEntry[]>({
-    queryKey: ["/api/users", MOCK_USER_ID, "sets?limit=30"],
-  });
+  const { data: recentSets } = useRecentSets(50);
 
   const handleStartWorkout = () => {
     // TODO: Navigate to workout start flow
@@ -69,7 +67,7 @@ export default function Dashboard() {
     return `${diffDays} days ago`;
   };
 
-  const getRecentSets = () => recentSets ?? [];
+  const getRecentSets = () => recentSets;
 
   return (
     <div className="min-h-screen">
