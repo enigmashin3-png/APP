@@ -16,6 +16,7 @@ import NotFound from "@/pages/not-found";
 import { SettingsProvider } from "@/contexts/settings-context";
 import MobileNavigation from "@/components/layout/mobile-navigation";
 import DesktopSidebar from "@/components/layout/desktop-sidebar";
+import ThemeProvider from "@/components/theme/ThemeProvider";
 
 function Router() {
   return (
@@ -38,18 +39,20 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <SettingsProvider>
-        <TooltipProvider>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <DesktopSidebar />
-            <div className="lg:ml-64 pb-16 lg:pb-0">
-              <Router />
+      <ThemeProvider>
+        <SettingsProvider>
+          <TooltipProvider>
+            <div className="min-h-screen bg-bg text-fg">
+              <DesktopSidebar />
+              <div className="lg:ml-64 pb-16 lg:pb-0">
+                <Router />
+              </div>
+              <MobileNavigation />
             </div>
-            <MobileNavigation />
-          </div>
-          <Toaster />
-        </TooltipProvider>
-      </SettingsProvider>
+            <Toaster />
+          </TooltipProvider>
+        </SettingsProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
