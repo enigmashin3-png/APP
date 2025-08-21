@@ -6,7 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Globe, Weight, Moon, Sun, Bell, Smartphone, SettingsIcon } from "lucide-react";
+import { Globe, Weight, Bell, Smartphone, SettingsIcon } from "lucide-react";
+import ThemeSelector from "@/components/theme/ThemeSelector";
+import { useThemeCtx } from "@/components/theme/ThemeProvider";
+import { THEME_STORAGE_KEY, DEFAULT_THEME } from "@/lib/theme";
 import { useToast } from "@/hooks/use-toast";
 
 const LANGUAGES = [
@@ -25,10 +28,10 @@ const LANGUAGES = [
 export default function Settings() {
   const [language, setLanguage] = useState(localStorage.getItem('fitness-app-language') || 'en');
   const [weightUnit, setWeightUnit] = useState(localStorage.getItem('fitness-app-weight-unit') || 'lbs');
-  const [darkMode, setDarkMode] = useState(localStorage.getItem('fitness-app-theme') === 'dark');
   const [notifications, setNotifications] = useState(localStorage.getItem('fitness-app-notifications') !== 'false');
   const [autoRest, setAutoRest] = useState(localStorage.getItem('fitness-app-auto-rest') !== 'false');
   const [restInterval, setRestInterval] = useState(parseInt(localStorage.getItem('fitness-app-rest-interval') || '90', 10));
+  const { setTheme } = useThemeCtx();
   const { toast } = useToast();
 
   const handleLanguageChange = (newLanguage: string) => {
@@ -49,15 +52,6 @@ export default function Settings() {
     });
   };
 
-  const handleDarkModeToggle = (enabled: boolean) => {
-    setDarkMode(enabled);
-    localStorage.setItem('fitness-app-theme', enabled ? 'dark' : 'light');
-    document.documentElement.classList.toggle('dark', enabled);
-    toast({
-      title: "Theme updated",
-      description: `${enabled ? 'Dark' : 'Light'} mode enabled`,
-    });
-  };
 
   const handleNotificationsToggle = (enabled: boolean) => {
     setNotifications(enabled);
@@ -97,17 +91,16 @@ export default function Settings() {
   const resetAllSettings = () => {
     setLanguage('en');
     setWeightUnit('lbs');
-    setDarkMode(false);
     setNotifications(true);
     setAutoRest(true);
-    
+    setTheme(DEFAULT_THEME);
+
     localStorage.removeItem('fitness-app-language');
     localStorage.removeItem('fitness-app-weight-unit');
-    localStorage.removeItem('fitness-app-theme');
     localStorage.removeItem('fitness-app-notifications');
     localStorage.removeItem('fitness-app-auto-rest');
+    localStorage.removeItem(THEME_STORAGE_KEY);
     
-    document.documentElement.classList.remove('dark');
     
     toast({
       title: "Settings reset",
@@ -210,24 +203,11 @@ export default function Settings() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              {darkMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
               <span>Appearance</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <Label htmlFor="dark-mode">Dark Mode</Label>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Switch between light and dark themes
-                </p>
-              </div>
-              <Switch
-                id="dark-mode"
-                checked={darkMode}
-                onCheckedChange={handleDarkModeToggle}
-              />
-            </div>
+            <ThemeSelector />
           </CardContent>
         </Card>
 
