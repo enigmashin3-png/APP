@@ -11,7 +11,8 @@
     "test": "echo \"No tests specified\" && exit 0",
     "db:push": "drizzle-kit push",
     "scrape:exercises": "node scripts/scrape-and-rewrite.mjs",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
