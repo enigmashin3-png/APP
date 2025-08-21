@@ -215,14 +215,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
 
     // User Stats
+  app.get("/api/users/:userId/sets", async (req, res) => {
+    try {
+      const limit = parseInt((req.query.limit as string) ?? "30", 10);
+      const sets = await storage.getRecentSets(req.params.userId, limit);
+      const mapped = sets.map(s => ({
+        date: s.completedAt.toISOString(),
+        exerciseId: s.exerciseId,
+        reps: s.reps,
+        weight: s.weight ?? 0,
+        rpe: (s as any).rpe,
+      }));
+      res.json(mapped);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch recent sets" });
+    }
+  });
+
   app.get("/api/users/:userId/stats", async (req, res) => {
     try {
       const stats = await storage.getUserStats(req.params.userId);
-    res.json(stats);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch user stats" });
-  }
-});
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch user stats" });
+    }
+  });
 
   app.post("/api/coach/tip", async (req, res) => {
     const Body = z.object({

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Globe, Weight, Bell, Smartphone, SettingsIcon } from "lucide-react";
+import { Globe, Weight, Bell, Smartphone, SettingsIcon, Bot } from "lucide-react";
 import ThemeSelector from "@/components/theme/ThemeSelector";
 import { useThemeCtx } from "@/components/theme/ThemeProvider";
 import { THEME_STORAGE_KEY, DEFAULT_THEME } from "@/lib/theme";
@@ -301,6 +301,20 @@ export default function Settings() {
             >
               Reset All Settings
             </Button>
+          </CardContent>
+        </Card>
+
+        {/* AI Coach */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Bot className="h-5 w-5" />
+              <span>AI Coach</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+            <p>The AI Coach fetches tips from OpenRouter when you're online.</p>
+            <p>If offline, heuristic advice is generated locally.</p>
           </CardContent>
         </Card>
       </div>

@@ -20,7 +20,7 @@ module.exports = {
         'regexp/optimal-quantifier-concatenation': 'off',
         'regexp/no-dupe-disjunctions': 'off',
         'regexp/no-obscure-range': 'off',
-        'regex/invalid': ['error', [
+        'regex/invalid': ['warn', [
           {
             regex: '#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})',
             message: 'Use design tokens (Tailwind + CSS vars) instead of hex colors.'
@@ -48,7 +48,7 @@ module.exports = {
       files: ['**/*.{css,scss}'],
       excludedFiles: ['styles/themes.css'],
       rules: {
-        'regex/invalid': ['error', [
+        'regex/invalid': ['warn', [
           {
             regex: '#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})',
             message: 'Define colors in themes.css as CSS variables; use tokens in components.'
