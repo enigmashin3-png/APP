@@ -1,0 +1,63 @@
+/* Base (default / energy) */
+:root {
+  --color-bg:        #F9FAFB;  /* Off White */
+  --color-fg:        #111827;  /* Charcoal for text on light */
+  --color-card:      #FFFFFF;
+  --color-muted:     #6B7280;
+
+  --color-primary:   #3B82F6;  /* Electric Blue */
+  --color-secondary: #22C55E;  /* Neon Green */
+  --color-accent:    #F97316;  /* Sunset Orange */
+
+  --color-success:   #10B981;
+  --color-warning:   #F59E0B;
+  --color-danger:    #DC2626;
+}
+
+/* Dark Pro */
+[data-theme="darkpro"] {
+  --color-bg:        #0B0F17;
+  --color-fg:        #E5E7EB;
+  --color-card:      #111827;
+  --color-muted:     #9CA3AF;
+
+  --color-primary:   #60A5FA;  /* softer blue glow */
+  --color-secondary: #34D399;
+  --color-accent:    #F59E0B;
+}
+
+/* Sunset Glow */
+[data-theme="sunset"] {
+  --color-bg:        #FFF7ED;
+  --color-fg:        #1F2937;
+  --color-card:      #FFFFFF;
+  --color-muted:     #6B7280;
+
+  --color-primary:   #F97316;  /* Orange */
+  --color-secondary: #F43F5E;  /* Rose */
+  --color-accent:    #8B5CF6;  /* Purple */
+}
+
+/* Minimal White */
+[data-theme="minimal"] {
+  --color-bg:        #FFFFFF;
+  --color-fg:        #111827;
+  --color-card:      #F3F4F6;
+  --color-muted:     #6B7280;
+
+  --color-primary:   #2563EB;  /* Deeper blue */
+  --color-secondary: #64748B;  /* Slate for subtle actions */
+  --color-accent:    #0EA5E9;  /* Cyan accent */
+}
+
+/* Retro Arcade */
+[data-theme="arcade"] {
+  --color-bg:        #0A0A0A;
+  --color-fg:        #E5E7EB;
+  --color-card:      #111111;
+  --color-muted:     #A3A3A3;
+
+  --color-primary:   #A78BFA;  /* Neon purple */
+  --color-secondary: #22D3EE;  /* Neon cyan */
+  --color-accent:    #22C55E;  /* Neon green */
+}
