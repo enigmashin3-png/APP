@@ -2,6 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertWorkoutSessionSchema, insertWorkoutSetSchema, insertWorkoutPlanSchema, updateWorkoutSetSchema } from "@shared/schema";
+import { z } from "zod";
+import { generateRuleTips, type SetEntry } from "@lib/coach/rules";
+import { openRouterChat } from "@lib/ai/openrouter";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Exercises
@@ -212,13 +215,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
 
     // User Stats
-    app.get("/api/users/:userId/stats", async (req, res) => {
-      try {
-        const stats = await storage.getUserStats(req.params.userId);
-      res.json(stats);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch user stats" });
+  app.get("/api/users/:userId/stats", async (req, res) => {
+    try {
+      const stats = await storage.getUserStats(req.params.userId);
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch user stats" });
+  }
+});
+
+  app.post("/api/coach/tip", async (req, res) => {
+    const Body = z.object({
+      recentSets: z.array(z.object({
+        date: z.string(),
+        exerciseId: z.string(),
+        reps: z.number(),
+        weight: z.number(),
+        rpe: z.number().optional()
+      })),
+      prefs: z.record(z.any()).optional(),
+      painFlags: z.array(z.string()).optional()
+    });
+
+    const parsed = Body.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ ok: false, error: parsed.error.flatten() });
     }
+
+    const { recentSets, prefs, painFlags } = parsed.data;
+    const ruleTips = generateRuleTips(recentSets as SetEntry[], prefs as any, painFlags ?? []);
+
+    let ai: string | null = null;
+    try {
+      const system = "You are Lift Legends' AI Coach. Be concise, actionable, positive. Max 3 bullet points. No medical claims.";
+      const user = [
+        `Recent sets (last ${recentSets.length} entries):`,
+        ...recentSets.slice(-8).map(s => `- ${s.date} ${s.exerciseId}: ${s.weight}x${s.reps}${s.rpe ? ` (RPE ${s.rpe})` : ""}`),
+        "",
+        "Heuristic tips:",
+        ...ruleTips.map(t => `- [${t.tag}] ${t.message}`)
+      ].join("\n");
+
+      ai = await openRouterChat([
+        { role: "system", content: system },
+        { role: "user", content: user }
+      ]);
+    } catch {
+      ai = null;
+    }
+
+    res.json({ ok: true, ai, ruleTips });
   });
 
   const httpServer = createServer(app);
