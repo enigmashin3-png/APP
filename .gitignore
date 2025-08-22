@@ -1,6 +1,4 @@
 LiftTrackerAI/node_modules/
 LiftTrackerAI/dist/
-LiftTrackerAI/.env
-LiftTrackerAI/.env.*
-!LiftTrackerAI/.env.example
+
 *.log
