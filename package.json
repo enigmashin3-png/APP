@@ -4,15 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo 'No tests specified' && exit 0",
-    "start:coach": "node dist/LiftTrackerAI/server/index.js",
     "build": "tsc",
-    "dev:coach": "tsx LiftTrackerAI/server/index.ts"
+    "start:coach": "node dist/LiftTrackerAI/server/index.js",
+    "dev:coach": "tsx LiftTrackerAI/server/index.ts",
+    "android:sync": "npx cap sync",
+    "android:open": "npx cap open android",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "tauri build",
+    "test": "echo 'No tests specified' && exit 0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",

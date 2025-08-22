@@ -1,7 +1,9 @@
+import { COACH_URL } from "../../src/config/coach.js";
+
 export type ChatMsg = { role: "system" | "user" | "assistant"; content: string };
 
 export async function askCoach(messages: ChatMsg[]) {
-  const resp = await fetch("/api/coach", {
+  const resp = await fetch(COACH_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ messages }),
@@ -9,7 +11,7 @@ export async function askCoach(messages: ChatMsg[]) {
   if (!resp.ok) {
     let msg = "Coach API error";
     try {
-      const j: any = await resp.json();
+      const j = await resp.json();
       if (j?.error) msg = j.error;
     } catch {}
     throw new Error(msg);
