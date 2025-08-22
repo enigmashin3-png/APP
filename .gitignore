@@ -5,3 +5,5 @@ LiftTrackerAI/dist/
 *.log
 .env
 node_modules/
+android
+src-tauri/target

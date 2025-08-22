@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.askCoach = askCoach;
-async function askCoach(messages) {
-    const resp = await fetch("/api/coach", {
+import { COACH_URL } from "../../src/config/coach.js";
+export async function askCoach(messages) {
+    const resp = await fetch(COACH_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages }),
