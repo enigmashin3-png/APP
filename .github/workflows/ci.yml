@@ -31,16 +31,16 @@ jobs:
       - name: Test (optional)
         run: npm test --if-present
 
-      - name: Build
+      - name: Build TypeScript
         run: npm run build --if-present
 
-      - name: Smoke run (server)
+      - name: Smoke run (compiled server)
         if: ${{ github.event_name != 'pull_request' }}
         run: |
-          node LiftTrackerAI/server/index.js &
+          node dist/LiftTrackerAI/server/index.js &
           sleep 3
           curl -sS -X POST http://localhost:8080/api/coach \
             -H "Content-Type: application/json" \
             -d '{"messages":[{"role":"user","content":"Say ok."}]}' \
             | tee /tmp/coach.json
-          pkill -f "LiftTrackerAI/server/index.js" || true
+          pkill -f "dist/LiftTrackerAI/server/index.js" || true

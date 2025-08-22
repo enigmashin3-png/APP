@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo 'No tests specified' && exit 0",
-    "start:coach": "node LiftTrackerAI/server/index.js"
+    "start:coach": "node dist/LiftTrackerAI/server/index.js",
+    "build": "tsc",
+    "dev:coach": "tsx LiftTrackerAI/server/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +18,12 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "groq-sdk": "^0.30.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.3.0",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
   }
 }
