@@ -1,8 +1,5 @@
 LiftTrackerAI/node_modules/
 LiftTrackerAI/dist/
 
-# Secrets
-.env
 
-# Logs
 *.log
