@@ -9,7 +9,7 @@ export async function askCoach(messages: ChatMsg[]) {
   if (!resp.ok) {
     let msg = "Coach API error";
     try {
-      const j = await resp.json();
+      const j: any = await resp.json();
       if (j?.error) msg = j.error;
     } catch {}
     throw new Error(msg);
