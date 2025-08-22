@@ -6,6 +6,13 @@ export async function askCoach(messages: ChatMsg[]) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ messages }),
   });
-  if (!resp.ok) throw new Error("Coach API error");
-  return (await resp.json()) as { reply: string };
+  if (!resp.ok) {
+    let msg = "Coach API error";
+    try {
+      const j = await resp.json();
+      if (j?.error) msg = j.error;
+    } catch {}
+    throw new Error(msg);
+  }
+  return (await resp.json()) as { model: string; reply: string };
 }

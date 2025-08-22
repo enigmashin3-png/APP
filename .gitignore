@@ -3,3 +3,5 @@ LiftTrackerAI/dist/
 
 
 *.log
+.env
+node_modules/
