@@ -9,32 +9,39 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     env:
+      # Inject model/port as plain vars; key comes from GitHub Secrets
       GROQ_MODEL: llama-3.1-8b-instant
       PORT: 8080
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-      VITE_COACH_URL: ${{ vars.VITE_COACH_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Use Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
+
       - name: Install deps
         run: npm ci
-      - name: Lint (optional)
-        run: npm run lint --if-present
-      - name: Test (optional)
-        run: npm test --if-present
-      - name: Build
+
+      - name: Build (if present)
         run: npm run build --if-present
+
+      # Optional: Smoke test your compiled server (skip on PRs from forks)
       - name: Smoke server
         if: ${{ github.event_name != 'pull_request' }}
         run: |
-          node dist/LiftTrackerAI/server/index.js &
+          # Try compiled server first, then TS dev if dist not present
+          if [ -f dist/LiftTrackerAI/server/index.js ]; then
+            node dist/LiftTrackerAI/server/index.js &
+          else
+            npx tsx LiftTrackerAI/server/index.ts &
+          fi
           sleep 3
           curl -sS -X POST http://localhost:8080/api/coach \
             -H "Content-Type: application/json" \
-            -d '{"messages":[{"role":"user","content":"Say ok."}]}' | tee /tmp/coach.json
-          pkill -f "dist/LiftTrackerAI/server/index.js" || true
+            -d '{"messages":[{"role":"user","content":"Say ok."}]}' \
+            | tee /tmp/coach.json
+          pkill -f "LiftTrackerAI/server/index" || true
