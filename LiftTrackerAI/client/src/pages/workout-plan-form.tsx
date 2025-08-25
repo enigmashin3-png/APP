@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ExerciseCombobox from "@/components/workout/exercise-combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import type { Exercise, WorkoutPlan } from "@shared/schema";
@@ -305,21 +306,11 @@ export default function WorkoutPlanForm() {
                     >
                   <div className="md:col-span-2">
                     <Label>Exercise</Label>
-                    <Select
+                    <ExerciseCombobox
+                      exercises={exercises ?? []}
                       value={row.exerciseId}
-                      onValueChange={(val) => updateRow(idx, "exerciseId", val)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select exercise" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {exercises?.map((ex) => (
-                          <SelectItem key={ex.id} value={ex.id}>
-                            {ex.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      onChange={(val) => updateRow(idx, "exerciseId", val)}
+                    />
                     {exercise?.tips && (
                       <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 italic">
                         Tip: {exercise.tips}
