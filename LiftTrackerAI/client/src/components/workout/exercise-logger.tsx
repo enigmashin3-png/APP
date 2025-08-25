@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import ExerciseCombobox from "@/components/workout/exercise-combobox";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/contexts/settings-context";
@@ -135,18 +135,11 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="exercise">Exercise</Label>
-            <Select value={selectedExerciseId} onValueChange={setSelectedExerciseId}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select exercise" />
-              </SelectTrigger>
-              <SelectContent>
-                {exercises?.map((exercise) => (
-                  <SelectItem key={exercise.id} value={exercise.id}>
-                    {exercise.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <ExerciseCombobox
+              exercises={exercises ?? []}
+              value={selectedExerciseId}
+              onChange={setSelectedExerciseId}
+            />
           </div>
 
           {/* Exercise tips */}
