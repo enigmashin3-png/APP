@@ -56,7 +56,10 @@ export async function exportAll() {
 }
 export async function importAll(payload: any, merge = true) {
   const { prefs = [], workouts = [], sets = [], voice = [], tips = [] } = payload || {};
-  await localdb.transaction('rw', localdb.userPrefs, localdb.workouts, localdb.sets, localdb.voiceLogs, localdb.coachTips, async () => {
+  await localdb.transaction(
+    'rw',
+    [localdb.userPrefs, localdb.workouts, localdb.sets, localdb.voiceLogs, localdb.coachTips],
+    async () => {
     if (!merge) {
       await Promise.all([
         localdb.userPrefs.clear(), localdb.workouts.clear(),
