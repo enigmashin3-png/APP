@@ -9,7 +9,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import type { Exercise } from "@shared/schema";
 
@@ -51,13 +51,7 @@ export function ExerciseCombobox({ exercises, value, onChange }: ExerciseCombobo
         <Input
           role="combobox"
           aria-expanded={open}
-          className="w-full"
-          value={selected ? selected.name : ""}
-          placeholder="Select exercise"
-          readOnly
-          onFocus={handleOpen}
-          onKeyDown={handleKeyDown}
-        />
+
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align="start">
         <Command>
