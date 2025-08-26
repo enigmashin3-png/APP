@@ -9,7 +9,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Exercise } from "@shared/schema";
 
@@ -32,8 +32,12 @@ export function ExerciseCombobox({ exercises, value, onChange }: ExerciseCombobo
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {selected ? selected.name : "Select exercise"}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          {selected ? (
+            selected.name
+          ) : (
+            <span className="text-muted-foreground">Click to search exercises</span>
+          )}
+          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align="start">
