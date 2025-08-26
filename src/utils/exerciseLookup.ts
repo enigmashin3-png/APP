@@ -1,8 +1,12 @@
-import { EXERCISES } from "../data/exercises";
+import EXERCISES from "../../data/exercises.json";
+
+type Exercise = { name: string; primary?: string; muscle?: string };
 
 export function primaryMuscleFor(name: string): string {
-  const found = EXERCISES.find((e) => e.name.toLowerCase() === name.toLowerCase());
-  return found?.primary ?? "Other";
+  const found = (EXERCISES as Exercise[]).find(
+    (e) => e.name.toLowerCase() === name.toLowerCase()
+  );
+  return found?.primary ?? found?.muscle ?? "Other";
 }
 
 export function est1RM(weight?: number, reps?: number): number | undefined {
