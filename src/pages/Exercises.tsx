@@ -3,12 +3,14 @@ import { useWorkoutStore } from "../store/workout";
 import { useDbExercises } from "../hooks/useDbExercises";
 import ExerciseInfoModal from "../components/ExerciseInfoModal";
 import { muscleMeta } from "../lib/muscle";
+import { isRecentPR, personalRecord, latestTimeForExercise } from "../utils/prs";
 
 export default function Exercises() {
   const ensure = useWorkoutStore((s) => s.ensureActive);
   const addExercise = useWorkoutStore((s) => s.addExercise);
   const favorites = useWorkoutStore((s) => s.favorites);
   const toggleFav = useWorkoutStore((s) => s.toggleFavoriteExercise);
+  const history = useWorkoutStore((s) => s.history);
 
   const { data, loading, error, fuse } = useDbExercises();
 
@@ -108,17 +110,19 @@ export default function Exercises() {
             <div key={e.id} className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
               <div className="flex items-center justify-between gap-2 mb-1">
                 <div className="min-w-0">
-                  <div className="font-medium truncate">{e.name}</div>
-                  <div className="text-xs opacity-80 flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1">
-                      <span
-                        className="inline-block h-2.5 w-2.5 rounded-full"
-                        style={{ backgroundColor: muscleMeta(e.primary).color }}
-                      />
-                      {e.primary}
-                    </span>
-                    • {e.equipment.join(", ") || "No equipment"}
+                  <div className="font-medium truncate flex items-center gap-2">
+                    <span className="truncate">{e.name}</span>
+                    {(() => {
+                      const pr = personalRecord(history, e.name);
+                      const latest = latestTimeForExercise(history, e.name);
+                      const recent = isRecentPR(history, e.name, 30);
+                      const showBadge = !!pr && !!latest && recent && pr!.t === latest;
+                      return showBadge ? (
+                        <span className="inline-flex items-center text-[11px] px-2 py-0.5 rounded-full bg-green-600 text-white">PR</span>
+                      ) : null;
+                    })()}
                   </div>
+                  <div className="text-xs opacity-80 truncate">{e.primary} • {e.equipment.join(", ") || "No equipment"}</div>
                 </div>
                 <div className="flex gap-2 shrink-0">
                   <button title="Info" onClick={() => { setSelected(e); setShow(true); }}
