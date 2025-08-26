@@ -5,13 +5,14 @@ const tabs = [
   { to: "/workouts", label: "Workouts" },
   { to: "/templates", label: "Templates" },
   { to: "/exercises", label: "Exercises" },
+  { to: "/prs", label: "PRs" },
   { to: "/settings", label: "Settings" },
 ];
 
 export default function TabsNav() {
   return (
     <nav className="border-t border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-900/80 backdrop-blur">
-      <ul className="mx-auto grid max-w-3xl grid-cols-5">
+      <ul className="mx-auto grid max-w-3xl grid-cols-6">
         {tabs.map((t) => (
           <li key={t.to} className="text-center">
             <NavLink

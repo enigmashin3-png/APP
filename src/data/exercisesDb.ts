@@ -1,6 +1,4 @@
 import initSqlJs from "sql.js";
-// Vite resolves ?url to a proper asset path for the wasm file
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import wasmUrl from "sql.js/dist/sql-wasm.wasm?url";
 
@@ -11,30 +9,34 @@ export type DbExercise = {
   equipment: string[];
   description?: string;
   tags?: string[];
+  // media scaffolding (safe if missing)
+  gifUrl?: string;
+  imageUrl?: string;
+  images?: string[];
 };
 
 let _cache: DbExercise[] | null = null;
 let _loading: Promise<DbExercise[]> | null = null;
 
+function parseListish(val: any): string[] {
+  if (!val) return [];
+  if (Array.isArray(val)) return val.map((s) => String(s).trim()).filter(Boolean);
+  return String(val)
+    .split(/[,/;|]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 function normalizeRow(row: Record<string, any>): DbExercise {
-  const equipmentRaw = row.equipment ?? row.equipments ?? row.equipment_list ?? "";
-  const tagsRaw = row.tags ?? row.tag_list ?? "";
+  const equipment = parseListish(row.equipment ?? row.equipments ?? row.equipment_list);
+  const tags = parseListish(row.tags ?? row.tag_list);
 
-  const equipment =
-    Array.isArray(equipmentRaw)
-      ? equipmentRaw
-      : String(equipmentRaw || "")
-          .split(/[,/]/)
-          .map((s) => s.trim())
-          .filter(Boolean);
-
-  const tags =
-    Array.isArray(tagsRaw)
-      ? tagsRaw
-      : String(tagsRaw || "")
-          .split(/[,/]/)
-          .map((s) => s.trim())
-          .filter(Boolean);
+  // media scaffolding — these can be filled later; safe to be undefined now
+  const gifUrl =
+    row.gif_url ?? row.gif ?? row.media_gif ?? undefined;
+  const imageUrl =
+    row.image_url ?? row.image ?? row.thumbnail ?? undefined;
+  const images = parseListish(row.images ?? row.gallery);
 
   return {
     id: String(row.id ?? row.slug ?? row.name),
@@ -43,19 +45,22 @@ function normalizeRow(row: Record<string, any>): DbExercise {
     equipment,
     description: row.description ?? row.instructions ?? row.notes ?? undefined,
     tags,
+    gifUrl: gifUrl ? String(gifUrl) : undefined,
+    imageUrl: imageUrl ? String(imageUrl) : undefined,
+    images: images.length ? images : undefined,
   };
 }
 
-async function queryAll(sql: any, dbBytes: Uint8Array, q: string): Promise<Record<string, any>[]> {
+async function queryAll(dbBytes: Uint8Array, q: string): Promise<Record<string, any>[]> {
   const SQL = await initSqlJs({ locateFile: () => wasmUrl });
   const db = new SQL.Database(dbBytes);
   try {
     const res = db.exec(q);
-    if (!res || !res[0]) return [];
+    if (!res?.[0]) return [];
     const cols = res[0].columns;
-    return res[0].values.map((arr: any[]) => {
+    return res[0].values.map((row: any[]) => {
       const o: Record<string, any> = {};
-      arr.forEach((v, i) => (o[cols[i]] = v));
+      row.forEach((v, i) => (o[cols[i]] = v));
       return o;
     });
   } finally {
@@ -63,23 +68,17 @@ async function queryAll(sql: any, dbBytes: Uint8Array, q: string): Promise<Recor
   }
 }
 
-/** Attempts multiple common schemas to find exercises */
 async function bestEffortRead(dbBytes: Uint8Array): Promise<DbExercise[]> {
   const candidates = [
-    // most likely
-    `SELECT id, name, primary_muscle AS primary, equipment, description, tags FROM exercises`,
-    `SELECT id, name, muscle AS primary, equipment, description, tags FROM exercises`,
-    `SELECT id, name, primary AS primary, equipment, description, tags FROM exercises`,
-    // other table names
-    `SELECT id, name, muscle AS primary, equipment, instructions AS description, tags FROM exercise`,
+    `SELECT id, name, primary_muscle AS primary, equipment, description, tags, gif_url, image_url, images FROM exercises`,
+    `SELECT id, name, muscle AS primary, equipment, description, tags, gif_url, image_url, images FROM exercises`,
+    `SELECT id, name, primary AS primary, equipment, instructions AS description, tags, gif_url, image_url, images FROM exercise`,
     `SELECT id, name, primary_muscle AS primary, equipment_list AS equipment, instructions AS description FROM exercise_library`,
-    // very generic fallback: pick any table that has name+description
     `SELECT name, description FROM exercises`,
   ];
-
   for (const q of candidates) {
     try {
-      const rows = await queryAll(null, dbBytes, q);
+      const rows = await queryAll(dbBytes, q);
       if (rows.length) {
         return rows
           .filter((r) => r.name)
@@ -90,42 +89,32 @@ async function bestEffortRead(dbBytes: Uint8Array): Promise<DbExercise[]> {
       // try next
     }
   }
-
-  // one last fallback: introspect sqlite_master and try first table
+  // last fallback: first table
   const SQL = await initSqlJs({ locateFile: () => wasmUrl });
   const db = new SQL.Database(dbBytes);
   try {
-    const master = db.exec(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name LIMIT 1`);
-    if (master[0]?.values?.[0]?.[0]) {
-      const table = master[0].values[0][0] as string;
-      const rows = db.exec(`SELECT * FROM ${table} LIMIT 1000`);
-      if (rows[0]) {
-        const cols = rows[0].columns;
-        const nameIdx = cols.findIndex((c) => /name/i.test(c));
-        if (nameIdx >= 0) {
-          return rows[0].values
-            .map((arr: any[]) => {
-              const obj: Record<string, any> = {};
-              arr.forEach((v, i) => (obj[cols[i]] = v));
-              return obj;
-            })
-            .filter((r) => r.name)
-            .map(normalizeRow);
-        }
-      }
-    }
+    const res = db.exec(`SELECT name FROM sqlite_master WHERE type='table' ORDER BY name LIMIT 1`);
+    const table = res?.[0]?.values?.[0]?.[0] as string | undefined;
+    if (!table) return [];
+    const rows = db.exec(`SELECT * FROM ${table}`);
+    if (!rows?.[0]) return [];
+    const cols = rows[0].columns;
+    return rows[0].values
+      .map((vals: any[]) => {
+        const o: Record<string, any> = {};
+        vals.forEach((v, i) => (o[cols[i]] = v));
+        return o;
+      })
+      .filter((r) => r.name)
+      .map(normalizeRow);
   } finally {
     db.close();
   }
-
-  return [];
 }
 
-/** Public loader (cached). Fetches /workout_exercises.db and reads rows. */
 export async function loadDbExercises(): Promise<DbExercise[]> {
   if (_cache) return _cache;
   if (_loading) return _loading;
-
   _loading = (async () => {
     const resp = await fetch("/workout_exercises.db");
     if (!resp.ok) throw new Error("Failed to fetch workout_exercises.db");
@@ -134,7 +123,18 @@ export async function loadDbExercises(): Promise<DbExercise[]> {
     _cache = list;
     return list;
   })();
-
   return _loading;
 }
 
+/** Idle warmup — safe no-op if already loaded */
+export function warmLoadDbExercisesIdle() {
+  const run = () => {
+    if (_cache || _loading) return;
+    // fire and forget
+    loadDbExercises().catch(() => {});
+  };
+  // @ts-ignore
+  const ric = window.requestIdleCallback as any;
+  if (typeof ric === "function") ric(run, { timeout: 3000 });
+  else setTimeout(run, 1200);
+}

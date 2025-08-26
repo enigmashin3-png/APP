@@ -39,6 +39,8 @@ type Settings = {
   theme: "system" | "light" | "dark";
   defaultRestSec: number;
   barWeightKg: number;
+  syncUrl?: string;
+  syncKey?: string;
 };
 
 type ExportShape = {
@@ -91,7 +93,7 @@ export const useWorkoutStore = create<State>()(
       templates: [],
       favorites: [],
       recents: [],
-      settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20 },
+      settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20, syncUrl: "", syncKey: "" },
 
       ensureActive: () => {
         if (!get().activeWorkout) {
@@ -215,7 +217,7 @@ export const useWorkoutStore = create<State>()(
             templates: Array.isArray(data.templates) ? data.templates : [],
             favorites: Array.isArray(data.favorites) ? data.favorites : [],
             recents: [],
-            settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20, ...(data.settings ?? {}) },
+            settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20, syncUrl: "", syncKey: "", ...(data.settings ?? {}) },
           });
           return true;
         } catch {
@@ -230,21 +232,25 @@ export const useWorkoutStore = create<State>()(
           templates: [],
           favorites: [],
           recents: [],
-          settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20 },
+          settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20, syncUrl: "", syncKey: "" },
         });
       },
     }),
     {
       name: "liftlegends-v1",
-      version: 3,
+      version: 4,
       storage: createJSONStorage(() => localStorage),
       migrate: (state: any, fromVersion: number) => {
+        const s = state?.state ?? state;
+        if (!s) return state;
         if (fromVersion < 3) {
-          const s = state?.state ?? state;
-          if (s && s.settings && typeof s.settings.barWeightKg === "undefined") {
-            s.settings.barWeightKg = 20;
+          if (s.settings && typeof s.settings.barWeightKg === "undefined") s.settings.barWeightKg = 20;
+        }
+        if (fromVersion < 4) {
+          if (s.settings) {
+            if (typeof s.settings.syncUrl === "undefined") s.settings.syncUrl = "";
+            if (typeof s.settings.syncKey === "undefined") s.settings.syncKey = "";
           }
-          return state;
         }
         return state;
       },
