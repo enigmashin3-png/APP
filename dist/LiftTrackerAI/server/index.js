@@ -5,6 +5,8 @@ import Groq from "groq-sdk";
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: "1mb" }));
+import { initExerciseRoute } from "./exercisesRoute.js";
+initExerciseRoute(app);
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 if (!GROQ_API_KEY) {
     console.error("Missing GROQ_API_KEY");
