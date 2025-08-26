@@ -1,9 +1,8 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a//dev/null b/src/components/ExercisePicker.tsx
-index 0000000000000000000000000000000000000000..71a67de60977bf0ed0153182d0bf41c6b9e67b61 100644
+index 0000000000000000000000000000000000000000..ffd6f6188b7e958be568591e105af69b961bc431 100644
 --- a//dev/null
 +++ b/src/components/ExercisePicker.tsx
-@@ -0,0 +1,82 @@
+@@ -0,0 +1,83 @@
 +import React, { useMemo, useState } from "react";
 +import exercisesData from "../../data/exercises.json";
 +
@@ -15,7 +14,8 @@ index 0000000000000000000000000000000000000000..71a67de60977bf0ed0153182d0bf41c6
 +};
 +
 +export default function ExercisePicker({ onAdd, onClose }: Props) {
-+  const [selected, setSelected] = useState<Record<string | number, Exercise>>({});
++  // track selected exercises by a stringified key to ensure Babel parses the type correctly
++  const [selected, setSelected] = useState<Record<string, Exercise>>({});
 +
 +  const groups = useMemo(() => {
 +    const g: Record<string, Exercise[]> = {};
@@ -31,7 +31,7 @@ index 0000000000000000000000000000000000000000..71a67de60977bf0ed0153182d0bf41c6
 +  const toggle = (ex: Exercise) => {
 +    setSelected((prev) => {
 +      const copy = { ...prev };
-+      const key = ex.id ?? ex.name;
++      const key = String(ex.id ?? ex.name);
 +      if (copy[key]) {
 +        delete copy[key];
 +      } else {
@@ -86,6 +86,4 @@ index 0000000000000000000000000000000000000000..71a67de60977bf0ed0153182d0bf41c6
 +    </div>
 +  );
 +}
- 
-EOF
-)
+
