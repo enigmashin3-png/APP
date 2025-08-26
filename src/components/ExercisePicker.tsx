@@ -38,7 +38,6 @@ export default function ExercisePicker({ onAdd, onClose }: Props) {
 
   const addAndClose = () => {
     onAdd(Object.values(selected));
-    onClose();
   };
 
   const hasSelection = Object.keys(selected).length > 0;
