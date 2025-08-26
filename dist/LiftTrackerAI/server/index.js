@@ -9,14 +9,16 @@ import { initExerciseRoute } from "./exercisesRoute.js";
 initExerciseRoute(app);
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 if (!GROQ_API_KEY) {
-    console.error("Missing GROQ_API_KEY");
-    process.exit(1);
+    console.warn("Missing GROQ_API_KEY – /api/coach will be disabled");
 }
 const GROQ_MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 // 🔒 Lock here — only allow Llama 3.1 models
 const ALLOWED_MODELS = new Set(["llama-3.1-8b-instant"]);
-const client = new Groq({ apiKey: GROQ_API_KEY });
+const client = GROQ_API_KEY ? new Groq({ apiKey: GROQ_API_KEY }) : null;
 app.post("/api/coach", async (req, res) => {
+    if (!client) {
+        return res.status(500).json({ error: "AI Coach not configured" });
+    }
     try {
         const { messages } = req.body;
         if (!Array.isArray(messages) || messages.length === 0) {
