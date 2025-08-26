@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "tsc",
+    "build": "vite build && tsc",
+    "build:web": "vite build",
     "start:coach": "node dist/LiftTrackerAI/server/index.js",
     "dev:coach": "tsx LiftTrackerAI/server/index.ts",
     "android:sync": "npx cap sync",
