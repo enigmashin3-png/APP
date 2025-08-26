@@ -1,0 +1,12 @@
+[
+  { "id": 1, "name": "Barbell Bench Press", "muscle": "Chest", "equipment": "Barbell" },
+  { "id": 2, "name": "Dumbbell Bench Press", "muscle": "Chest", "equipment": "Dumbbell" },
+  { "id": 3, "name": "Incline Barbell Bench Press", "muscle": "Chest", "equipment": "Barbell" },
+  { "id": 4, "name": "Back Squat", "muscle": "Quads", "equipment": "Barbell" },
+  { "id": 5, "name": "Front Squat", "muscle": "Quads", "equipment": "Barbell" },
+  { "id": 6, "name": "Romanian Deadlift", "muscle": "Hamstrings", "equipment": "Barbell" },
+  { "id": 7, "name": "Conventional Deadlift", "muscle": "Back", "equipment": "Barbell" },
+  { "id": 8, "name": "Lat Pulldown", "muscle": "Back", "equipment": "Cable" },
+  { "id": 9, "name": "Seated Cable Row", "muscle": "Back", "equipment": "Cable" },
+  { "id": 10, "name": "Overhead Press", "muscle": "Shoulders", "equipment": "Barbell" }
+]
