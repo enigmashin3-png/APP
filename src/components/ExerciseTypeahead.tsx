@@ -29,9 +29,9 @@ export default function ExerciseTypeahead({ value, onChange, onSelect, placehold
     const controller = new AbortController();
     const q = encodeURIComponent(debounced.trim());
     fetch(`/api/exercises?q=${q}&limit=${limit}`, { signal: controller.signal })
-      .then(r => r.json())
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then((data: Exercise[]) => { setItems(data); setOpen(true); setHighlight(0); })
-      .catch(() => {});
+      .catch((e) => { console.error("typeahead fetch failed:", e); });
     return () => controller.abort();
   }, [debounced, limit]);
 
