@@ -1,5 +1,6 @@
 import React from "react";
 import { MoreHorizontal, Plus, CalendarDays, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/lift-legends-logo.svg";
 
 type Template = { id: string; title: string; exercises: string[]; date: string };
@@ -11,6 +12,7 @@ const templates: Template[] = [
 ];
 
 export default function WorkoutHome() {
+  const navigate = useNavigate();
   return (
     <div className="app">
       <header className="app-header">
@@ -18,7 +20,7 @@ export default function WorkoutHome() {
         <div className="h1">Workout</div>
         <div className="subtle">Quick start</div>
         <div className="container" style={{padding: "10px 0 0"}}>
-          <button className="quick">START AN EMPTY WORKOUT</button>
+          <button className="quick" onClick={() => navigate("/workout/new")}>START AN EMPTY WORKOUT</button>
         </div>
       </header>
 

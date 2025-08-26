@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+// @ts-ignore: fuse.js has no type declarations
 import Fuse from "fuse.js";
 import fs from "fs";
 import path from "path";
@@ -34,7 +35,7 @@ export function initExerciseRoute(app: any) {
     if (!q) {
       return res.json(EXERCISES.slice(0, limit));
     }
-    const results = FUSE!.search(q, { limit }).map(r => r.item);
+    const results = FUSE!.search(q, { limit }).map((r: any) => r.item);
     return res.json(results);
   });
 }
