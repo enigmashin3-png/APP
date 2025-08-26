@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import WorkoutHome from "./pages/WorkoutHome";
+import WorkoutSession from "./pages/WorkoutSession";
 import Profile from "./pages/Profile";
 import History from "./pages/History";
 import Exercises from "./pages/Exercises";
@@ -17,6 +18,7 @@ export default function App(){
         <Route path="/history" element={<History/>} />
         <Route path="/exercises" element={<Exercises/>} />
         <Route path="/measure" element={<Measure/>} />
+        <Route path="/workout/new" element={<WorkoutSession/>} />
       </Routes>
       <BottomTabs/>
     </>
