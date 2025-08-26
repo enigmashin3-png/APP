@@ -7,3 +7,4 @@ LiftTrackerAI/dist/
 node_modules/
 android
 src-tauri/target
+src-tauri/Cargo.lock
