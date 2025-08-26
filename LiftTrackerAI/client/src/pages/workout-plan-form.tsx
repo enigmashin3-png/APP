@@ -131,7 +131,7 @@ export default function WorkoutPlanForm() {
     setRows((prev) => [
       ...prev,
       {
-        exerciseId: exercises && exercises.length > 0 ? exercises[0].id : "",
+        exerciseId: "",
         sets: 3,
         reps: 8,
         weight: undefined,
@@ -311,10 +311,14 @@ export default function WorkoutPlanForm() {
                       value={row.exerciseId}
                       onChange={(val) => updateRow(idx, "exerciseId", val)}
                     />
-                    {exercise?.tips && (
-                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 italic">
-                        Tip: {exercise.tips}
-                      </p>
+                    {row.exerciseId === "" ? (
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Select exercise</p>
+                    ) : (
+                      exercise?.tips && (
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 italic">
+                          Tip: {exercise.tips}
+                        </p>
+                      )
                     )}
                   </div>
                   <div>
