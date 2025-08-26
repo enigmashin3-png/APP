@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: align with our theme manager */
+:root { color-scheme: light dark; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { @apply bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50; }
+
