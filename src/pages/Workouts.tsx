@@ -51,7 +51,11 @@ export default function Workouts() {
                   ))}
                 </div>
                 <div className="mt-3">
-                  <button onClick={() => addSet(ex.id)} className="rounded-lg border px-4 h-10 border-neutral-300 dark:border-neutral-700">
+                  <button
+                    onClick={() => addSet(ex.id)}
+                    aria-label={`Add set to ${ex.name}`}
+                    className="rounded-lg border px-4 h-10 border-neutral-300 dark:border-neutral-700"
+                  >
                     Add set
                   </button>
                 </div>
