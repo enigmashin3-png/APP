@@ -1,4 +1,5 @@
 import { useWorkoutStore } from "../store/workout";
+import { hapticSuccess } from "../lib/haptics";
 
 export default function FinishBar() {
   const finishWorkout = useWorkoutStore((s) => s.finishWorkout);
@@ -12,7 +13,10 @@ export default function FinishBar() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-3xl p-3">
       <button
-        onClick={finishWorkout}
+        onClick={() => {
+          hapticSuccess();
+          finishWorkout();
+        }}
         className="w-full h-12 rounded-xl bg-black text-white shadow-lg dark:bg-white dark:text-black"
       >
         Finish Workout • {setCount} sets
