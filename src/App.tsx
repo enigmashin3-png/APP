@@ -4,12 +4,68 @@ import SideNav from "./components/SideNav";
 import FAB from "./components/FAB";
 import BottomSheet from "./components/BottomSheet";
 import FinishBar from "./components/FinishBar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useWorkoutStore } from "./store/workout";
 import { isTauri } from "./lib/env";
 import Titlebar from "./targets/tauri/Titlebar";
 import { applyTheme, bindSystemTheme } from "./lib/theme";
+import { useDbExercises } from "./hooks/useDbExercises";
+import ExerciseInfoModal from "./components/ExerciseInfoModal";
 
+function ExercisePicker({ onPicked }: { onPicked: (name: string) => void }) {
+  const { data, loading, error, fuse } = useDbExercises();
+  const favorites = (window as any).LLfavorites ?? null; // not used; keeping inline with store would be heavier here
+  const [q, setQ] = useState("");
+  const [show, setShow] = useState(false);
+  const [selected, setSelected] = useState<any>(null);
+
+  const filtered = useMemo(() => {
+    if (!data) return [];
+    if (!q.trim()) return data.slice(0, 80);
+    if (fuse) return fuse.search(q).map((r) => r.item).slice(0, 80);
+    return data.filter((e) => e.name.toLowerCase().includes(q.toLowerCase())).slice(0, 80);
+  }, [data, fuse, q]);
+
+  return (
+    <div className="space-y-4">
+      <input
+        placeholder="Search exercise…"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        className="w-full h-11 rounded-xl px-3 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900"
+      />
+
+      {loading && <div className="text-sm opacity-70">Loading exercise database…</div>}
+      {error && <div className="text-sm text-red-600">Failed to load DB: {error}</div>}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[45vh] overflow-auto pr-1">
+        {filtered.map((e) => (
+          <div key={e.id} className="flex items-center justify-between rounded-xl border p-3 border-neutral-300 dark:border-neutral-700">
+            <div className="min-w-0">
+              <div className="font-medium truncate">{e.name}</div>
+              <div className="text-xs opacity-70 truncate">{e.primary}</div>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <button
+                title="Info"
+                onClick={() => { setSelected(e); setShow(true); }}
+                className="h-9 w-9 rounded-lg border border-neutral-300 dark:border-neutral-700"
+              >?</button>
+              <button
+                onClick={() => onPicked(e.name)}
+                className="h-9 px-3 rounded-lg bg-black text-white dark:bg-white dark:text-black"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <ExerciseInfoModal open={show} onClose={() => setShow(false)} exercise={selected} />
+    </div>
+  );
+}
 export default function App() {
   const [open, setOpen] = useState(false);
   const loc = useLocation();
@@ -53,27 +109,13 @@ export default function App() {
 
       {/* Bottom sheet for exercise picker / quick log */}
       <BottomSheet open={open} onClose={() => setOpen(false)} title="Quick Log">
-        <div className="space-y-3">
-          <input
-            placeholder="Search exercise..."
-            className="w-full h-11 rounded-xl px-3 border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900"
-          />
-          <div className="text-sm opacity-70">Recents</div>
-          <div className="flex flex-wrap gap-2">
-            {["Bench Press", "Squat", "Lat Pulldown", "DB Row", "Shoulder Press"].map((x) => (
-              <button
-                key={x}
-                onClick={() => {
-                  useWorkoutStore.getState().ensureActive();
-                  useWorkoutStore.getState().addExercise(x);
-                }}
-                className="rounded-full border px-3 py-1 text-sm border-neutral-300 dark:border-neutral-700"
-              >
-                {x}
-              </button>
-            ))}
-          </div>
-        </div>
+        <ExercisePicker
+          onPicked={(name) => {
+            useWorkoutStore.getState().ensureActive();
+            useWorkoutStore.getState().addExercise(name);
+            setOpen(false);
+          }}
+        />
       </BottomSheet>
 
       {/* Finish workout call-to-action */}
