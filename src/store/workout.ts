@@ -38,6 +38,7 @@ type Settings = {
   unit: "kg" | "lb";
   theme: "system" | "light" | "dark";
   defaultRestSec: number;
+  barWeightKg: number;
 };
 
 type ExportShape = {
@@ -90,7 +91,7 @@ export const useWorkoutStore = create<State>()(
       templates: [],
       favorites: [],
       recents: [],
-      settings: { unit: "kg", theme: "system", defaultRestSec: 90 },
+      settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20 },
 
       ensureActive: () => {
         if (!get().activeWorkout) {
@@ -214,7 +215,7 @@ export const useWorkoutStore = create<State>()(
             templates: Array.isArray(data.templates) ? data.templates : [],
             favorites: Array.isArray(data.favorites) ? data.favorites : [],
             recents: [],
-            settings: { unit: "kg", theme: "system", defaultRestSec: 90, ...(data.settings ?? {}) },
+            settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20, ...(data.settings ?? {}) },
           });
           return true;
         } catch {
@@ -229,14 +230,24 @@ export const useWorkoutStore = create<State>()(
           templates: [],
           favorites: [],
           recents: [],
-          settings: { unit: "kg", theme: "system", defaultRestSec: 90 },
+          settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20 },
         });
       },
     }),
     {
       name: "liftlegends-v1",
-      version: 2,
+      version: 3,
       storage: createJSONStorage(() => localStorage),
+      migrate: (state: any, fromVersion: number) => {
+        if (fromVersion < 3) {
+          const s = state?.state ?? state;
+          if (s && s.settings && typeof s.settings.barWeightKg === "undefined") {
+            s.settings.barWeightKg = 20;
+          }
+          return state;
+        }
+        return state;
+      },
     }
   )
 );

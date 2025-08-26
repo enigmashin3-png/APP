@@ -2,12 +2,14 @@ import { useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useWorkoutStore } from "../store/workout";
 import { est1RM } from "../utils/exerciseLookup";
+import { toUserUnits, unitLabel } from "../lib/units";
 
 export default function WorkoutDetail() {
   const { id } = useParams();
   const nav = useNavigate();
   const history = useWorkoutStore((s) => s.history);
   const repeat = useWorkoutStore((s) => s.repeatFromHistory);
+  const unit = useWorkoutStore((s) => s.settings.unit);
 
   const w = useMemo(() => history.find((x) => x.id === id), [history, id]);
 
@@ -45,9 +47,9 @@ export default function WorkoutDetail() {
               <div key={s.id} className="flex items-center justify-between rounded-lg border px-3 h-11 border-neutral-300 dark:border-neutral-700">
                 <div className="text-sm">Set {i + 1}</div>
                 <div className="text-sm opacity-80">
-                  {s.weight ?? "—"} × {s.reps ?? "—"} {s.rpe ? `• RPE ${s.rpe}` : ""}
+                  {s.weight !== undefined ? `${toUserUnits(s.weight, unit)} ${unitLabel(unit)}` : "—"} × {s.reps ?? "—"} {s.rpe ? `• RPE ${s.rpe}` : ""}
                   {s.weight && s.reps ? (
-                    <span className="ml-2 text-xs opacity-70">1RM≈ {est1RM(s.weight, s.reps)}</span>
+                    <span className="ml-2 text-xs opacity-70">1RM≈ {toUserUnits(est1RM(s.weight, s.reps)!, unit)} {unitLabel(unit)}</span>
                   ) : null}
                 </div>
               </div>

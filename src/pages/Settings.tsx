@@ -69,6 +69,22 @@ export default function Settings() {
             className="h-10 rounded-lg border px-3 border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900"
           />
         </label>
+
+        <label className="space-y-1">
+          <div className="text-sm">Default bar weight ({settings.unit})</div>
+          <input
+            type="number"
+            min={settings.unit === "kg" ? 10 : 20}
+            step={settings.unit === "kg" ? 0.5 : 1}
+            value={settings.unit === "kg" ? settings.barWeightKg : Math.round(settings.barWeightKg * 2.20462)}
+            onChange={(e) => {
+              const v = Number(e.target.value || 0);
+              const kg = settings.unit === "kg" ? v : v * 0.45359237;
+              useWorkoutStore.getState().setSetting("barWeightKg", Math.max(5, +kg.toFixed(2)));
+            }}
+            className="h-10 rounded-lg border px-3 border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900"
+          />
+        </label>
       </div>
 
       <div className="space-y-3">

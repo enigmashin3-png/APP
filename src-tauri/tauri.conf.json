@@ -13,9 +13,12 @@
     "windows": [
       {
         "title": "Lift Legends",
-        "width": 1200,
-        "height": 800,
-        "resizable": true
+        "decorations": false,
+        "transparent": false,
+        "fullscreen": false,
+        "resizable": true,
+        "width": 1100,
+        "height": 750
       }
     ],
     "security": {

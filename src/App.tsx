@@ -4,16 +4,29 @@ import SideNav from "./components/SideNav";
 import FAB from "./components/FAB";
 import BottomSheet from "./components/BottomSheet";
 import FinishBar from "./components/FinishBar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useWorkoutStore } from "./store/workout";
+import { isTauri } from "./lib/env";
+import Titlebar from "./targets/tauri/Titlebar";
+import { applyTheme, bindSystemTheme } from "./lib/theme";
 
 export default function App() {
   const [open, setOpen] = useState(false);
   const loc = useLocation();
   const hasActive = useWorkoutStore((s) => !!s.activeWorkout);
+  const theme = useWorkoutStore((s) => s.settings.theme);
+  const tauri = isTauri();
+
+  useEffect(() => {
+    applyTheme(theme);
+    const off = bindSystemTheme(theme, () => applyTheme(theme));
+    return off;
+  }, [theme]);
 
   return (
-    <div className="min-h-dvh bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50">
+    <>
+      {tauri && <Titlebar />}
+      <div className={tauri ? "pt-8 min-h-dvh bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50" : "min-h-dvh bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50"}>
       {/* Desktop side navigation */}
       <div className="hidden md:flex fixed inset-y-0 left-0 w-64 border-r border-neutral-200 dark:border-neutral-800 p-4">
         <SideNav />
@@ -65,6 +78,7 @@ export default function App() {
 
       {/* Finish workout call-to-action */}
       {hasActive && <FinishBar />}
-    </div>
+      </div>
+    </>
   );
 }
