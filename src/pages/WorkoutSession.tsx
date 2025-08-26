@@ -1,6 +1,6 @@
-import { useState } from "react";
-import ExerciseTypeahead from "../components/ExerciseTypeahead";
+import { useEffect, useState } from "react";
 import CountdownTimer from "../components/CountdownTimer";
+import ExercisePicker from "../components/ExercisePicker";
 
 type WorkoutSet = { weight: string; reps: string; done: boolean };
 
@@ -14,15 +14,29 @@ interface WorkoutExercise {
 }
 
 export default function WorkoutSession() {
-  const [exerciseQuery, setExerciseQuery] = useState("");
   const [exercises, setExercises] = useState<WorkoutExercise[]>([]);
+  const [showPicker, setShowPicker] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
 
-  const addExercise = (item: { id?: number | string; name: string }) => {
+  useEffect(() => {
+    if (!running) return;
+    const t = setInterval(() => setElapsed((e) => e + 1), 1000);
+    return () => clearInterval(t);
+  }, [running]);
+
+  const addExercises = (items: { id?: number | string; name: string }[]) => {
     setExercises((prev) => [
       ...prev,
-      { id: item.id, name: item.name, rest: 90, sets: [], timerRunning: false, timerId: 0 },
+      ...items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        rest: 90,
+        sets: [],
+        timerRunning: false,
+        timerId: 0,
+      })),
     ]);
-    setExerciseQuery("");
   };
 
   const addSet = (idx: number) => {
@@ -78,15 +92,14 @@ export default function WorkoutSession() {
 
   return (
     <div className="container" style={{ paddingTop: 24 }}>
-      <h2>Start Workout</h2>
-      <p className="subtle">Add exercises to begin.</p>
-      <ExerciseTypeahead
-        value={exerciseQuery}
-        onChange={setExerciseQuery}
-        onSelect={addExercise}
-        placeholder="e.g., bench, squat, deadlift…"
-        autoFocus
-      />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        {running ? (
+          <span>{format(elapsed)}</span>
+        ) : (
+          <button onClick={() => setRunning(true)}>Start</button>
+        )}
+        <button onClick={() => setShowPicker(true)}>Add Exercise</button>
+      </div>
       {exercises.map((ex, idx) => (
         <div
           key={idx}
@@ -152,6 +165,15 @@ export default function WorkoutSession() {
           </div>
         </div>
       ))}
+      {showPicker && (
+        <ExercisePicker
+          onAdd={(items) => {
+            addExercises(items);
+            setShowPicker(false);
+          }}
+          onClose={() => setShowPicker(false)}
+        />
+      )}
     </div>
   );
 }
