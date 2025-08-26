@@ -7,6 +7,7 @@ import Workouts from "./pages/Workouts";
 import WorkoutDetail from "./pages/WorkoutDetail";
 import Templates from "./pages/Templates";
 import Exercises from "./pages/Exercises";
+import PRs from "./pages/PRs";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="workouts/:id" element={<WorkoutDetail />} />
           <Route path="templates" element={<Templates />} />
           <Route path="exercises" element={<Exercises />} />
+          <Route path="prs" element={<PRs />} />
           <Route path="settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Route>

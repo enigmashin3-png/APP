@@ -11,6 +11,7 @@ import Titlebar from "./targets/tauri/Titlebar";
 import { applyTheme, bindSystemTheme } from "./lib/theme";
 import { useDbExercises } from "./hooks/useDbExercises";
 import ExerciseInfoModal from "./components/ExerciseInfoModal";
+import { warmLoadDbExercisesIdle } from "./data/exercisesDb";
 
 function ExercisePicker({ onPicked }: { onPicked: (name: string) => void }) {
   const { data, loading, error, fuse } = useDbExercises();
@@ -78,6 +79,10 @@ export default function App() {
     const off = bindSystemTheme(theme, () => applyTheme(theme));
     return off;
   }, [theme]);
+
+  useEffect(() => {
+    warmLoadDbExercisesIdle();
+  }, []);
 
   return (
     <>
