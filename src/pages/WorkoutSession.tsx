@@ -84,6 +84,10 @@ export default function WorkoutSession() {
     );
   };
 
+  const removeExercise = (idx: number) => {
+    setExercises((prev) => prev.filter((_, i) => i !== idx));
+  };
+
   const format = (s: number) => {
     const m = Math.floor(s / 60);
     const sec = s % 60;
@@ -105,7 +109,17 @@ export default function WorkoutSession() {
           key={idx}
           style={{ marginTop: 32, borderTop: "1px solid #eee", paddingTop: 16 }}
         >
-          <h3 style={{ marginBottom: 8 }}>{ex.name}</h3>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: 8,
+            }}
+          >
+            <h3 style={{ marginBottom: 0 }}>{ex.name}</h3>
+            <button onClick={() => removeExercise(idx)}>Remove</button>
+          </div>
           {ex.sets.map((s, sIdx) => (
             <div
               key={sIdx}
@@ -165,6 +179,11 @@ export default function WorkoutSession() {
           </div>
         </div>
       ))}
+      {exercises.length > 0 && (
+        <div style={{ marginTop: 32 }}>
+          <button onClick={() => setShowPicker(true)}>Add Exercise</button>
+        </div>
+      )}
       {showPicker && (
         <ExercisePicker
           onAdd={(items) => {
