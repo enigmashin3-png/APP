@@ -1,8 +1,11 @@
-export default function Sparkline({ points, width = 240, height = 64, strokeWidth = 2 }: {
+export default function Sparkline({
+  points, width = 240, height = 64, strokeWidth = 2, className = "",
+}: {
   points: Array<{ t: number; v: number }>;
   width?: number;
   height?: number;
   strokeWidth?: number;
+  className?: string;
 }) {
   if (points.length === 0) return <div className="text-xs opacity-70">No data</div>;
   const xs = points.map((p) => p.t);
@@ -19,7 +22,7 @@ export default function Sparkline({ points, width = 240, height = 64, strokeWidt
     })
     .join(" ");
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+    <svg className={className} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
       <path d={path} fill="none" stroke="currentColor" strokeWidth={strokeWidth} />
     </svg>
   );

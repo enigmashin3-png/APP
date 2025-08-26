@@ -12,10 +12,12 @@ import { applyTheme, bindSystemTheme } from "./lib/theme";
 import { useDbExercises } from "./hooks/useDbExercises";
 import ExerciseInfoModal from "./components/ExerciseInfoModal";
 import { warmLoadDbExercisesIdle } from "./data/exercisesDb";
+import { isRecentPR, personalRecord, latestTimeForExercise } from "./utils/prs";
 
 function ExercisePicker({ onPicked }: { onPicked: (name: string) => void }) {
   const { data, loading, error, fuse } = useDbExercises();
-  const favorites = (window as any).LLfavorites ?? null; // not used; keeping inline with store would be heavier here
+  const history = useWorkoutStore((s) => s.history);
+
   const [q, setQ] = useState("");
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState<any>(null);
@@ -40,27 +42,41 @@ function ExercisePicker({ onPicked }: { onPicked: (name: string) => void }) {
       {error && <div className="text-sm text-red-600">Failed to load DB: {error}</div>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[45vh] overflow-auto pr-1">
-        {filtered.map((e) => (
-          <div key={e.id} className="flex items-center justify-between rounded-xl border p-3 border-neutral-300 dark:border-neutral-700">
-            <div className="min-w-0">
-              <div className="font-medium truncate">{e.name}</div>
-              <div className="text-xs opacity-70 truncate">{e.primary}</div>
+        {filtered.map((e) => {
+          const pr = personalRecord(history, e.name);
+          const latest = latestTimeForExercise(history, e.name);
+          const recent = isRecentPR(history, e.name, 30); // recent = latest occurrence is PR in last 30d
+          const showBadge = !!pr && !!latest && recent && pr!.t === latest;
+
+          return (
+            <div key={e.id} className="flex items-center justify-between rounded-xl border p-3 border-neutral-300 dark:border-neutral-700">
+              <div className="min-w-0">
+                <div className="font-medium truncate flex items-center gap-2">
+                  <span className="truncate">{e.name}</span>
+                  {showBadge && (
+                    <span className="inline-flex items-center text-[11px] px-2 py-0.5 rounded-full bg-green-600 text-white">
+                      PR
+                    </span>
+                  )}
+                </div>
+                <div className="text-xs opacity-70 truncate">{e.primary}</div>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  title="Info"
+                  onClick={() => { setSelected(e); setShow(true); }}
+                  className="h-9 w-9 rounded-lg border border-neutral-300 dark:border-neutral-700"
+                >?</button>
+                <button
+                  onClick={() => onPicked(e.name)}
+                  className="h-9 px-3 rounded-lg bg-black text-white dark:bg-white dark:text-black"
+                >
+                  Add
+                </button>
+              </div>
             </div>
-            <div className="flex gap-2 shrink-0">
-              <button
-                title="Info"
-                onClick={() => { setSelected(e); setShow(true); }}
-                className="h-9 w-9 rounded-lg border border-neutral-300 dark:border-neutral-700"
-              >?</button>
-              <button
-                onClick={() => onPicked(e.name)}
-                className="h-9 px-3 rounded-lg bg-black text-white dark:bg-white dark:text-black"
-              >
-                Add
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <ExerciseInfoModal open={show} onClose={() => setShow(false)} exercise={selected} />
