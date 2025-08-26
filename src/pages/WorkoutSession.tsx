@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ExerciseTypeahead from "../components/ExerciseTypeahead";
 import CountdownTimer from "../components/CountdownTimer";
 
