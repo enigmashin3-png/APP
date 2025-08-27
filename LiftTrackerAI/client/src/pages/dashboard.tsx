@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +28,8 @@ const MOCK_USER_ID = "user-1";
 
 export default function Dashboard() {
   const { formatWeight, convertWeight } = useSettings();
-  
+  const [, navigate] = useLocation();
+
   const { data: stats, isLoading: statsLoading } = useQuery<WorkoutStats>({
     queryKey: ["/api/users", MOCK_USER_ID, "stats"],
   });
@@ -47,8 +49,7 @@ export default function Dashboard() {
   const { data: recentSets } = useRecentSets(50);
 
   const handleStartWorkout = () => {
-    // TODO: Navigate to workout start flow
-    console.log("Start workout");
+    navigate("/workout");
   };
 
   const formatDuration = (seconds: number) => {
