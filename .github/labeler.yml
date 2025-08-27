@@ -1,12 +1,21 @@
-"area:ui":
-  - "src/components/**"
-  - "src/pages/**"
-"area:state":
-  - "src/store/**"
-"area:build":
-  - "vite.config.*"
-  - "tsconfig*.json"
-  - "package.json"
-"area:db":
-  - "public/workout_exercises.db"
-  - "src/data/**"
+area:ui:
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/components/**
+      - src/pages/**
+area:state:
+  - changed-files:
+    - any-glob-to-any-file:
+      - src/store/**
+      - src/lib/store/**
+area:build:
+  - changed-files:
+    - any-glob-to-any-file:
+      - vite.config.*
+      - tsconfig*.json
+      - package.json
+area:db:
+  - changed-files:
+    - any-glob-to-any-file:
+      - public/workout_exercises.db
+      - src/data/**
