@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "node server/index.js",
     "server": "cd server && npm start",
-    "client": "serve -s client -l 3000",
+    "client": "vite",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "build": "vite build && tsc",
     "build:web": "vite build",
