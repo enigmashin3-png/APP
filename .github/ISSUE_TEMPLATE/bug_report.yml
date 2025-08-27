@@ -1,0 +1,22 @@
+name: Bug report
+description: Help us fix it!
+labels: ["bug"]
+body:
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: OS / Node / npm versions
+  - type: textarea
+    id: repro
+    attributes:
+      label: Repro steps
+      description: How to reproduce the problem
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual

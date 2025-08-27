@@ -1,0 +1,12 @@
+"area:ui":
+  - "src/components/**"
+  - "src/pages/**"
+"area:state":
+  - "src/store/**"
+"area:build":
+  - "vite.config.*"
+  - "tsconfig*.json"
+  - "package.json"
+"area:db":
+  - "public/workout_exercises.db"
+  - "src/data/**"
