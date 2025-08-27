@@ -1,31 +1,49 @@
-const express = require('express');
-const path = require('path');
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
-require('dotenv').config();
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Serve static files from the Vite build output
-app.use(express.static(path.join(__dirname, '../dist')));
+const distPath = path.join(__dirname, '../dist');
+app.use(express.static(distPath));
 
-// The "catchall" handler: for any request that doesn't
-// match an API route, send back React's index.html file.
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
+// TODO: add your API routes before the SPA fallback
+// e.g. app.use('/api', apiRouter);
+
+// SPA fallback: send index.html for any GET that isn't handled above
+app.get('*', (req, res, next) => {
+  res.sendFile(path.join(distPath, 'index.html'), (err) => {
+    if (err) next(err);
+  });
 });
 
-// Catch-all 404 handler for unmatched routes
+// 404 for non-GET or unmatched API routes
 app.use((req, res, next) => {
-  res.status(404).json({ error: 'Not Found' });
+  if (req.method !== 'GET') {
+    return res.status(404).json({ error: 'Not Found' });
+  }
+  next();
 });
 
 // Error-handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
+  if (res.headersSent) return next(err);
   res.status(err.status || 500).json({ error: 'Internal Server Error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+export default app;
