@@ -1,17 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* Optional: align with our theme manager */
-:root { color-scheme: light dark; }
-html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-body {
-  background-color: var(--color-neutral-50);
-  color: var(--color-neutral-900);
+/* Your custom layers/utilities can go below (optional) */
+/*
+@layer utilities {
+  .debug-outline { outline: 1px solid red; }
 }
-
-.dark body {
-  background-color: var(--color-neutral-950);
-  color: var(--color-neutral-50);
-}
-
+*/
