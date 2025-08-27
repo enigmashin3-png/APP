@@ -10,7 +10,11 @@
     "skipLibCheck": true,
     "outDir": "dist",
     "rootDir": ".",
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": ["LiftTrackerAI/server/index.ts", "LiftTrackerAI/client/coach.ts"],
   "exclude": ["node_modules", "dist", "android", "src-tauri/target"]
