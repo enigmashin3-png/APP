@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Check, ChevronDown } from "lucide-react";
+import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Exercise } from "@shared/schema";
 
@@ -24,57 +23,31 @@ export function ExerciseCombobox({ exercises, value, onChange }: ExerciseCombobo
   const [search, setSearch] = useState("");
   const selected = exercises.find((ex) => ex.id === value);
 
-  const handleOpen = () => setOpen(true);
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
-    if (!open) {
-      handleOpen();
-      if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        setSearch(e.key);
-      }
-      if (e.key === "Backspace") {
-        setSearch("");
-      }
-      e.preventDefault();
-    }
-  };
+  const filtered = exercises.filter((ex) =>
+    ex.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <Popover
-      open={open}
-      onOpenChange={(o) => {
-        setOpen(o);
-        if (!o) setSearch("");
-      }}
-    >
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
+        <Input
           role="combobox"
           aria-expanded={open}
-          onKeyDown={handleKeyDown}
-          className="w-full justify-between"
-        >
-          {selected ? (
-            selected.name
-          ) : (
-            <span className="text-muted-foreground">Click to search exercises</span>
-          )}
-          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
+          placeholder="Search exercises..."
+          value={selected ? selected.name : search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setOpen(true);
+          }}
+          onFocus={() => setOpen(true)}
+        />
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align="start">
         <Command>
-          <CommandInput
-            placeholder="Search exercises..."
-            autoFocus
-            value={search}
-            onValueChange={setSearch}
-          />
           <CommandList>
             <CommandEmpty>No exercise found.</CommandEmpty>
             <CommandGroup>
-              {exercises.map((ex) => (
+              {filtered.map((ex) => (
                 <CommandItem
                   key={ex.id}
                   value={ex.name}
