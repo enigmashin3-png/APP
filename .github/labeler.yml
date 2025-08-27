@@ -1,21 +1,21 @@
-area:ui:
+"area:ui":
   - changed-files:
-    - any-glob-to-any-file:
-      - src/components/**
-      - src/pages/**
-area:state:
+      any-glob-to-any-file:
+        - src/components/**
+        - src/pages/**
+"area:state":
   - changed-files:
-    - any-glob-to-any-file:
-      - src/store/**
-      - src/lib/store/**
-area:build:
+      any-glob-to-any-file:
+        - src/store/**
+        - src/lib/store/**
+"area:build":
   - changed-files:
-    - any-glob-to-any-file:
-      - vite.config.*
-      - tsconfig*.json
-      - package.json
-area:db:
+      any-glob-to-any-file:
+        - vite.config.*
+        - tsconfig*.json
+        - package.json
+"area:db":
   - changed-files:
-    - any-glob-to-any-file:
-      - public/workout_exercises.db
-      - src/data/**
+      any-glob-to-any-file:
+        - public/workout_exercises.db
+        - src/data/**
