@@ -1,6 +1,10 @@
 LiftTrackerAI/node_modules/
 LiftTrackerAI/dist/
 
+# Build outputs
+client/
+dist/
+server/dist/
 
 *.log
 .env
