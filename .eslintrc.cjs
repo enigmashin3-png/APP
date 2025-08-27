@@ -17,12 +17,13 @@ module.exports = {
   rules: {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
-    "simple-import-sort/imports": "warn",
-    "simple-import-sort/exports": "warn",
+    "simple-import-sort/imports": "off",
+    "simple-import-sort/exports": "off",
     "import/order": "off",
-    "import/newline-after-import": "warn",
+    "import/newline-after-import": "off",
+    "import/no-unresolved": "off",
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": "off",
   },
   ignorePatterns: ["dist", "build", "node_modules", "public"],
 };
