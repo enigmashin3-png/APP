@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useSettings } from "@/contexts/settings-context";
-import ProgressChart from "@/components/workout/progress-chart";
-import PedometerCard from "@/components/pedometer/pedometer-card";
-import CoachDock from "@/components/coach/Dock";
-import { useRecentSets } from "@/hooks/useLocalData";
+import { Card, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import { useSettings } from "../contexts/settings-context";
+import ProgressChart from "../components/workout/progress-chart";
+import PedometerCard from "../components/pedometer/pedometer-card";
+import CoachDock from "../components/coach/Dock";
+import { useRecentSets } from "../hooks/useLocalData";
 import { 
   Home, 
   Calendar, 
@@ -21,7 +21,7 @@ import {
   Star,
   Timer
 } from "lucide-react";
-import type { WorkoutStats, WorkoutPlan, WorkoutSession } from "@shared/schema";
+import type { WorkoutStats, WorkoutPlan, WorkoutSession } from "../../shared/schema";
 
 // Mock user ID - in real app this would come from auth context
 const MOCK_USER_ID = "user-1";
