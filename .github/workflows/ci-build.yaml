@@ -4,11 +4,19 @@ on:
   push:
     branches: [ main ]
 jobs:
-  build:
+  guard-and-build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Guard: no built assets in git
+        run: |
+          if git ls-files -- 'dist/*' | grep -q .; then
+            echo "dist/ contains tracked files. Remove them from git and add dist/ to .gitignore."
+            exit 1
+          fi
       - name: Use Node
         uses: actions/setup-node@v4
         with:
