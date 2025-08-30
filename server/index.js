@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -19,10 +20,19 @@ app.use(express.static(distPath));
 // e.g. app.use('/api', apiRouter);
 
 // SPA fallback: send index.html for any GET that isn't handled above
-app.get('*', (req, res, next) => {
-  res.sendFile(path.join(distPath, 'index.html'), (err) => {
-    if (err) next(err);
-  });
+app.use((req, res, next) => {
+  if (req.method === 'GET') {
+    const indexPath = path.join(distPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath, (err) => {
+        if (err) next(err);
+      });
+    } else {
+      res.status(200).send('');
+    }
+  } else {
+    next();
+  }
 });
 
 // 404 for non-GET or unmatched API routes
