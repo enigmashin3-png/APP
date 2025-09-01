@@ -1,10 +1,21 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, real, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  varchar,
+  integer,
+  real,
+  boolean,
+  timestamp,
+  jsonb,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
   name: text("name").notNull(),
@@ -12,7 +23,9 @@ export const users = pgTable("users", {
 });
 
 export const exercises = pgTable("exercises", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   category: text("category").notNull(), // chest, back, legs, shoulders, arms, core, cardio
   muscleGroups: text("muscle_groups").array().notNull(),
@@ -22,7 +35,9 @@ export const exercises = pgTable("exercises", {
 });
 
 export const workoutPlans = pgTable("workout_plans", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   description: text("description"),
   level: text("level").notNull(), // beginner, intermediate, advanced
@@ -33,8 +48,12 @@ export const workoutPlans = pgTable("workout_plans", {
 });
 
 export const workoutSessions = pgTable("workout_sessions", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").notNull().references(() => users.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  userId: varchar("user_id")
+    .notNull()
+    .references(() => users.id),
   workoutPlanId: varchar("workout_plan_id").references(() => workoutPlans.id),
   name: text("name").notNull(),
   startedAt: timestamp("started_at").notNull(),
@@ -46,9 +65,15 @@ export const workoutSessions = pgTable("workout_sessions", {
 });
 
 export const workoutSets = pgTable("workout_sets", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  sessionId: varchar("session_id").notNull().references(() => workoutSessions.id),
-  exerciseId: varchar("exercise_id").notNull().references(() => exercises.id),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  sessionId: varchar("session_id")
+    .notNull()
+    .references(() => workoutSessions.id),
+  exerciseId: varchar("exercise_id")
+    .notNull()
+    .references(() => exercises.id),
   setNumber: integer("set_number").notNull(),
   reps: integer("reps").notNull(),
   weight: real("weight"),

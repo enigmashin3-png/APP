@@ -4,8 +4,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Search, Filter, Dumbbell, Users, BookOpen, Zap } from "lucide-react";
 import { getMuscleGroupColor } from "@/lib/workout-utils";
 import type { Exercise } from "@shared/schema";
@@ -20,15 +32,19 @@ export default function ExerciseDatabase() {
   });
 
   // Filter exercises based on search and category
-  const filteredExercises = exercises?.filter(exercise => {
-    const matchesSearch = exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         exercise.muscleGroups.some(muscle => muscle.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = categoryFilter === "all" || exercise.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  }) || [];
+  const filteredExercises =
+    exercises?.filter((exercise) => {
+      const matchesSearch =
+        exercise.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        exercise.muscleGroups.some((muscle) =>
+          muscle.toLowerCase().includes(searchQuery.toLowerCase()),
+        );
+      const matchesCategory = categoryFilter === "all" || exercise.category === categoryFilter;
+      return matchesSearch && matchesCategory;
+    }) || [];
 
   // Get unique categories
-  const categories = exercises ? Array.from(new Set(exercises.map(ex => ex.category))) : [];
+  const categories = exercises ? Array.from(new Set(exercises.map((ex) => ex.category))) : [];
 
   const getCategoryIcon = (category: string) => {
     const icons: Record<string, React.ComponentType<any>> = {
@@ -40,7 +56,7 @@ export default function ExerciseDatabase() {
       core: Dumbbell,
       cardio: Zap,
     };
-    
+
     const IconComponent = icons[category] || Dumbbell;
     return <IconComponent className="h-5 w-5" />;
   };
@@ -55,7 +71,7 @@ export default function ExerciseDatabase() {
       core: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200",
       cardio: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
     };
-    
+
     return colors[category] || "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
   };
 
@@ -88,7 +104,7 @@ export default function ExerciseDatabase() {
               className="pl-10"
             />
           </div>
-          
+
           <div className="flex gap-2">
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-48">
@@ -113,11 +129,13 @@ export default function ExerciseDatabase() {
         {/* Category Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
           {categories.map((category) => {
-            const categoryExercises = exercises?.filter(ex => ex.category === category) || [];
+            const categoryExercises = exercises?.filter((ex) => ex.category === category) || [];
             return (
               <Card key={category} className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardContent className="p-4 text-center">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2 ${getCategoryColor(category)}`}>
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center mx-auto mb-2 ${getCategoryColor(category)}`}
+                  >
                     {getCategoryIcon(category)}
                   </div>
                   <h3 className="font-medium text-gray-900 dark:text-white capitalize text-sm">
@@ -167,7 +185,9 @@ export default function ExerciseDatabase() {
 
                       <div className="space-y-3">
                         <div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Muscle Groups</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                            Muscle Groups
+                          </p>
                           <div className="flex flex-wrap gap-1">
                             {exercise.muscleGroups.slice(0, 3).map((muscle) => (
                               <Badge key={muscle} variant="outline" className="text-xs">
@@ -210,7 +230,9 @@ export default function ExerciseDatabase() {
 
                   <div className="space-y-6">
                     <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Muscle Groups</h4>
+                      <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                        Muscle Groups
+                      </h4>
                       <div className="flex flex-wrap gap-2">
                         {exercise.muscleGroups.map((muscle) => (
                           <Badge key={muscle} className={getMuscleGroupColor(muscle)}>
@@ -222,17 +244,23 @@ export default function ExerciseDatabase() {
 
                     {exercise.equipment && (
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Equipment</h4>
+                        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                          Equipment
+                        </h4>
                         <div className="flex items-center space-x-2">
                           <Dumbbell className="h-4 w-4 text-gray-500" />
-                          <span className="text-gray-700 dark:text-gray-300">{exercise.equipment}</span>
+                          <span className="text-gray-700 dark:text-gray-300">
+                            {exercise.equipment}
+                          </span>
                         </div>
                       </div>
                     )}
 
                     {exercise.instructions && (
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Instructions</h4>
+                        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+                          Instructions
+                        </h4>
                         <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
                           {exercise.instructions}
                         </p>
@@ -243,9 +271,7 @@ export default function ExerciseDatabase() {
                       <div>
                         <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Tips</h4>
                         <div className="bg-primary-50 dark:bg-primary-900 border border-primary-200 dark:border-primary-800 rounded-lg p-4">
-                          <p className="text-primary-800 dark:text-primary-200">
-                            {exercise.tips}
-                          </p>
+                          <p className="text-primary-800 dark:text-primary-200">{exercise.tips}</p>
                         </div>
                       </div>
                     )}
@@ -264,7 +290,7 @@ export default function ExerciseDatabase() {
               <p className="text-gray-600 dark:text-gray-400 mb-6">
                 Try adjusting your search terms or category filter
               </p>
-              <Button 
+              <Button
                 onClick={() => {
                   setSearchQuery("");
                   setCategoryFilter("all");

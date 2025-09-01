@@ -41,12 +41,19 @@ export default function Exercises() {
   const list = useMemo(() => {
     if (!data) return [];
     const base = muscle === "All" ? data : data.filter((e) => e.primary === muscle);
-    const withTags = activeTags.length === 0 ? base : base.filter((e) => {
-      const set = new Set(e.tags ?? []);
-      return activeTags.every((t) => set.has(t));
-    });
+    const withTags =
+      activeTags.length === 0
+        ? base
+        : base.filter((e) => {
+            const set = new Set(e.tags ?? []);
+            return activeTags.every((t) => set.has(t));
+          });
     if (!q.trim()) return withTags.slice(0, 400);
-    if (fuse) return fuse.search(q).map((r) => r.item).filter((e) => withTags.includes(e));
+    if (fuse)
+      return fuse
+        .search(q)
+        .map((r) => r.item)
+        .filter((e) => withTags.includes(e));
     return withTags.filter((e) => e.name.toLowerCase().includes(q.toLowerCase()));
   }, [data, fuse, q, muscle, activeTags]);
 
@@ -64,7 +71,7 @@ export default function Exercises() {
             <button
               key={m}
               onClick={() => setMuscle(m)}
-              className={`h-11 px-3 rounded-xl border ${muscle===m ? "bg-neutral-100 dark:bg-neutral-800" : "border-neutral-300 dark:border-neutral-700"}`}
+              className={`h-11 px-3 rounded-xl border ${muscle === m ? "bg-neutral-100 dark:bg-neutral-800" : "border-neutral-300 dark:border-neutral-700"}`}
             >
               <span className="inline-flex items-center gap-2">
                 <span
@@ -85,7 +92,9 @@ export default function Exercises() {
             return (
               <button
                 key={t}
-                onClick={() => setActiveTags(on ? activeTags.filter(x => x !== t) : [...activeTags, t])}
+                onClick={() =>
+                  setActiveTags(on ? activeTags.filter((x) => x !== t) : [...activeTags, t])
+                }
                 className={`h-8 px-3 rounded-full border text-sm ${on ? "bg-neutral-100 dark:bg-neutral-800" : "border-neutral-300 dark:border-neutral-700"}`}
               >
                 #{t}
@@ -93,7 +102,10 @@ export default function Exercises() {
             );
           })}
           {activeTags.length > 0 && (
-            <button onClick={() => setActiveTags([])} className="h-8 px-3 rounded-full border border-neutral-300 dark:border-neutral-700 text-sm">
+            <button
+              onClick={() => setActiveTags([])}
+              className="h-8 px-3 rounded-full border border-neutral-300 dark:border-neutral-700 text-sm"
+            >
               Clear tags
             </button>
           )}
@@ -107,7 +119,10 @@ export default function Exercises() {
         {list.map((e) => {
           const isFav = favorites.includes(e.name);
           return (
-            <div key={e.id} className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+            <div
+              key={e.id}
+              className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4"
+            >
               <div className="flex items-center justify-between gap-2 mb-1">
                 <div className="min-w-0">
                   <div className="font-medium truncate flex items-center gap-2">
@@ -118,26 +133,48 @@ export default function Exercises() {
                       const recent = isRecentPR(history, e.name, 30);
                       const showBadge = !!pr && !!latest && recent && pr!.t === latest;
                       return showBadge ? (
-                        <span className="inline-flex items-center text-[11px] px-2 py-0.5 rounded-full bg-green-600 text-white">PR</span>
+                        <span className="inline-flex items-center text-[11px] px-2 py-0.5 rounded-full bg-green-600 text-white">
+                          PR
+                        </span>
                       ) : null;
                     })()}
                   </div>
-                  <div className="text-xs opacity-80 truncate">{e.primary} • {e.equipment.join(", ") || "No equipment"}</div>
+                  <div className="text-xs opacity-80 truncate">
+                    {e.primary} • {e.equipment.join(", ") || "No equipment"}
+                  </div>
                 </div>
                 <div className="flex gap-2 shrink-0">
-                  <button title="Info" onClick={() => { setSelected(e); setShow(true); }}
-                    className="h-9 w-9 rounded-lg border border-neutral-300 dark:border-neutral-700">?</button>
-                  <button title={isFav ? "Unfavorite" : "Favorite"} onClick={() => toggleFav(e.name)}
-                    className={`h-9 w-9 rounded-lg border ${isFav ? "bg-yellow-100 dark:bg-yellow-900/30" : "border-neutral-300 dark:border-neutral-700"}`}>★</button>
                   <button
-                    onClick={() => { ensure(); addExercise(e.name); }}
+                    title="Info"
+                    onClick={() => {
+                      setSelected(e);
+                      setShow(true);
+                    }}
+                    className="h-9 w-9 rounded-lg border border-neutral-300 dark:border-neutral-700"
+                  >
+                    ?
+                  </button>
+                  <button
+                    title={isFav ? "Unfavorite" : "Favorite"}
+                    onClick={() => toggleFav(e.name)}
+                    className={`h-9 w-9 rounded-lg border ${isFav ? "bg-yellow-100 dark:bg-yellow-900/30" : "border-neutral-300 dark:border-neutral-700"}`}
+                  >
+                    ★
+                  </button>
+                  <button
+                    onClick={() => {
+                      ensure();
+                      addExercise(e.name);
+                    }}
                     className="h-9 px-3 rounded-lg bg-black text-white dark:bg-white dark:text-black"
                   >
                     Add
                   </button>
                 </div>
               </div>
-              {e.description && <div className="text-xs opacity-70 line-clamp-2">{e.description}</div>}
+              {e.description && (
+                <div className="text-xs opacity-70 line-clamp-2">{e.description}</div>
+              )}
             </div>
           );
         })}

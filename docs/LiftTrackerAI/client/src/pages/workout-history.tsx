@@ -3,8 +3,20 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Calendar, Clock, Weight, TrendingUp, Star, Eye, Filter, BarChart3 } from "lucide-react";
 import { formatDuration, formatTimeAgo } from "@/lib/workout-utils";
 import { calculateVolume } from "@/lib/progressive-overload";
@@ -30,41 +42,44 @@ export default function WorkoutHistory() {
   });
 
   // Filter sessions by time period
-  const filteredSessions = sessions?.filter(session => {
-    if (timeFilter === "all") return true;
-    
-    const sessionDate = new Date(session.startedAt);
-    const now = new Date();
-    
-    switch (timeFilter) {
-      case "week":
-        return (now.getTime() - sessionDate.getTime()) <= (7 * 24 * 60 * 60 * 1000);
-      case "month":
-        return (now.getTime() - sessionDate.getTime()) <= (30 * 24 * 60 * 60 * 1000);
-      case "3months":
-        return (now.getTime() - sessionDate.getTime()) <= (90 * 24 * 60 * 60 * 1000);
-      default:
-        return true;
-    }
-  }) || [];
+  const filteredSessions =
+    sessions?.filter((session) => {
+      if (timeFilter === "all") return true;
+
+      const sessionDate = new Date(session.startedAt);
+      const now = new Date();
+
+      switch (timeFilter) {
+        case "week":
+          return now.getTime() - sessionDate.getTime() <= 7 * 24 * 60 * 60 * 1000;
+        case "month":
+          return now.getTime() - sessionDate.getTime() <= 30 * 24 * 60 * 60 * 1000;
+        case "3months":
+          return now.getTime() - sessionDate.getTime() <= 90 * 24 * 60 * 60 * 1000;
+        default:
+          return true;
+      }
+    }) || [];
 
   // Calculate statistics
-  const completedSessions = filteredSessions.filter(s => s.completedAt);
+  const completedSessions = filteredSessions.filter((s) => s.completedAt);
   const totalWorkouts = completedSessions.length;
   const totalDuration = completedSessions.reduce((sum, s) => sum + (s.duration || 0), 0);
   const totalVolume = completedSessions.reduce((sum, s) => sum + (s.totalVolume || 0), 0);
-  const avgRating = completedSessions.length > 0 
-    ? completedSessions.reduce((sum, s) => sum + (s.rating || 0), 0) / completedSessions.length
-    : 0;
+  const avgRating =
+    completedSessions.length > 0
+      ? completedSessions.reduce((sum, s) => sum + (s.rating || 0), 0) / completedSessions.length
+      : 0;
 
   // Group sets by exercise for selected session
-  const exerciseGroups = sessionSets?.reduce((groups: Record<string, WorkoutSet[]>, set) => {
-    if (!groups[set.exerciseId]) {
-      groups[set.exerciseId] = [];
-    }
-    groups[set.exerciseId].push(set);
-    return groups;
-  }, {}) || {};
+  const exerciseGroups =
+    sessionSets?.reduce((groups: Record<string, WorkoutSet[]>, set) => {
+      if (!groups[set.exerciseId]) {
+        groups[set.exerciseId] = [];
+      }
+      groups[set.exerciseId].push(set);
+      return groups;
+    }, {}) || {};
 
   return (
     <div className="min-h-screen">
@@ -165,11 +180,13 @@ export default function WorkoutHistory() {
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                          <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                            session.completedAt 
-                              ? "bg-success-50 dark:bg-success-900" 
-                              : "bg-orange-50 dark:bg-orange-900"
-                          }`}>
+                          <div
+                            className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                              session.completedAt
+                                ? "bg-success-50 dark:bg-success-900"
+                                : "bg-orange-50 dark:bg-orange-900"
+                            }`}
+                          >
                             {session.completedAt ? (
                               <div className="w-3 h-3 bg-success-600 rounded-full"></div>
                             ) : (
@@ -260,13 +277,15 @@ export default function WorkoutHistory() {
                     {/* Exercise Details */}
                     {Object.keys(exerciseGroups).length > 0 && (
                       <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-4">Exercises</h4>
+                        <h4 className="font-semibold text-gray-900 dark:text-white mb-4">
+                          Exercises
+                        </h4>
                         <div className="space-y-4">
                           {Object.entries(exerciseGroups).map(([exerciseId, sets]) => {
-                            const exercise = exercises?.find(ex => ex.id === exerciseId);
+                            const exercise = exercises?.find((ex) => ex.id === exerciseId);
                             const exerciseVolume = calculateVolume(sets);
-                            const maxWeight = Math.max(...sets.map(s => s.weight || 0));
-                            
+                            const maxWeight = Math.max(...sets.map((s) => s.weight || 0));
+
                             return (
                               <Card key={exerciseId}>
                                 <CardContent className="p-4">
@@ -282,8 +301,13 @@ export default function WorkoutHistory() {
                                   </div>
                                   <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
                                     {sets.map((set, index) => (
-                                      <div key={set.id} className="bg-gray-50 dark:bg-gray-700 rounded p-2 text-center">
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">Set {index + 1}</p>
+                                      <div
+                                        key={set.id}
+                                        className="bg-gray-50 dark:bg-gray-700 rounded p-2 text-center"
+                                      >
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                                          Set {index + 1}
+                                        </p>
                                         <p className="text-sm font-medium text-gray-900 dark:text-white">
                                           {set.weight} × {set.reps}
                                         </p>
@@ -320,16 +344,12 @@ export default function WorkoutHistory() {
                 No workout history found
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                {timeFilter === "all" 
+                {timeFilter === "all"
                   ? "Start your first workout to begin tracking your progress"
-                  : "No workouts found for the selected time period"
-                }
+                  : "No workouts found for the selected time period"}
               </p>
               {timeFilter !== "all" && (
-                <Button 
-                  onClick={() => setTimeFilter("all")}
-                  variant="outline"
-                >
+                <Button onClick={() => setTimeFilter("all")} variant="outline">
                   View All History
                 </Button>
               )}

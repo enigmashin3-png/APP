@@ -56,7 +56,11 @@ export default function ViewWorkoutPlan() {
       navigate("/workout");
     },
     onError: (error: any) => {
-      toast({ title: "Error", description: error.message || "Failed to start session", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: error.message || "Failed to start session",
+        variant: "destructive",
+      });
     },
   });
 
@@ -73,11 +77,15 @@ export default function ViewWorkoutPlan() {
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 lg:px-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{plan?.name || "Plan"}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {plan?.name || "Plan"}
+            </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">{plan?.description}</p>
           </div>
           {plan && !plan.isTemplate && (
-            <Button onClick={() => navigate(`/plans/${plan.id}/edit`)} variant="outline">Edit</Button>
+            <Button onClick={() => navigate(`/plans/${plan.id}/edit`)} variant="outline">
+              Edit
+            </Button>
           )}
         </div>
       </header>
@@ -100,7 +108,10 @@ export default function ViewWorkoutPlan() {
                       {(plan.exercises as any[]).map((ex, idx) => {
                         const exercise = exercises?.find((e) => e.id === ex.exerciseId);
                         return (
-                          <div key={idx} className="border rounded-lg p-3 bg-gray-50 dark:bg-gray-800">
+                          <div
+                            key={idx}
+                            className="border rounded-lg p-3 bg-gray-50 dark:bg-gray-800"
+                          >
                             <h3 className="font-medium text-gray-900 dark:text-white">
                               {exercise?.name || "Exercise"}
                             </h3>
@@ -110,7 +121,9 @@ export default function ViewWorkoutPlan() {
                               {ex.restTime ? `, Rest: ${ex.restTime}s` : ""}
                             </p>
                             {exercise?.tips && (
-                              <p className="text-xs text-gray-500 dark:text-gray-400 italic mt-1">Tip: {exercise.tips}</p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 italic mt-1">
+                                Tip: {exercise.tips}
+                              </p>
                             )}
                           </div>
                         );
@@ -120,7 +133,9 @@ export default function ViewWorkoutPlan() {
                 </CardContent>
               </Card>
               <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => navigate("/plans")}>Back</Button>
+                <Button variant="outline" onClick={() => navigate("/plans")}>
+                  Back
+                </Button>
                 <Button
                   onClick={() => startSessionMutation.mutate()}
                   disabled={startSessionMutation.isPending}

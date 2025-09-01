@@ -1,5 +1,9 @@
 export default function Sparkline({
-  points, width = 240, height = 64, strokeWidth = 2, className = "",
+  points,
+  width = 240,
+  height = 64,
+  strokeWidth = 2,
+  className = "",
 }: {
   points: Array<{ t: number; v: number }>;
   width?: number;
@@ -10,8 +14,10 @@ export default function Sparkline({
   if (points.length === 0) return <div className="text-xs opacity-70">No data</div>;
   const xs = points.map((p) => p.t);
   const ys = points.map((p) => p.v);
-  const minX = Math.min(...xs), maxX = Math.max(...xs);
-  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const minX = Math.min(...xs),
+    maxX = Math.max(...xs);
+  const minY = Math.min(...ys),
+    maxY = Math.max(...ys);
   const dx = maxX - minX || 1;
   const dy = maxY - minY || 1;
   const path = points

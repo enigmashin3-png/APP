@@ -1,5 +1,5 @@
 // Dynamic import so it never runs at module init
-type InitSqlJs = typeof import("sql.js")["default"];
+type InitSqlJs = (typeof import("sql.js"))["default"];
 let _initSqlJs: InitSqlJs | null = null;
 
 // @ts-ignore - Vite will rewrite ?url to an asset path
@@ -23,7 +23,10 @@ let _loading: Promise<DbExercise[]> | null = null;
 function listish(v: any): string[] {
   if (!v) return [];
   if (Array.isArray(v)) return v.map((x) => String(x).trim()).filter(Boolean);
-  return String(v).split(/[,/;|]/).map((x) => x.trim()).filter(Boolean);
+  return String(v)
+    .split(/[,/;|]/)
+    .map((x) => x.trim())
+    .filter(Boolean);
 }
 
 function normalizeRow(row: Record<string, any>): DbExercise {
@@ -85,7 +88,11 @@ async function bestEffortRead(dbBytes: Uint8Array): Promise<DbExercise[]> {
   ];
   for (const q of shapes) {
     const rows = await queryAll(dbBytes, q);
-    if (rows.length) return rows.filter((r) => r.name).map(normalizeRow).sort((a, b) => a.name.localeCompare(b.name));
+    if (rows.length)
+      return rows
+        .filter((r) => r.name)
+        .map(normalizeRow)
+        .sort((a, b) => a.name.localeCompare(b.name));
   }
   return [];
 }
@@ -114,7 +121,9 @@ export async function loadDbExercises(): Promise<DbExercise[]> {
 
 // Idle warm load (safe no-op)
 export function warmLoadDbExercisesIdle() {
-  const run = () => { if (!_cache && !_loading) loadDbExercises().catch(() => {}); };
+  const run = () => {
+    if (!_cache && !_loading) loadDbExercises().catch(() => {});
+  };
   // @ts-ignore
   const ric = window.requestIdleCallback as any;
   if (typeof ric === "function") ric(run, { timeout: 3000 });

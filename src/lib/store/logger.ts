@@ -15,20 +15,18 @@ export const useLogger = create<LoggerState>()(
   persist(
     (set, get) => ({
       entries: [],
-      add: (e) =>
-        set((s) => ({ entries: [{ ...e, id: nanoid() }, ...s.entries] })),
+      add: (e) => set((s) => ({ entries: [{ ...e, id: nanoid() }, ...s.entries] })),
       update: (id, patch) =>
         set((s) => ({
           entries: s.entries.map((x) => (x.id === id ? { ...x, ...patch } : x)),
         })),
-      remove: (id) =>
-        set((s) => ({ entries: s.entries.filter((x) => x.id !== id) })),
+      remove: (id) => set((s) => ({ entries: s.entries.filter((x) => x.id !== id) })),
       clear: () => set({ entries: [] }),
     }),
     {
       name: "ll-logger-v1",
       storage: createJSONStorage(() => localStorage),
       version: 1,
-    }
-  )
+    },
+  ),
 );

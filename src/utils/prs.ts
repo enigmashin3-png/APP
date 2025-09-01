@@ -6,7 +6,10 @@ export function est1RM(weight?: number, reps?: number): number | undefined {
   return +(weight * (1 + reps / 30)).toFixed(2);
 }
 
-export function exerciseHistory1RM(history: Workout[], exerciseName: string): Array<{ t: number; v: number }> {
+export function exerciseHistory1RM(
+  history: Workout[],
+  exerciseName: string,
+): Array<{ t: number; v: number }> {
   const out: Array<{ t: number; v: number }> = [];
   for (const w of history) {
     let bestForWorkout = 0;
@@ -70,7 +73,11 @@ export function latestTimeForExercise(history: Workout[], exerciseName: string):
 }
 
 /** Best 1RM strictly *before* a given timestamp */
-export function previousBestBefore(history: Workout[], exerciseName: string, beforeTs: number): { t: number; v: number } | null {
+export function previousBestBefore(
+  history: Workout[],
+  exerciseName: string,
+  beforeTs: number,
+): { t: number; v: number } | null {
   const list = exerciseHistory1RM(history, exerciseName).filter((p) => p.t < beforeTs);
   if (list.length === 0) return null;
   const best = list.reduce((m, x) => (x.v > m.v ? x : m), list[0]);
@@ -88,7 +95,11 @@ export function isRecentPR(history: Workout[], exerciseName: string, daysWindow 
 }
 
 /** Compare current workout's best 1RM vs previous session before it */
-export function compareVsPrevious(history: Workout[], current: Workout, exerciseName: string): {
+export function compareVsPrevious(
+  history: Workout[],
+  current: Workout,
+  exerciseName: string,
+): {
   current: number;
   previous: number | null;
   delta: number | null;

@@ -46,4 +46,3 @@ describe("Dashboard navigation", () => {
     expect(screen.getByTestId("location").textContent).toBe("/workout");
   });
 });
-

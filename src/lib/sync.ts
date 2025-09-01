@@ -1,4 +1,8 @@
-export async function uploadBackup(url: string, key: string, payloadJson: string): Promise<{ ok: boolean; msg: string }> {
+export async function uploadBackup(
+  url: string,
+  key: string,
+  payloadJson: string,
+): Promise<{ ok: boolean; msg: string }> {
   if (!url) return { ok: false, msg: "Sync URL is empty" };
   try {
     const res = await fetch(url, {
@@ -13,7 +17,10 @@ export async function uploadBackup(url: string, key: string, payloadJson: string
   }
 }
 
-export async function downloadBackup(url: string, key: string): Promise<{ ok: boolean; msg: string; json?: string }> {
+export async function downloadBackup(
+  url: string,
+  key: string,
+): Promise<{ ok: boolean; msg: string; json?: string }> {
   if (!url) return { ok: false, msg: "Sync URL is empty" };
   try {
     const res = await fetch(url, {

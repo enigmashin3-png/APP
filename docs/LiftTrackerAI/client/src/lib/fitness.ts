@@ -6,17 +6,14 @@ export async function fetchGoogleFitSteps(token: string): Promise<number> {
     endTimeMillis: Date.now(),
   };
 
-  const res = await fetch(
-    "https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
+  const res = await fetch("https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify(body),
+  });
   const json = await res.json();
   return json.bucket?.[0]?.dataset?.[0]?.point?.[0]?.value?.[0]?.intVal ?? 0;
 }
@@ -44,11 +41,6 @@ export async function fetchAppleHealthSteps(token: string): Promise<number> {
   return json.steps ?? 0;
 }
 
-export function calculateCalories(
-  met: number,
-  weightKg: number,
-  durationMinutes: number,
-): number {
+export function calculateCalories(met: number, weightKg: number, durationMinutes: number): number {
   return met * weightKg * (durationMinutes / 60);
 }
-

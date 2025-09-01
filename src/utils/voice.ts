@@ -1,5 +1,8 @@
 export function isVoiceSupported() {
-  return typeof window !== "undefined" && (("webkitSpeechRecognition" in window) || ("SpeechRecognition" in window));
+  return (
+    typeof window !== "undefined" &&
+    ("webkitSpeechRecognition" in window || "SpeechRecognition" in window)
+  );
 }
 
 export function startDictation(onText: (text: string) => void, onEnd?: () => void) {

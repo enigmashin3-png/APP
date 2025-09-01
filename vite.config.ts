@@ -1,14 +1,14 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { configDefaults } from 'vitest/config';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { configDefaults } from "vitest/config";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   test: {
-    environment: 'jsdom',
-    setupFiles: './vitest.setup.ts',
+    environment: "jsdom",
+    setupFiles: "./vitest.setup.ts",
     globals: true,
-    exclude: [...configDefaults.exclude, 'LiftTrackerAI/**'],
+    exclude: [...configDefaults.exclude, "LiftTrackerAI/**"],
   },
 });

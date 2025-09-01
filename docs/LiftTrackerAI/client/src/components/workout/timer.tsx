@@ -67,10 +67,7 @@ export default function Timer({
                 {previousSet.weight ? " lbs" : ""} × {previousSet.reps ?? "-"}
               </span>
             )}
-            <button
-              onClick={() => setOpen(true)}
-              className="text-xl font-bold font-mono"
-            >
+            <button onClick={() => setOpen(true)} className="text-xl font-bold font-mono">
               {formatDuration(Math.abs(time))}
             </button>
           </div>
@@ -79,9 +76,7 @@ export default function Timer({
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="flex flex-col items-center space-y-4">
-          <div className="text-6xl font-bold font-mono">
-            {formatDuration(Math.abs(time))}
-          </div>
+          <div className="text-6xl font-bold font-mono">{formatDuration(Math.abs(time))}</div>
           <div className="flex space-x-4">
             <Button onClick={() => adjustTime(-30)} variant="outline">
               -30s

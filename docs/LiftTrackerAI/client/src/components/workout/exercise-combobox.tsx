@@ -23,9 +23,7 @@ export function ExerciseCombobox({ exercises, value, onChange }: ExerciseCombobo
   const [search, setSearch] = useState("");
   const selected = exercises.find((ex) => ex.id === value);
 
-  const filtered = exercises.filter((ex) =>
-    ex.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = exercises.filter((ex) => ex.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -59,10 +57,7 @@ export function ExerciseCombobox({ exercises, value, onChange }: ExerciseCombobo
                 >
                   {ex.name}
                   <Check
-                    className={cn(
-                      "ml-auto h-4 w-4",
-                      value === ex.id ? "opacity-100" : "opacity-0"
-                    )}
+                    className={cn("ml-auto h-4 w-4", value === ex.id ? "opacity-100" : "opacity-0")}
                   />
                 </CommandItem>
               ))}

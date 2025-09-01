@@ -1,9 +1,25 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+} from "recharts";
 import { TrendingUp, Award, Target, Calendar, Dumbbell, Zap } from "lucide-react";
 import { formatTimeAgo } from "@/lib/workout-utils";
 import type { WorkoutSession, WorkoutSet, Exercise } from "@shared/schema";
@@ -27,40 +43,42 @@ export default function Progress() {
   });
 
   // Filter data by timeframe
-  const filteredSessions = sessions?.filter(session => {
-    if (selectedTimeframe === "all") return true;
-    
-    const sessionDate = new Date(session.startedAt);
-    const now = new Date();
-    
-    switch (selectedTimeframe) {
-      case "week":
-        return (now.getTime() - sessionDate.getTime()) <= (7 * 24 * 60 * 60 * 1000);
-      case "month":
-        return (now.getTime() - sessionDate.getTime()) <= (30 * 24 * 60 * 60 * 1000);
-      case "3months":
-        return (now.getTime() - sessionDate.getTime()) <= (90 * 24 * 60 * 60 * 1000);
-      case "year":
-        return (now.getTime() - sessionDate.getTime()) <= (365 * 24 * 60 * 60 * 1000);
-      default:
-        return true;
-    }
-  }) || [];
+  const filteredSessions =
+    sessions?.filter((session) => {
+      if (selectedTimeframe === "all") return true;
+
+      const sessionDate = new Date(session.startedAt);
+      const now = new Date();
+
+      switch (selectedTimeframe) {
+        case "week":
+          return now.getTime() - sessionDate.getTime() <= 7 * 24 * 60 * 60 * 1000;
+        case "month":
+          return now.getTime() - sessionDate.getTime() <= 30 * 24 * 60 * 60 * 1000;
+        case "3months":
+          return now.getTime() - sessionDate.getTime() <= 90 * 24 * 60 * 60 * 1000;
+        case "year":
+          return now.getTime() - sessionDate.getTime() <= 365 * 24 * 60 * 60 * 1000;
+        default:
+          return true;
+      }
+    }) || [];
 
   // Calculate progress statistics
-  const completedSessions = filteredSessions.filter(s => s.completedAt);
+  const completedSessions = filteredSessions.filter((s) => s.completedAt);
   const totalWorkouts = completedSessions.length;
   const totalVolume = completedSessions.reduce((sum, s) => sum + (s.totalVolume || 0), 0);
-  const avgDuration = completedSessions.length > 0 
-    ? completedSessions.reduce((sum, s) => sum + (s.duration || 0), 0) / completedSessions.length
-    : 0;
+  const avgDuration =
+    completedSessions.length > 0
+      ? completedSessions.reduce((sum, s) => sum + (s.duration || 0), 0) / completedSessions.length
+      : 0;
 
   // Prepare chart data for workout frequency
   const workoutFrequencyData = completedSessions
     .sort((a, b) => new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime())
     .reduce((acc: any[], session) => {
       const date = new Date(session.startedAt).toLocaleDateString();
-      const existing = acc.find(item => item.date === date);
+      const existing = acc.find((item) => item.date === date);
       if (existing) {
         existing.workouts += 1;
         existing.volume += session.totalVolume || 0;
@@ -76,32 +94,39 @@ export default function Progress() {
     .slice(-30); // Last 30 data points
 
   // Prepare strength progression data
-  const strengthData = allSets
-    ?.filter(set => selectedExercise === "all" || set.exerciseId === selectedExercise)
-    ?.sort((a, b) => new Date(a.completedAt || "").getTime() - new Date(b.completedAt || "").getTime())
-    ?.map((set, index) => ({
-      session: index + 1,
-      weight: set.weight || 0,
-      reps: set.reps || 0,
-      oneRepMax: Math.round((set.weight || 0) * (1 + (set.reps || 0) / 30)), // Epley formula
-      date: new Date(set.completedAt || "").toLocaleDateString(),
-    }))
-    ?.slice(-20) || []; // Last 20 sets
+  const strengthData =
+    allSets
+      ?.filter((set) => selectedExercise === "all" || set.exerciseId === selectedExercise)
+      ?.sort(
+        (a, b) => new Date(a.completedAt || "").getTime() - new Date(b.completedAt || "").getTime(),
+      )
+      ?.map((set, index) => ({
+        session: index + 1,
+        weight: set.weight || 0,
+        reps: set.reps || 0,
+        oneRepMax: Math.round((set.weight || 0) * (1 + (set.reps || 0) / 30)), // Epley formula
+        date: new Date(set.completedAt || "").toLocaleDateString(),
+      }))
+      ?.slice(-20) || []; // Last 20 sets
 
   // Find personal records
-  const personalRecords = exercises?.map(exercise => {
-    const exerciseSets = allSets?.filter(set => set.exerciseId === exercise.id) || [];
-    const maxWeight = Math.max(...exerciseSets.map(s => s.weight || 0), 0);
-    const maxVolume = Math.max(...exerciseSets.map(s => (s.weight || 0) * (s.reps || 0)), 0);
-    const bestSet = exerciseSets.find(s => s.weight === maxWeight);
-    
-    return {
-      exercise: exercise.name,
-      maxWeight,
-      maxVolume,
-      date: bestSet?.completedAt ? formatTimeAgo(bestSet.completedAt) : "Never",
-    };
-  }).filter(pr => pr.maxWeight > 0).slice(0, 5) || [];
+  const personalRecords =
+    exercises
+      ?.map((exercise) => {
+        const exerciseSets = allSets?.filter((set) => set.exerciseId === exercise.id) || [];
+        const maxWeight = Math.max(...exerciseSets.map((s) => s.weight || 0), 0);
+        const maxVolume = Math.max(...exerciseSets.map((s) => (s.weight || 0) * (s.reps || 0)), 0);
+        const bestSet = exerciseSets.find((s) => s.weight === maxWeight);
+
+        return {
+          exercise: exercise.name,
+          maxWeight,
+          maxVolume,
+          date: bestSet?.completedAt ? formatTimeAgo(bestSet.completedAt) : "Never",
+        };
+      })
+      .filter((pr) => pr.maxWeight > 0)
+      .slice(0, 5) || [];
 
   return (
     <div className="min-h-screen">
@@ -228,17 +253,17 @@ export default function Progress() {
                   <XAxis dataKey="session" />
                   <YAxis />
                   <Tooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="weight" 
-                    stroke="#10b981" 
+                  <Line
+                    type="monotone"
+                    dataKey="weight"
+                    stroke="#10b981"
                     strokeWidth={2}
                     name="Weight (lbs)"
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="oneRepMax" 
-                    stroke="#f59e0b" 
+                  <Line
+                    type="monotone"
+                    dataKey="oneRepMax"
+                    stroke="#f59e0b"
                     strokeWidth={2}
                     strokeDasharray="5 5"
                     name="Estimated 1RM"
@@ -261,13 +286,18 @@ export default function Progress() {
             {personalRecords.length > 0 ? (
               <div className="space-y-4">
                 {personalRecords.map((record, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  >
                     <div className="flex items-center space-x-4">
                       <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center">
                         <Award className="h-5 w-5 text-yellow-600" />
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900 dark:text-white">{record.exercise}</h4>
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          {record.exercise}
+                        </h4>
                         <p className="text-sm text-gray-500 dark:text-gray-400">{record.date}</p>
                       </div>
                     </div>
@@ -311,10 +341,10 @@ export default function Progress() {
                 <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
-                <Line 
-                  type="monotone" 
-                  dataKey="volume" 
-                  stroke="#8b5cf6" 
+                <Line
+                  type="monotone"
+                  dataKey="volume"
+                  stroke="#8b5cf6"
                   strokeWidth={2}
                   name="Volume (lbs)"
                 />

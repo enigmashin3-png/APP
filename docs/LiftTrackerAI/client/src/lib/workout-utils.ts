@@ -4,9 +4,9 @@ export function formatDuration(seconds: number): string {
   const remainingSeconds = seconds % 60;
 
   if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   }
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
 }
 
 export function formatTimeAgo(date: string | Date): string {
@@ -40,7 +40,7 @@ export function getMuscleGroupColor(muscleGroup: string): string {
     core: "bg-pink-100 text-pink-800",
     cardio: "bg-orange-100 text-orange-800",
   };
-  
+
   return colors[muscleGroup.toLowerCase()] || "bg-gray-100 text-gray-800";
 }
 
@@ -50,15 +50,18 @@ export function getLevelColor(level: string): string {
     intermediate: "bg-blue-100 text-blue-800",
     advanced: "bg-red-100 text-red-800",
   };
-  
+
   return colors[level.toLowerCase()] || "bg-gray-100 text-gray-800";
 }
 
-export function calculateRestTime(exerciseType: string, intensity: 'light' | 'moderate' | 'heavy'): number {
+export function calculateRestTime(
+  exerciseType: string,
+  intensity: "light" | "moderate" | "heavy",
+): number {
   const baseTimes: Record<string, number> = {
     compound: 180, // 3 minutes for compound movements
     isolation: 90, // 1.5 minutes for isolation
-    cardio: 60,    // 1 minute for cardio
+    cardio: 60, // 1 minute for cardio
   };
 
   const intensityMultiplier: Record<string, number> = {

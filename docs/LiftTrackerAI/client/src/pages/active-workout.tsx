@@ -50,10 +50,10 @@ export default function ActiveWorkout() {
         name: "Quick Workout",
         startedAt: new Date().toISOString(),
       };
-      
+
       const validation = insertWorkoutSessionSchema.safeParse(sessionData);
       if (!validation.success) throw new Error("Invalid session data");
-      
+
       const response = await apiRequest("POST", "/api/workout-sessions", validation.data);
       return response.json();
     },
@@ -77,7 +77,7 @@ export default function ActiveWorkout() {
         duration: workoutTime,
         totalVolume,
       };
-      
+
       const response = await apiRequest("PATCH", `/api/workout-sessions/${sessionId}`, updates);
       return response.json();
     },
@@ -115,7 +115,11 @@ export default function ActiveWorkout() {
       cancelEditing();
     },
     onError: () => {
-      toast({ title: "Failed to update set", description: "Please try again", variant: "destructive" });
+      toast({
+        title: "Failed to update set",
+        description: "Please try again",
+        variant: "destructive",
+      });
     },
   });
 
@@ -130,7 +134,7 @@ export default function ActiveWorkout() {
     let interval: NodeJS.Timeout;
     if (isWorkoutRunning) {
       interval = setInterval(() => {
-        setWorkoutTime(prev => prev + 1);
+        setWorkoutTime((prev) => prev + 1);
       }, 1000);
     }
     return () => {
@@ -158,7 +162,13 @@ export default function ActiveWorkout() {
     }
   };
 
-  const handleSetLogged = ({ restTime, previousSet }: { restTime: number; previousSet?: WorkoutSet | null }) => {
+  const handleSetLogged = ({
+    restTime,
+    previousSet,
+  }: {
+    restTime: number;
+    previousSet?: WorkoutSet | null;
+  }) => {
     setRestDuration(restTime);
     setLastSetInfo(previousSet ?? null);
     setShowRestTimer(true);
@@ -174,13 +184,14 @@ export default function ActiveWorkout() {
   };
 
   // Group sets by exercise
-  const exerciseGroups = sessionSets?.reduce((groups: Record<string, WorkoutSet[]>, set) => {
-    if (!groups[set.exerciseId]) {
-      groups[set.exerciseId] = [];
-    }
-    groups[set.exerciseId].push(set);
-    return groups;
-  }, {}) || {};
+  const exerciseGroups =
+    sessionSets?.reduce((groups: Record<string, WorkoutSet[]>, set) => {
+      if (!groups[set.exerciseId]) {
+        groups[set.exerciseId] = [];
+      }
+      groups[set.exerciseId].push(set);
+      return groups;
+    }, {}) || {};
 
   const totalVolume = sessionSets ? calculateVolume(sessionSets) : 0;
   const exerciseCount = Object.keys(exerciseGroups).length;
@@ -192,7 +203,9 @@ export default function ActiveWorkout() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Start Workout</h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Begin a new training session</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Begin a new training session
+              </p>
             </div>
           </div>
         </header>
@@ -203,11 +216,13 @@ export default function ActiveWorkout() {
               <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Play className="h-8 w-8 text-primary-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Ready to Workout?</h2>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Ready to Workout?
+              </h2>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
                 Start a new session to begin logging your exercises and tracking your progress.
               </p>
-              <Button 
+              <Button
                 onClick={handleStartWorkout}
                 disabled={createSessionMutation.isPending}
                 className="w-full bg-primary-600 hover:bg-primary-700"
@@ -227,7 +242,9 @@ export default function ActiveWorkout() {
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-4 lg:px-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{activeSession.name}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              {activeSession.name}
+            </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Started {formatTimeAgo(activeSession.startedAt)}
             </p>
@@ -240,7 +257,11 @@ export default function ActiveWorkout() {
               <p className="text-sm text-gray-500 dark:text-gray-400">Duration</p>
             </div>
             <Button
-              onClick={isWorkoutRunning ? () => setIsWorkoutRunning(false) : () => setIsWorkoutRunning(true)}
+              onClick={
+                isWorkoutRunning
+                  ? () => setIsWorkoutRunning(false)
+                  : () => setIsWorkoutRunning(true)
+              }
               variant="outline"
               size="sm"
             >
@@ -276,9 +297,7 @@ export default function ActiveWorkout() {
           <Card>
             <CardContent className="p-4 text-center">
               <Repeat className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-              <div className="text-lg font-bold text-gray-900 dark:text-white">
-                {exerciseCount}
-              </div>
+              <div className="text-lg font-bold text-gray-900 dark:text-white">{exerciseCount}</div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Exercises</p>
             </CardContent>
           </Card>
@@ -287,7 +306,9 @@ export default function ActiveWorkout() {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Exercise Logger */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Log Exercise</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Log Exercise
+            </h3>
             <ExerciseLogger sessionId={activeSession.id} onSetLogged={handleSetLogged} />
             {showRestTimer && (
               <div className="mt-4">
@@ -303,10 +324,12 @@ export default function ActiveWorkout() {
 
           {/* Exercise History */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Today's Exercises</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Today's Exercises
+            </h3>
             <div className="space-y-4">
               {Object.entries(exerciseGroups).map(([exerciseId, sets]) => {
-                const exercise = exercises?.find(ex => ex.id === exerciseId);
+                const exercise = exercises?.find((ex) => ex.id === exerciseId);
                 return (
                   <Card key={exerciseId}>
                     <CardContent className="p-4">
@@ -316,46 +339,52 @@ export default function ActiveWorkout() {
                         </h4>
                         <Badge variant="secondary">{sets.length} sets</Badge>
                       </div>
-                        <div className="space-y-2">
-                          {sets.map((set, index) => (
-                            <div key={set.id} className="flex items-center justify-between text-sm">
-                              <span className="text-gray-500 dark:text-gray-400">Set {index + 1}</span>
-                              {editingSetId === set.id ? (
-                                <div className="flex items-center space-x-2">
-                                  <Input
-                                    type="number"
-                                    value={editWeight}
-                                    onChange={(e) => setEditWeight(e.target.value)}
-                                    className="w-20"
-                                  />
-                                  <span className="text-gray-900 dark:text-white">lbs ×</span>
-                                  <Input
-                                    type="number"
-                                    value={editReps}
-                                    onChange={(e) => setEditReps(e.target.value)}
-                                    className="w-14"
-                                  />
-                                  <Button size="sm" onClick={() => saveEdit(set.id)} disabled={updateSetMutation.isPending}>
-                                    Save
-                                  </Button>
-                                  <Button size="sm" variant="ghost" onClick={cancelEditing}>
-                                    Cancel
-                                  </Button>
-                                </div>
-                              ) : (
-                                <div className="flex items-center space-x-4">
-                                  <span className="text-gray-900 dark:text-white">
-                                    {set.weight} lbs × {set.reps}
-                                  </span>
-                                  <Button variant="ghost" size="sm" onClick={() => startEditing(set)}>
-                                    <Pencil className="h-4 w-4" />
-                                  </Button>
-                                  <CheckCircle className="h-4 w-4 text-success-600" />
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
+                      <div className="space-y-2">
+                        {sets.map((set, index) => (
+                          <div key={set.id} className="flex items-center justify-between text-sm">
+                            <span className="text-gray-500 dark:text-gray-400">
+                              Set {index + 1}
+                            </span>
+                            {editingSetId === set.id ? (
+                              <div className="flex items-center space-x-2">
+                                <Input
+                                  type="number"
+                                  value={editWeight}
+                                  onChange={(e) => setEditWeight(e.target.value)}
+                                  className="w-20"
+                                />
+                                <span className="text-gray-900 dark:text-white">lbs ×</span>
+                                <Input
+                                  type="number"
+                                  value={editReps}
+                                  onChange={(e) => setEditReps(e.target.value)}
+                                  className="w-14"
+                                />
+                                <Button
+                                  size="sm"
+                                  onClick={() => saveEdit(set.id)}
+                                  disabled={updateSetMutation.isPending}
+                                >
+                                  Save
+                                </Button>
+                                <Button size="sm" variant="ghost" onClick={cancelEditing}>
+                                  Cancel
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="flex items-center space-x-4">
+                                <span className="text-gray-900 dark:text-white">
+                                  {set.weight} lbs × {set.reps}
+                                </span>
+                                <Button variant="ghost" size="sm" onClick={() => startEditing(set)}>
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                                <CheckCircle className="h-4 w-4 text-success-600" />
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </CardContent>
                   </Card>
                 );

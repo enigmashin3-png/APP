@@ -14,8 +14,14 @@ export default function PRs() {
   }, [history]);
 
   const selected = q || exercisesInHistory[0] || "";
-  const series = useMemo(() => (selected ? exerciseHistory1RM(history, selected) : []), [history, selected]);
-  const pr = useMemo(() => (selected ? personalRecord(history, selected) : null), [history, selected]);
+  const series = useMemo(
+    () => (selected ? exerciseHistory1RM(history, selected) : []),
+    [history, selected],
+  );
+  const pr = useMemo(
+    () => (selected ? personalRecord(history, selected) : null),
+    [history, selected],
+  );
   const recent = useMemo(() => recentPRs(history, 30).slice(0, 6), [history]);
 
   return (
@@ -23,10 +29,17 @@ export default function PRs() {
       <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 space-y-3">
         <div className="text-lg font-semibold">PR Trends</div>
         <div className="flex flex-wrap items-center gap-2">
-          <input list="ex-list" placeholder="Search exercise..." value={q} onChange={(e) => setQ(e.target.value)}
-            className="h-10 rounded-lg border px-3 border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 w-full sm:w-80" />
+          <input
+            list="ex-list"
+            placeholder="Search exercise..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="h-10 rounded-lg border px-3 border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900 w-full sm:w-80"
+          />
           <datalist id="ex-list">
-            {exercisesInHistory.map((n) => <option key={n} value={n} />)}
+            {exercisesInHistory.map((n) => (
+              <option key={n} value={n} />
+            ))}
           </datalist>
         </div>
         <div className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-3">
@@ -47,7 +60,10 @@ export default function PRs() {
         ) : (
           <ul className="grid sm:grid-cols-2 gap-3">
             {recent.map((r, i) => (
-              <li key={i} className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-3">
+              <li
+                key={i}
+                className="rounded-xl border border-neutral-200 dark:border-neutral-800 p-3"
+              >
                 <div className="font-medium">{r.name}</div>
                 <div className="text-sm opacity-80">
                   {r.pr?.v.toFixed(1)} on {r.pr ? new Date(r.pr.t).toLocaleDateString() : "—"}

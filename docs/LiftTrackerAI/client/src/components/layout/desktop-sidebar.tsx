@@ -24,20 +24,20 @@ export default function DesktopSidebar() {
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">FitTrack Pro</h1>
         </div>
       </div>
-      
+
       <nav className="flex-1 p-4">
         <ul className="space-y-2">
           {navItems.map((item) => {
             const isActive = location === item.path;
             const IconComponent = item.icon;
-            
+
             return (
               <li key={item.path}>
-                <Link 
+                <Link
                   href={item.path}
                   className={`flex items-center space-x-3 p-3 rounded-lg font-medium relative ${
-                    isActive 
-                      ? "bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-300" 
+                    isActive
+                      ? "bg-primary-50 dark:bg-primary-900 text-primary-700 dark:text-primary-300"
                       : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   }`}
                 >
@@ -52,12 +52,12 @@ export default function DesktopSidebar() {
           })}
         </ul>
       </nav>
-      
+
       <div className="p-4 border-t border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-3">
-          <img 
-            src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=40&h=40" 
-            alt="User profile" 
+          <img
+            src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=40&h=40"
+            alt="User profile"
             className="w-10 h-10 rounded-full object-cover"
           />
           <div>

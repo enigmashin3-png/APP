@@ -19,7 +19,7 @@ export default function BottomSheet({ open, onClose, title, children }: Props) {
     <div
       className={cn(
         "fixed inset-0 z-50 transition",
-        open ? "pointer-events-auto" : "pointer-events-none"
+        open ? "pointer-events-auto" : "pointer-events-none",
       )}
       aria-hidden={!open}
     >
@@ -28,14 +28,14 @@ export default function BottomSheet({ open, onClose, title, children }: Props) {
         onClick={onClose}
         className={cn(
           "absolute inset-0 bg-black/40 transition-opacity",
-          open ? "opacity-100" : "opacity-0"
+          open ? "opacity-100" : "opacity-0",
         )}
       />
       {/* Sheet */}
       <div
         className={cn(
           "absolute inset-x-0 bottom-0 mx-auto w-full max-w-2xl rounded-t-2xl bg-white dark:bg-neutral-900 p-4 shadow-2xl transition-transform",
-          open ? "translate-y-0" : "translate-y-full"
+          open ? "translate-y-0" : "translate-y-full",
         )}
         role="dialog"
         aria-modal="true"

@@ -8,8 +8,12 @@ function Nav() {
   return (
     <header className="sticky top-0 z-10 backdrop-blur bg-black/30 border-b border-white/10">
       <nav className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-2">
-        <NavLink to="/" className={({isActive}) => `${base} ${isActive ? active : ""}`}>Home</NavLink>
-        <NavLink to="/logger" className={({isActive}) => `${base} ${isActive ? active : ""}`}>Logger</NavLink>
+        <NavLink to="/" className={({ isActive }) => `${base} ${isActive ? active : ""}`}>
+          Home
+        </NavLink>
+        <NavLink to="/logger" className={({ isActive }) => `${base} ${isActive ? active : ""}`}>
+          Logger
+        </NavLink>
       </nav>
     </header>
   );

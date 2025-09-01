@@ -47,21 +47,21 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
     mutationFn: async (setData: InsertWorkoutSet) => {
       const response = await apiRequest("POST", "/api/workout-sets", setData);
       return response.json();
-    }
+    },
   });
 
   // Calculate current set number for selected exercise
-  const exerciseSetCount = currentSessionSets?.filter(set => set.exerciseId === selectedExerciseId).length || 0;
+  const exerciseSetCount =
+    currentSessionSets?.filter((set) => set.exerciseId === selectedExerciseId).length || 0;
   const currentSetNumber = exerciseSetCount + 1;
 
   // Get progressive overload suggestion
-  const suggestion = selectedExerciseId && previousSets 
-    ? calculateProgressiveOverload(previousSets, 8)
-    : null;
+  const suggestion =
+    selectedExerciseId && previousSets ? calculateProgressiveOverload(previousSets, 8) : null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!selectedExerciseId || !weight || !reps) {
       toast({
         title: "Missing information",
@@ -93,7 +93,7 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
       return;
     }
 
-    const previousSet = previousSets?.find(s => s.sessionId !== sessionId) || null;
+    const previousSet = previousSets?.find((s) => s.sessionId !== sessionId) || null;
 
     logSetMutation.mutate(validation.data, {
       onSuccess: () => {
@@ -105,7 +105,7 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
         // Reset form
         setWeight("");
         setReps("");
-        setSetNumber(prev => prev + 1);
+        setSetNumber((prev) => prev + 1);
 
         // Invalidate relevant queries
         queryClient.invalidateQueries({ queryKey: ["/api/workout-sets"] });
@@ -118,7 +118,7 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
           description: "Please try again",
           variant: "destructive",
         });
-      }
+      },
     });
   };
 
@@ -143,7 +143,8 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
           </div>
 
           {/* Exercise tips */}
-          {selectedExerciseId && exercises && (
+          {selectedExerciseId &&
+            exercises &&
             (() => {
               const ex = exercises.find((e) => e.id === selectedExerciseId);
               if (ex?.tips) {
@@ -154,8 +155,7 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
                 );
               }
               return null;
-            })()
-          )}
+            })()}
 
           <div className="grid grid-cols-3 gap-3">
             <div>
@@ -217,10 +217,13 @@ export default function ExerciseLogger({ sessionId, onSetLogged }: ExerciseLogge
               <CardContent className="p-4">
                 <div className="flex items-center space-x-2 mb-2">
                   <Lightbulb className="h-4 w-4 text-primary-600" />
-                  <h4 className="font-medium text-primary-900 dark:text-primary-100">Progressive Overload Suggestion</h4>
+                  <h4 className="font-medium text-primary-900 dark:text-primary-100">
+                    Progressive Overload Suggestion
+                  </h4>
                 </div>
                 <p className="text-sm text-primary-700 dark:text-primary-300 mb-3">
-                  Try <strong>{formatWeight(suggestion.weight)}</strong> for <strong>{suggestion.reps} reps</strong>.
+                  Try <strong>{formatWeight(suggestion.weight)}</strong> for{" "}
+                  <strong>{suggestion.reps} reps</strong>.
                 </p>
                 <p className="text-xs text-primary-600 dark:text-primary-400 mb-3">
                   {suggestion.reason}

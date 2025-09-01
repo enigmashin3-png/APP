@@ -9,7 +9,8 @@ const fromEnv = (import.meta as any)?.env?.VITE_COACH_URL || (globalThis as any)
 
 function detectDefault(): string {
   // Capacitor emulator
-  const isAndroidEmu = typeof navigator !== "undefined" &&
+  const isAndroidEmu =
+    typeof navigator !== "undefined" &&
     /Android/i.test(navigator.userAgent) &&
     (location.hostname === "10.0.2.2" || location.hostname === "localhost");
 
