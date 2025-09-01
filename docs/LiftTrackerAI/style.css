@@ -1,189 +1,195 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
 }
 
 .container {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-    backdrop-filter: blur(10px);
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 h1 {
-    color: #333;
-    text-align: center;
-    margin-bottom: 30px;
-    font-weight: 300;
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 300;
 }
 
 .controls {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 button {
-    background: #667eea;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 button:hover {
-    background: #5a67d8;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: #5a67d8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 button.secondary {
-    background: #e2e8f0;
-    color: #4a5568;
+  background: #e2e8f0;
+  color: #4a5568;
 }
 
 button.secondary:hover {
-    background: #cbd5e0;
+  background: #cbd5e0;
 }
 
 button.danger {
-    background: #e53e3e;
+  background: #e53e3e;
 }
 
 button.danger:hover {
-    background: #c53030;
+  background: #c53030;
 }
 
 #exercise-form {
-    background: #f7fafc;
-    padding: 20px;
-    border-radius: 8px;
-    margin: 20px 0;
-    border: 1px solid #e2e8f0;
+  background: #f7fafc;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  border: 1px solid #e2e8f0;
 }
 
 .form-group {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 label {
-    display: block;
-    margin-bottom: 5px;
-    color: #4a5568;
-    font-weight: 500;
+  display: block;
+  margin-bottom: 5px;
+  color: #4a5568;
+  font-weight: 500;
 }
 
 input {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid #e2e8f0;
-    border-radius: 6px;
-    font-size: 16px;
-    transition: border-color 0.3s ease;
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
 }
 
 input:focus {
-    outline: none;
-    border-color: #667eea;
+  outline: none;
+  border-color: #667eea;
 }
 
 #workout-list {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
 }
 
 .exercise-item {
-    background: white;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border-left: 4px solid #667eea;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
+  background: white;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
 }
 
 .exercise-item:hover {
-    transform: translateX(5px);
+  transform: translateX(5px);
 }
 
 .exercise-info {
-    flex: 1;
+  flex: 1;
 }
 
 .exercise-name {
-    font-weight: 600;
-    color: #2d3748;
-    margin-bottom: 5px;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 5px;
 }
 
 .exercise-details {
-    color: #718096;
-    font-size: 14px;
+  color: #718096;
+  font-size: 14px;
 }
 
 .delete-btn {
-    background: #fc8181;
-    padding: 8px 12px;
-    font-size: 12px;
+  background: #fc8181;
+  padding: 8px 12px;
+  font-size: 12px;
 }
 
 .delete-btn:hover {
-    background: #f56565;
+  background: #f56565;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 /* Responsive Design */
 @media (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
-    
-    .container {
-        padding: 15px;
-    }
-    
-    .controls {
-        flex-direction: column;
-    }
-    
-    button {
-        width: 100%;
-    }
-    
-    .exercise-item {
-        flex-direction: column;
-        gap: 10px;
-        text-align: center;
-    }
-    
-    .delete-btn {
-        align-self: center;
-    }
+  body {
+    padding: 10px;
+  }
+
+  .container {
+    padding: 15px;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .exercise-item {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .delete-btn {
+    align-self: center;
+  }
 }
 
 /* Animation */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .exercise-item {
-    animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.3s ease;
 }

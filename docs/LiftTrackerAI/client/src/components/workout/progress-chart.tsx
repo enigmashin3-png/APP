@@ -1,6 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useState } from "react";
 import type { WorkoutSet, Exercise } from "@shared/schema";
 import {
@@ -17,7 +23,15 @@ import { Line } from "react-chartjs-2";
 
 const MOCK_USER_ID = "user-1";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, ChartTooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  ChartTooltip,
+  Legend,
+);
 
 interface ChartDataPoint {
   date: string;
@@ -68,7 +82,7 @@ export default function ProgressChart() {
 
   const chartJsData = {
     labels: chartData.map((d) =>
-      new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+      new Date(d.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
     ),
     datasets: [
       {
@@ -123,14 +137,14 @@ export default function ProgressChart() {
           </Select>
         </div>
       </div>
-      
+
       <CardContent className="p-6">
         {chartData.length > 0 ? (
           <>
             <div className="h-48 mb-4">
               <Line data={chartJsData} options={chartOptions} />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">Current Max Weight</p>
@@ -138,10 +152,17 @@ export default function ProgressChart() {
               </div>
               <div className="text-right">
                 <p className="text-sm text-gray-500 dark:text-gray-400">Progress</p>
-                <p className={`text-xl font-bold ${
-                  progressPercentage > 0 ? "text-success-600" : progressPercentage < 0 ? "text-red-600" : "text-gray-500"
-                }`}>
-                  {progressPercentage > 0 ? "+" : ""}{progressPercentage}%
+                <p
+                  className={`text-xl font-bold ${
+                    progressPercentage > 0
+                      ? "text-success-600"
+                      : progressPercentage < 0
+                        ? "text-red-600"
+                        : "text-gray-500"
+                  }`}
+                >
+                  {progressPercentage > 0 ? "+" : ""}
+                  {progressPercentage}%
                 </p>
               </div>
             </div>
@@ -151,7 +172,9 @@ export default function ProgressChart() {
             <div className="text-center">
               <p className="text-gray-500 dark:text-gray-400 mb-2">No data available</p>
               <p className="text-sm text-gray-400 dark:text-gray-500">
-                {selectedExerciseId ? "Complete some workouts to see your progress" : "Select an exercise to view progress"}
+                {selectedExerciseId
+                  ? "Complete some workouts to see your progress"
+                  : "Select an exercise to view progress"}
               </p>
             </div>
           </div>

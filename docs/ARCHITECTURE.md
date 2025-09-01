@@ -6,6 +6,7 @@
 **Platforms**: Web, Tauri (desktop), Capacitor (mobile)
 
 ## Directories
+
 - `src/components/`: reusable UI pieces
 - `src/pages/`: routed pages
 - `src/store/`: app state (persist + actions)
@@ -17,6 +18,7 @@
 - `public/`: static assets (`workout_exercises.db`)
 
 ## Build
+
 - `npm run check` — typecheck + lint
 - `npm run build` — production bundle
 - GitHub Actions runs on every PR

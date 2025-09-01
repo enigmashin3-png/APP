@@ -8,15 +8,15 @@ export async function openRouterChat(messages: ChatMessage[]) {
   const res = await fetch(`${base}/chat/completions`, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${key}`,
+      Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       model: "openai/gpt-3.5-turbo",
       messages,
-      temperature: 0.2
+      temperature: 0.2,
     }),
-    cache: "no-store"
+    cache: "no-store",
   });
 
   if (!res.ok) throw new Error(`OpenRouter ${res.status}: ${await res.text()}`);

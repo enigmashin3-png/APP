@@ -5,3 +5,4 @@ public
 *.svg
 *.png
 *.db
+docs/LiftTrackerAI/scripts/scrape-and-rewrite.mjs

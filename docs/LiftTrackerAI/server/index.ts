@@ -40,7 +40,7 @@ app.post("/api/coach", async (req: Request, res: Response) => {
     const completion = await client.chat.completions.create({
       model: GROQ_MODEL,
       messages,
-      temperature: 0.3
+      temperature: 0.3,
     });
 
     const reply = completion?.choices?.[0]?.message?.content ?? "";

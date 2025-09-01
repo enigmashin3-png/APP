@@ -45,9 +45,7 @@ export default function PedometerCard({
       const acc = e.accelerationIncludingGravity;
       if (!acc) return;
       const magnitude = Math.sqrt(
-        (acc.x || 0) * (acc.x || 0) +
-          (acc.y || 0) * (acc.y || 0) +
-          (acc.z || 0) * (acc.z || 0),
+        (acc.x || 0) * (acc.x || 0) + (acc.y || 0) * (acc.y || 0) + (acc.z || 0) * (acc.z || 0),
       );
       const now = Date.now();
       if (magnitude > 12 && now - lastStep > 300) {
@@ -76,9 +74,7 @@ export default function PedometerCard({
           <div>
             <p className="text-sm text-gray-500 dark:text-gray-400">Steps</p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">{steps}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {calories.toFixed(1)} kcal
-            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{calories.toFixed(1)} kcal</p>
           </div>
           <div className="w-12 h-12 bg-purple-50 dark:bg-purple-50 rounded-lg flex items-center justify-center">
             <Footprints className="h-6 w-6 text-purple-600" />
@@ -88,4 +84,3 @@ export default function PedometerCard({
     </Card>
   );
 }
-

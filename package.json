@@ -18,11 +18,12 @@
     "test": "vitest run",
     "preview": "vite preview",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --config .eslintrc.cjs --ext .ts,.tsx --max-warnings 0",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx --max-warnings 0",
     "format": "prettier --write .",
-    "check": "npm run typecheck && npm run lint",
+    "check": "npm run format:check && npm run typecheck && npm run lint",
     "codex:quick": "npm run check && npm run build",
-    "codex:fmt": "npm run format && npm run lint"
+    "codex:fmt": "npm run format && npm run lint",
+    "format:check": "prettier --check ."
   },
   "proxy": "http://localhost:5000",
   "keywords": [],

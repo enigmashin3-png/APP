@@ -8,18 +8,18 @@ import ProgressChart from "../components/workout/progress-chart";
 import PedometerCard from "../components/pedometer/pedometer-card";
 import CoachDock from "../components/coach/Dock";
 import { useRecentSets } from "../hooks/useLocalData";
-import { 
-  Home, 
-  Calendar, 
-  Weight, 
-  Flame, 
-  Trophy, 
-  Play, 
-  Dumbbell, 
-  Zap, 
+import {
+  Home,
+  Calendar,
+  Weight,
+  Flame,
+  Trophy,
+  Play,
+  Dumbbell,
+  Zap,
   ChevronRight,
   Star,
-  Timer
+  Timer,
 } from "lucide-react";
 import type { WorkoutStats, WorkoutPlan, WorkoutSession } from "../../shared/schema";
 
@@ -62,7 +62,7 @@ export default function Dashboard() {
     const now = new Date();
     const then = new Date(date);
     const diffDays = Math.floor((now.getTime() - then.getTime()) / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) return "Today";
     if (diffDays === 1) return "Yesterday";
     return `${diffDays} days ago`;
@@ -183,7 +183,7 @@ export default function Dashboard() {
                   <p className="text-sm text-primary-100">Duration</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-4">
                   <div>
@@ -199,11 +199,14 @@ export default function Dashboard() {
                     <p className="font-medium">{formatWeight(185)}</p>
                   </div>
                 </div>
-                <Button variant="secondary" className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white border-0">
+                <Button
+                  variant="secondary"
+                  className="bg-white bg-opacity-20 hover:bg-opacity-30 text-white border-0"
+                >
                   Continue
                 </Button>
               </div>
-              
+
               <div className="w-full bg-primary-800 rounded-full h-2">
                 <div className="bg-white h-2 rounded-full" style={{ width: "75%" }}></div>
               </div>
@@ -217,23 +220,36 @@ export default function Dashboard() {
           <Card className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700">
             <div className="p-6 border-b border-gray-100 dark:border-gray-700">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Your Workout Plans</h3>
-                <Button variant="ghost" size="sm" className="text-primary-600 hover:text-primary-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Your Workout Plans
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-primary-600 hover:text-primary-700"
+                >
                   View All
                 </Button>
               </div>
             </div>
-            
+
             <div className="divide-y divide-gray-100 dark:divide-gray-700">
               {templatePlans?.slice(0, 3).map((plan) => (
-                <div key={plan.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+                <div
+                  key={plan.id}
+                  className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        plan.level === "beginner" ? "bg-blue-100 dark:bg-blue-900" :
-                        plan.level === "intermediate" ? "bg-primary-100 dark:bg-primary-900" :
-                        "bg-red-100 dark:bg-red-900"
-                      }`}>
+                      <div
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          plan.level === "beginner"
+                            ? "bg-blue-100 dark:bg-blue-900"
+                            : plan.level === "intermediate"
+                              ? "bg-primary-100 dark:bg-primary-900"
+                              : "bg-red-100 dark:bg-red-900"
+                        }`}
+                      >
                         {plan.level === "beginner" ? (
                           <Dumbbell className="h-5 w-5 text-blue-600" />
                         ) : plan.level === "intermediate" ? (
@@ -244,15 +260,22 @@ export default function Dashboard() {
                       </div>
                       <div>
                         <h4 className="font-medium text-gray-900 dark:text-white">{plan.name}</h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">{plan.description}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {plan.description}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Badge variant={
-                        plan.level === "beginner" ? "secondary" :
-                        plan.level === "intermediate" ? "default" :
-                        "destructive"
-                      } className="capitalize">
+                      <Badge
+                        variant={
+                          plan.level === "beginner"
+                            ? "secondary"
+                            : plan.level === "intermediate"
+                              ? "default"
+                              : "destructive"
+                        }
+                        className="capitalize"
+                      >
                         {plan.level}
                       </Badge>
                       <ChevronRight className="h-4 w-4 text-gray-400" />
@@ -271,16 +294,21 @@ export default function Dashboard() {
         <Card className="bg-white dark:bg-gray-800 shadow-sm border border-gray-100 dark:border-gray-700">
           <div className="p-6 border-b border-gray-100 dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Workouts</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Recent Workouts
+              </h3>
               <Button variant="ghost" size="sm" className="text-primary-600 hover:text-primary-700">
                 View History
               </Button>
             </div>
           </div>
-          
+
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {recentSessions?.slice(0, 3).map((session) => (
-              <div key={session.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer">
+              <div
+                key={session.id}
+                className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 bg-success-50 dark:bg-success-900 rounded-lg flex items-center justify-center">
@@ -289,12 +317,17 @@ export default function Dashboard() {
                     <div>
                       <h4 className="font-medium text-gray-900 dark:text-white">{session.name}</h4>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {formatTimeAgo(session.startedAt.toString())} • {session.duration ? formatDuration(session.duration) : "N/A"}
+                        {formatTimeAgo(session.startedAt.toString())} •{" "}
+                        {session.duration ? formatDuration(session.duration) : "N/A"}
                       </p>
                       <div className="flex items-center space-x-4 mt-1">
-                        <span className="text-xs text-gray-500 dark:text-gray-400">6 exercises</span>
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {session.totalVolume ? `${formatWeight(Math.round(session.totalVolume))} total` : "No volume"}
+                          6 exercises
+                        </span>
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          {session.totalVolume
+                            ? `${formatWeight(Math.round(session.totalVolume))} total`
+                            : "No volume"}
                         </span>
                       </div>
                     </div>
@@ -307,7 +340,9 @@ export default function Dashboard() {
                           {session.rating || "4.5"}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{session.notes || "Great workout!"}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {session.notes || "Great workout!"}
+                      </p>
                     </div>
                     <ChevronRight className="h-4 w-4 text-gray-400" />
                   </div>

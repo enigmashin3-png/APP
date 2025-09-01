@@ -1,12 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 @import "../../styles/themes.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* smooth transitions when switching */
-:root, [data-theme] {
-  transition: background-color 0.3s ease, color 0.3s ease;
+:root,
+[data-theme] {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 :root {
@@ -47,7 +50,7 @@
   --gray-700: var(--color-muted);
   --gray-800: var(--color-fg);
   --gray-900: var(--color-fg);
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: "Inter", sans-serif;
   --font-serif: Georgia, serif;
   --font-mono: Menlo, monospace;
   --radius: 0.75rem;

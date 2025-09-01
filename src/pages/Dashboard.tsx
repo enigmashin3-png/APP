@@ -17,9 +17,14 @@ export default function Dashboard() {
       <section className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
         <div className="mb-2 text-lg font-semibold">Today</div>
         {active ? (
-          <div className="text-sm opacity-80">Active workout started • {new Date(active.startedAt).toLocaleTimeString()}</div>
+          <div className="text-sm opacity-80">
+            Active workout started • {new Date(active.startedAt).toLocaleTimeString()}
+          </div>
         ) : (
-          <button onClick={ensure} className="rounded-lg bg-black text-white px-4 h-10 dark:bg-white dark:text-black">
+          <button
+            onClick={ensure}
+            className="rounded-lg bg-black text-white px-4 h-10 dark:bg-white dark:text-black"
+          >
             Start Workout
           </button>
         )}
@@ -31,16 +36,24 @@ export default function Dashboard() {
         <div>
           <div className="text-sm opacity-70 mb-2">Last 7 days</div>
           <div className="grid gap-3 sm:grid-cols-2">
-            {Object.entries(vol7).map(([m, v]) => <MiniBar key={m} label={m} value={v} max={max7} />)}
-            {Object.keys(vol7).length === 0 && <div className="text-sm opacity-70">No data in the last 7 days.</div>}
+            {Object.entries(vol7).map(([m, v]) => (
+              <MiniBar key={m} label={m} value={v} max={max7} />
+            ))}
+            {Object.keys(vol7).length === 0 && (
+              <div className="text-sm opacity-70">No data in the last 7 days.</div>
+            )}
           </div>
         </div>
 
         <div>
           <div className="text-sm opacity-70 mb-2">Last 30 days</div>
           <div className="grid gap-3 sm:grid-cols-2">
-            {Object.entries(vol30).map(([m, v]) => <MiniBar key={m} label={m} value={v} max={max30} />)}
-            {Object.keys(vol30).length === 0 && <div className="text-sm opacity-70">No data in the last 30 days.</div>}
+            {Object.entries(vol30).map(([m, v]) => (
+              <MiniBar key={m} label={m} value={v} max={max30} />
+            ))}
+            {Object.keys(vol30).length === 0 && (
+              <div className="text-sm opacity-70">No data in the last 30 days.</div>
+            )}
           </div>
         </div>
       </section>
@@ -53,7 +66,10 @@ export default function Dashboard() {
           <ul className="space-y-2">
             {history.slice(0, 5).map((w) => (
               <li key={w.id}>
-                <a href={`/workouts/${w.id}`} className="block rounded-xl border p-3 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900/60">
+                <a
+                  href={`/workouts/${w.id}`}
+                  className="block rounded-xl border p-3 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900/60"
+                >
                   {new Date(w.startedAt).toLocaleString()} • {w.exercises.length} exercises
                 </a>
               </li>

@@ -27,19 +27,33 @@ export default function Workouts() {
         ) : (
           <div className="space-y-4">
             {active.exercises.map((ex) => (
-              <div key={ex.id} className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4">
+              <div
+                key={ex.id}
+                className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4"
+              >
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="font-semibold">{ex.name}</div>
                     <button
                       title="Exercise info"
                       onClick={() => {
-                        const match = data?.find((d) => d.name.toLowerCase() === ex.name.toLowerCase());
-                        setSelected(match ?? { name: ex.name, primary: "—", equipment: [], description: "No description found." });
+                        const match = data?.find(
+                          (d) => d.name.toLowerCase() === ex.name.toLowerCase(),
+                        );
+                        setSelected(
+                          match ?? {
+                            name: ex.name,
+                            primary: "—",
+                            equipment: [],
+                            description: "No description found.",
+                          },
+                        );
                         setShowInfo(true);
                       }}
                       className="h-7 w-7 rounded-md border border-neutral-300 dark:border-neutral-700 text-sm"
-                    >?</button>
+                    >
+                      ?
+                    </button>
                   </div>
                   {ex.sets.length > 0 && ex.sets[ex.sets.length - 1].restEndAt ? (
                     <RestTimerChip endAt={ex.sets[ex.sets.length - 1].restEndAt!} />
@@ -71,11 +85,17 @@ export default function Workouts() {
           ) : (
             <ul className="space-y-2">
               {history.map((w) => (
-                <li key={w.id} className="flex items-center justify-between rounded-xl border p-3 border-neutral-200 dark:border-neutral-800">
+                <li
+                  key={w.id}
+                  className="flex items-center justify-between rounded-xl border p-3 border-neutral-200 dark:border-neutral-800"
+                >
                   <Link to={`/workouts/${w.id}`} className="font-medium hover:underline">
                     {new Date(w.startedAt).toLocaleString()} • {w.exercises.length} exercises
                   </Link>
-                  <button onClick={() => repeat(w.id)} className="h-9 px-3 rounded-lg border border-neutral-300 dark:border-neutral-700">
+                  <button
+                    onClick={() => repeat(w.id)}
+                    className="h-9 px-3 rounded-lg border border-neutral-300 dark:border-neutral-700"
+                  >
                     Repeat
                   </button>
                 </li>

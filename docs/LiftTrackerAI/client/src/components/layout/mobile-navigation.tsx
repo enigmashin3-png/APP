@@ -18,12 +18,14 @@ export default function MobileNavigation() {
         {navItems.map((item) => {
           const isActive = location === item.path;
           const IconComponent = item.icon;
-          
+
           return (
             <Link key={item.path} href={item.path}>
-              <button className={`flex flex-col items-center p-2 relative ${
-                isActive ? "text-primary-600" : "text-gray-500 hover:text-primary-600"
-              }`}>
+              <button
+                className={`flex flex-col items-center p-2 relative ${
+                  isActive ? "text-primary-600" : "text-gray-500 hover:text-primary-600"
+                }`}
+              >
                 <IconComponent className="h-5 w-5 mb-1" />
                 <span className="text-xs font-medium">{item.label}</span>
                 {item.hasIndicator && (

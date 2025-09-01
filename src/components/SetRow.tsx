@@ -15,10 +15,7 @@ export default function SetRow({ exId, setId }: Props) {
   const history = useWorkoutStore((s) => s.history);
   const unit = useWorkoutStore((s) => s.settings.unit);
 
-  const exercise = useMemo(
-    () => active?.exercises.find((e) => e.id === exId),
-    [active, exId]
-  );
+  const exercise = useMemo(() => active?.exercises.find((e) => e.id === exId), [active, exId]);
   const exerciseName = exercise?.name ?? "";
 
   const [weight, setWeight] = useState<string>("");
@@ -28,7 +25,10 @@ export default function SetRow({ exId, setId }: Props) {
   const [openPlates, setOpenPlates] = useState(false);
 
   // PR proximity computation
-  const prValueKg = useMemo(() => personalRecord(history, exerciseName)?.v, [history, exerciseName]);
+  const prValueKg = useMemo(
+    () => personalRecord(history, exerciseName)?.v,
+    [history, exerciseName],
+  );
   const candidate1RMkg = useMemo(() => {
     const w = parseFloat(weight);
     const r = parseInt(reps);
@@ -53,11 +53,14 @@ export default function SetRow({ exId, setId }: Props) {
   const onVoice = () => {
     if (!isVoiceSupported()) return alert("Voice input not supported in this browser.");
     setListening(true);
-    startDictation((text) => {
-      const { weight: w, reps: r } = parseWeightReps(text);
-      if (typeof w === "number") setWeight(String(w));
-      if (typeof r === "number") setReps(String(r));
-    }, () => setListening(false));
+    startDictation(
+      (text) => {
+        const { weight: w, reps: r } = parseWeightReps(text);
+        if (typeof w === "number") setWeight(String(w));
+        if (typeof r === "number") setReps(String(r));
+      },
+      () => setListening(false),
+    );
   };
 
   const onRepeat = () => {

@@ -1,7 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertWorkoutSessionSchema, insertWorkoutSetSchema, insertWorkoutPlanSchema, updateWorkoutSetSchema } from "@shared/schema";
+import {
+  insertWorkoutSessionSchema,
+  insertWorkoutSetSchema,
+  insertWorkoutPlanSchema,
+  updateWorkoutSetSchema,
+} from "@shared/schema";
 import { z } from "zod";
 import { generateRuleTips, type SetEntry } from "@lib/coach/rules";
 import { openRouterChat } from "@lib/ai/openrouter";
@@ -31,13 +36,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { userId, templates } = req.query;
       let plans;
-      
+
       if (templates === "true") {
         plans = await storage.getTemplateWorkoutPlans();
       } else {
         plans = await storage.getWorkoutPlans(userId as string);
       }
-      
+
       res.json(plans);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch workout plans" });
@@ -60,9 +65,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validation = insertWorkoutPlanSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ message: "Invalid workout plan data", errors: validation.error.issues });
+        return res
+          .status(400)
+          .json({ message: "Invalid workout plan data", errors: validation.error.issues });
       }
-      
+
       const plan = await storage.createWorkoutPlan(validation.data);
       res.status(201).json(plan);
     } catch (error) {
@@ -95,7 +102,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const templateId = req.params.id;
       const { userId } = req.query;
-      if (!userId || typeof userId !== 'string') {
+      if (!userId || typeof userId !== "string") {
         return res.status(400).json({ message: "userId query parameter is required" });
       }
       const cloned = await storage.cloneWorkoutPlan(templateId, userId);
@@ -109,7 +116,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/workout-suggestions", async (req, res) => {
     try {
       const { userId, limit } = req.query;
-      if (!userId || typeof userId !== 'string') {
+      if (!userId || typeof userId !== "string") {
         return res.status(400).json({ message: "userId query parameter is required" });
       }
       const suggestionLimit = limit ? parseInt(limit as string, 10) : undefined;
@@ -127,7 +134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
       }
-      
+
       const sessions = await storage.getWorkoutSessions(userId as string);
       res.json(sessions);
     } catch (error) {
@@ -148,9 +155,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validation = insertWorkoutSessionSchema.safeParse(req.body);
       if (!validation.success) {
-        return res.status(400).json({ message: "Invalid workout session data", errors: validation.error.issues });
+        return res
+          .status(400)
+          .json({ message: "Invalid workout session data", errors: validation.error.issues });
       }
-      
+
       const session = await storage.createWorkoutSession(validation.data);
       res.status(201).json(session);
     } catch (error) {
@@ -171,7 +180,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/workout-sets", async (req, res) => {
     try {
       const { sessionId, exerciseId, userId } = req.query;
-      
+
       if (sessionId) {
         const sets = await storage.getWorkoutSets(sessionId as string);
         res.json(sets);
@@ -186,40 +195,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-    app.post("/api/workout-sets", async (req, res) => {
-      try {
-        const validation = insertWorkoutSetSchema.safeParse(req.body);
-        if (!validation.success) {
-          return res.status(400).json({ message: "Invalid workout set data", errors: validation.error.issues });
-        }
-
-        const set = await storage.createWorkoutSet(validation.data);
-        res.status(201).json(set);
-      } catch (error) {
-        res.status(500).json({ message: "Failed to create workout set" });
+  app.post("/api/workout-sets", async (req, res) => {
+    try {
+      const validation = insertWorkoutSetSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res
+          .status(400)
+          .json({ message: "Invalid workout set data", errors: validation.error.issues });
       }
-    });
 
-    app.patch("/api/workout-sets/:id", async (req, res) => {
-      try {
-        const validation = updateWorkoutSetSchema.safeParse(req.body);
-        if (!validation.success) {
-          return res.status(400).json({ message: "Invalid workout set data", errors: validation.error.issues });
-        }
+      const set = await storage.createWorkoutSet(validation.data);
+      res.status(201).json(set);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to create workout set" });
+    }
+  });
 
-        const set = await storage.updateWorkoutSet(req.params.id, validation.data);
-        res.json(set);
-      } catch (error) {
-        res.status(500).json({ message: "Failed to update workout set" });
+  app.patch("/api/workout-sets/:id", async (req, res) => {
+    try {
+      const validation = updateWorkoutSetSchema.safeParse(req.body);
+      if (!validation.success) {
+        return res
+          .status(400)
+          .json({ message: "Invalid workout set data", errors: validation.error.issues });
       }
-    });
 
-    // User Stats
+      const set = await storage.updateWorkoutSet(req.params.id, validation.data);
+      res.json(set);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update workout set" });
+    }
+  });
+
+  // User Stats
   app.get("/api/users/:userId/sets", async (req, res) => {
     try {
       const limit = parseInt((req.query.limit as string) ?? "30", 10);
       const sets = await storage.getRecentSets(req.params.userId, limit);
-      const mapped = sets.map(s => ({
+      const mapped = sets.map((s) => ({
         date: s.completedAt.toISOString(),
         exerciseId: s.exerciseId,
         reps: s.reps,
@@ -243,15 +256,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/coach/tip", async (req, res) => {
     const Body = z.object({
-      recentSets: z.array(z.object({
-        date: z.string(),
-        exerciseId: z.string(),
-        reps: z.number(),
-        weight: z.number(),
-        rpe: z.number().optional()
-      })),
+      recentSets: z.array(
+        z.object({
+          date: z.string(),
+          exerciseId: z.string(),
+          reps: z.number(),
+          weight: z.number(),
+          rpe: z.number().optional(),
+        }),
+      ),
       prefs: z.record(z.any()).optional(),
-      painFlags: z.array(z.string()).optional()
+      painFlags: z.array(z.string()).optional(),
     });
 
     const parsed = Body.safeParse(req.body);
@@ -264,18 +279,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     let ai: string | null = null;
     try {
-      const system = "You are Lift Legends' AI Coach. Be concise, actionable, positive. Max 3 bullet points. No medical claims.";
+      const system =
+        "You are Lift Legends' AI Coach. Be concise, actionable, positive. Max 3 bullet points. No medical claims.";
       const user = [
         `Recent sets (last ${recentSets.length} entries):`,
-        ...recentSets.slice(-8).map(s => `- ${s.date} ${s.exerciseId}: ${s.weight}x${s.reps}${s.rpe ? ` (RPE ${s.rpe})` : ""}`),
+        ...recentSets
+          .slice(-8)
+          .map(
+            (s) =>
+              `- ${s.date} ${s.exerciseId}: ${s.weight}x${s.reps}${s.rpe ? ` (RPE ${s.rpe})` : ""}`,
+          ),
         "",
         "Heuristic tips:",
-        ...ruleTips.map(t => `- [${t.tag}] ${t.message}`)
+        ...ruleTips.map((t) => `- [${t.tag}] ${t.message}`),
       ].join("\n");
 
       ai = await openRouterChat([
         { role: "system", content: system },
-        { role: "user", content: user }
+        { role: "user", content: user },
       ]);
     } catch {
       ai = null;

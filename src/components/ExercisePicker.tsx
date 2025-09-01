@@ -80,4 +80,3 @@ export default function ExercisePicker({ onAdd, onClose }: Props) {
     </div>
   );
 }
-

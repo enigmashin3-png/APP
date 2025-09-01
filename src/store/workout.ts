@@ -93,7 +93,14 @@ export const useWorkoutStore = create<State>()(
       templates: [],
       favorites: [],
       recents: [],
-      settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20, syncUrl: "", syncKey: "" },
+      settings: {
+        unit: "kg",
+        theme: "system",
+        defaultRestSec: 90,
+        barWeightKg: 20,
+        syncUrl: "",
+        syncKey: "",
+      },
 
       ensureActive: () => {
         if (!get().activeWorkout) {
@@ -116,7 +123,9 @@ export const useWorkoutStore = create<State>()(
         const w = get().activeWorkout;
         if (!w) return;
         const exercises = w.exercises.map((e) =>
-          e.id === exId ? { ...e, sets: [...e.sets, { id: uid(), done: false, restEndAt: null }] } : e
+          e.id === exId
+            ? { ...e, sets: [...e.sets, { id: uid(), done: false, restEndAt: null }] }
+            : e,
         );
         set({ activeWorkout: { ...w, exercises } });
       },
@@ -129,9 +138,11 @@ export const useWorkoutStore = create<State>()(
           e.id === exId
             ? {
                 ...e,
-                sets: e.sets.map((s) => (s.id === setId ? { ...s, ...payload, done: true, restEndAt } : s)),
+                sets: e.sets.map((s) =>
+                  s.id === setId ? { ...s, ...payload, done: true, restEndAt } : s,
+                ),
               }
-            : e
+            : e,
         );
         set({ activeWorkout: { ...w, exercises } });
       },
@@ -173,7 +184,11 @@ export const useWorkoutStore = create<State>()(
           exercises: t.exercises.map((te) => ({
             id: uid(),
             name: te.name,
-            sets: Array.from({ length: te.defaultSets }).map(() => ({ id: uid(), done: false, restEndAt: null })),
+            sets: Array.from({ length: te.defaultSets }).map(() => ({
+              id: uid(),
+              done: false,
+              restEndAt: null,
+            })),
           })),
         };
         set({ activeWorkout: w });
@@ -217,7 +232,15 @@ export const useWorkoutStore = create<State>()(
             templates: Array.isArray(data.templates) ? data.templates : [],
             favorites: Array.isArray(data.favorites) ? data.favorites : [],
             recents: [],
-            settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20, syncUrl: "", syncKey: "", ...(data.settings ?? {}) },
+            settings: {
+              unit: "kg",
+              theme: "system",
+              defaultRestSec: 90,
+              barWeightKg: 20,
+              syncUrl: "",
+              syncKey: "",
+              ...(data.settings ?? {}),
+            },
           });
           return true;
         } catch {
@@ -232,7 +255,14 @@ export const useWorkoutStore = create<State>()(
           templates: [],
           favorites: [],
           recents: [],
-          settings: { unit: "kg", theme: "system", defaultRestSec: 90, barWeightKg: 20, syncUrl: "", syncKey: "" },
+          settings: {
+            unit: "kg",
+            theme: "system",
+            defaultRestSec: 90,
+            barWeightKg: 20,
+            syncUrl: "",
+            syncKey: "",
+          },
         });
       },
     }),
@@ -244,7 +274,8 @@ export const useWorkoutStore = create<State>()(
         const s = state?.state ?? state;
         if (!s) return state;
         if (fromVersion < 3) {
-          if (s.settings && typeof s.settings.barWeightKg === "undefined") s.settings.barWeightKg = 20;
+          if (s.settings && typeof s.settings.barWeightKg === "undefined")
+            s.settings.barWeightKg = 20;
         }
         if (fromVersion < 4) {
           if (s.settings) {
@@ -254,6 +285,6 @@ export const useWorkoutStore = create<State>()(
         }
         return state;
       },
-    }
-  )
+    },
+  ),
 );

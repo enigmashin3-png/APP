@@ -6,7 +6,8 @@ export function useTheme() {
   const [theme, setThemeState] = useState<ThemeId>(DEFAULT_THEME);
 
   useEffect(() => {
-    const saved = (typeof window !== "undefined" && localStorage.getItem(THEME_STORAGE_KEY)) as ThemeId | null;
+    const saved = (typeof window !== "undefined" &&
+      localStorage.getItem(THEME_STORAGE_KEY)) as ThemeId | null;
     const t = saved ?? DEFAULT_THEME;
     setThemeState(t);
     document.documentElement.setAttribute("data-theme", t === "default" ? "" : t);

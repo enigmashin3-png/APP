@@ -12,15 +12,17 @@ export default function WorkoutTimer({ startTime }: WorkoutTimerProps) {
     const updateTimer = () => {
       const now = new Date();
       const elapsed = now.getTime() - startTime.getTime();
-      
+
       const hours = Math.floor(elapsed / (1000 * 60 * 60));
       const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
 
       if (hours > 0) {
-        setDuration(`${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+        setDuration(
+          `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
+        );
       } else {
-        setDuration(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+        setDuration(`${minutes}:${seconds.toString().padStart(2, "0")}`);
       }
     };
 

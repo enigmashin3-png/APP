@@ -6,7 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import ExerciseCombobox from "@/components/workout/exercise-combobox";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -73,7 +79,7 @@ export default function WorkoutPlanForm() {
           reps: ex.reps,
           weight: ex.weight,
           restTime: ex.restTime,
-        }))
+        })),
       );
     }
   }, [existingPlan]);
@@ -157,10 +163,7 @@ export default function WorkoutPlanForm() {
   // Fetch exercise suggestions and append them to the plan
   const suggestionMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest(
-        "GET",
-        `/api/workout-suggestions?userId=user-1&limit=3`
-      );
+      const response = await apiRequest("GET", `/api/workout-suggestions?userId=user-1&limit=3`);
       if (!response.ok) throw new Error("Failed to fetch suggestions");
       return response.json();
     },
@@ -208,7 +211,9 @@ export default function WorkoutPlanForm() {
             </p>
           </div>
           <div className="space-x-2">
-            <Button variant="outline" onClick={() => navigate("/plans")}>Cancel</Button>
+            <Button variant="outline" onClick={() => navigate("/plans")}>
+              Cancel
+            </Button>
             <Button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}>
               {saveMutation.isPending ? "Saving..." : "Save Plan"}
             </Button>
@@ -239,7 +244,7 @@ export default function WorkoutPlanForm() {
                 className="min-h-[80px]"
               />
             </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label htmlFor="level">Level</Label>
                 <Select value={level} onValueChange={setLevel}>
@@ -292,53 +297,55 @@ export default function WorkoutPlanForm() {
             {rows.length === 0 && (
               <p className="text-gray-500 dark:text-gray-400 text-sm">No exercises added yet.</p>
             )}
-              <AnimatePresence initial={false}>
-                {rows.map((row, idx) => {
-                  const exercise = exercises?.find((ex) => ex.id === row.exerciseId);
-                  return (
-                    <motion.div
-                      key={idx}
-                      layout
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      className="grid grid-cols-1 md:grid-cols-6 gap-3 md:items-end border rounded-lg p-3 mb-2 bg-gray-50 dark:bg-gray-800"
-                    >
-                  <div className="md:col-span-2">
-                    <Label>Exercise</Label>
-                    <ExerciseCombobox
-                      exercises={exercises ?? []}
-                      value={row.exerciseId}
-                      onChange={(val) => updateRow(idx, "exerciseId", val)}
-                    />
-                    {row.exerciseId === "" ? (
-                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Select exercise</p>
-                    ) : (
-                      exercise?.tips && (
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 italic">
-                          Tip: {exercise.tips}
+            <AnimatePresence initial={false}>
+              {rows.map((row, idx) => {
+                const exercise = exercises?.find((ex) => ex.id === row.exerciseId);
+                return (
+                  <motion.div
+                    key={idx}
+                    layout
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="grid grid-cols-1 md:grid-cols-6 gap-3 md:items-end border rounded-lg p-3 mb-2 bg-gray-50 dark:bg-gray-800"
+                  >
+                    <div className="md:col-span-2">
+                      <Label>Exercise</Label>
+                      <ExerciseCombobox
+                        exercises={exercises ?? []}
+                        value={row.exerciseId}
+                        onChange={(val) => updateRow(idx, "exerciseId", val)}
+                      />
+                      {row.exerciseId === "" ? (
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                          Select exercise
                         </p>
-                      )
-                    )}
-                  </div>
-                  <div>
-                    <Label>Sets</Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      value={row.sets}
-                      onChange={(e) => updateRow(idx, "sets", parseInt(e.target.value) || 1)}
-                    />
-                  </div>
-                  <div>
-                    <Label>Reps</Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      value={row.reps}
-                      onChange={(e) => updateRow(idx, "reps", parseInt(e.target.value) || 1)}
-                    />
-                  </div>
+                      ) : (
+                        exercise?.tips && (
+                          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 italic">
+                            Tip: {exercise.tips}
+                          </p>
+                        )
+                      )}
+                    </div>
+                    <div>
+                      <Label>Sets</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        value={row.sets}
+                        onChange={(e) => updateRow(idx, "sets", parseInt(e.target.value) || 1)}
+                      />
+                    </div>
+                    <div>
+                      <Label>Reps</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        value={row.reps}
+                        onChange={(e) => updateRow(idx, "reps", parseInt(e.target.value) || 1)}
+                      />
+                    </div>
                     <div>
                       <Label>Weight (lbs)</Label>
                       <Input
@@ -346,19 +353,25 @@ export default function WorkoutPlanForm() {
                         step="2.5"
                         min={0}
                         value={row.weight ?? ""}
-                        onChange={(e) => updateRow(idx, "weight", e.target.value === "" ? undefined : parseFloat(e.target.value))}
+                        onChange={(e) =>
+                          updateRow(
+                            idx,
+                            "weight",
+                            e.target.value === "" ? undefined : parseFloat(e.target.value),
+                          )
+                        }
                       />
                     </div>
-                  <div>
-                    <Label>Rest (sec)</Label>
-                    <Input
-                      type="number"
-                      min={30}
-                      step={30}
-                      value={row.restTime ?? 0}
-                      onChange={(e) => updateRow(idx, "restTime", parseInt(e.target.value) || 60)}
-                    />
-                  </div>
+                    <div>
+                      <Label>Rest (sec)</Label>
+                      <Input
+                        type="number"
+                        min={30}
+                        step={30}
+                        value={row.restTime ?? 0}
+                        onChange={(e) => updateRow(idx, "restTime", parseInt(e.target.value) || 60)}
+                      />
+                    </div>
                     <div className="flex justify-end">
                       <Button
                         type="button"
@@ -372,10 +385,10 @@ export default function WorkoutPlanForm() {
                   </motion.div>
                 );
               })}
-              </AnimatePresence>
-            </CardContent>
-          </Card>
-        </div>
+            </AnimatePresence>
+          </CardContent>
+        </Card>
       </div>
-    );
+    </div>
+  );
 }

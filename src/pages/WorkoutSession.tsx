@@ -42,23 +42,18 @@ export default function WorkoutSession() {
   const addSet = (idx: number) => {
     setExercises((prev) =>
       prev.map((ex, i) =>
-        i === idx ? { ...ex, sets: [...ex.sets, { weight: "", reps: "", done: false }] } : ex
-      )
+        i === idx ? { ...ex, sets: [...ex.sets, { weight: "", reps: "", done: false }] } : ex,
+      ),
     );
   };
 
-  const updateSet = (
-    exIdx: number,
-    setIdx: number,
-    field: "weight" | "reps",
-    value: string
-  ) => {
+  const updateSet = (exIdx: number, setIdx: number, field: "weight" | "reps", value: string) => {
     setExercises((prev) =>
       prev.map((ex, i) => {
         if (i !== exIdx) return ex;
         const sets = ex.sets.map((s, j) => (j === setIdx ? { ...s, [field]: value } : s));
         return { ...ex, sets };
-      })
+      }),
     );
   };
 
@@ -68,20 +63,18 @@ export default function WorkoutSession() {
         if (i !== exIdx) return ex;
         const sets = ex.sets.map((s, j) => (j === setIdx ? { ...s, done: true } : s));
         return { ...ex, sets, timerRunning: true, timerId: ex.timerId + 1 };
-      })
+      }),
     );
   };
 
   const onTimerComplete = (exIdx: number) => {
     setExercises((prev) =>
-      prev.map((ex, i) => (i === exIdx ? { ...ex, timerRunning: false } : ex))
+      prev.map((ex, i) => (i === exIdx ? { ...ex, timerRunning: false } : ex)),
     );
   };
 
   const updateRest = (exIdx: number, value: number) => {
-    setExercises((prev) =>
-      prev.map((ex, i) => (i === exIdx ? { ...ex, rest: value } : ex))
-    );
+    setExercises((prev) => prev.map((ex, i) => (i === exIdx ? { ...ex, rest: value } : ex)));
   };
 
   const removeExercise = (idx: number) => {
@@ -105,10 +98,7 @@ export default function WorkoutSession() {
         <button onClick={() => setShowPicker(true)}>Add Exercise</button>
       </div>
       {exercises.map((ex, idx) => (
-        <div
-          key={idx}
-          style={{ marginTop: 32, borderTop: "1px solid #eee", paddingTop: 16 }}
-        >
+        <div key={idx} style={{ marginTop: 32, borderTop: "1px solid #eee", paddingTop: 16 }}>
           <div
             style={{
               display: "flex",
@@ -154,7 +144,7 @@ export default function WorkoutSession() {
           ))}
           {ex.timerRunning && (
             <div style={{ marginBottom: 8 }}>
-              Rest: {" "}
+              Rest:{" "}
               <CountdownTimer
                 key={ex.timerId}
                 seconds={ex.rest}
@@ -163,9 +153,7 @@ export default function WorkoutSession() {
               />
             </div>
           )}
-          <div
-            style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}
-          >
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
             <button onClick={() => addSet(idx)}>Add Set ({format(ex.rest)})</button>
             <label>
               Rest (sec):

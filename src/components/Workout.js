@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export default function Workout() {
   const [exercises, setExercises] = useState([]);
-  const [exerciseName, setExerciseName] = useState('');
-  const [exerciseSets, setExerciseSets] = useState('');
+  const [exerciseName, setExerciseName] = useState("");
+  const [exerciseSets, setExerciseSets] = useState("");
 
   const addExercise = () => {
     if (!exerciseName.trim() || !exerciseSets) {
-      alert('Please fill in both fields!');
+      alert("Please fill in both fields!");
       return;
     }
 
@@ -18,8 +18,8 @@ export default function Workout() {
     };
 
     setExercises([...exercises, newExercise]);
-    setExerciseName('');
-    setExerciseSets('');
+    setExerciseName("");
+    setExerciseSets("");
   };
 
   return (
