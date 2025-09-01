@@ -46,6 +46,7 @@
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.8.2",
     "sql.js": "^1.13.0",
+    "wouter": "^3.3.5",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
