@@ -1,14 +1,5 @@
-
-# Build outputs
-# OS detritus
-*.log
 .DS_Store
 .env
 .env.local
-apps/desktop/src-tauri/Cargo.lock
-apps/desktop/src-tauri/target
-apps/mobile/android
-client/
 dist/
 node_modules/
-server/dist/
