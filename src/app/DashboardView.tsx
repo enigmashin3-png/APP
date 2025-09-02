@@ -1,20 +1,20 @@
 import React from "react";
 import { Activity, CheckCircle2, ChevronRight, Dumbbell, Timer } from "lucide-react";
+import KpiCard from "./components/KpiCard";
+import { MOCK_WORKOUTS, QUICK_START_TEMPLATES } from "../data/mocks";
 
-const MOCK_WORKOUTS = [
-  { id: "w1", name: "Upper A", date: "2025-09-01", volume: 12650, durationMin: 68 },
-  { id: "w2", name: "Lower A", date: "2025-08-30", volume: 10210, durationMin: 61 },
-  { id: "w3", name: "Push B", date: "2025-08-28", volume: 11800, durationMin: 64 },
-  { id: "w4", name: "Pull B", date: "2025-08-26", volume: 11190, durationMin: 59 },
-];
+export interface DashboardViewProps {
+  onStartWorkout: (id: string) => void;
+}
 
 const formatVolume = (kg: number) => `${kg.toLocaleString()} kg`;
 
-export default function DashboardView({
-  onStartWorkout,
-}: {
-  onStartWorkout: (id: string) => void;
-}) {
+const formatDate = (dateStr: string) => {
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? "Unknown date" : d.toLocaleDateString();
+};
+
+export default function DashboardView({ onStartWorkout }: DashboardViewProps) {
   return (
     <section className="space-y-6">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -47,7 +47,7 @@ export default function DashboardView({
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-base font-semibold text-slate-900">{w.name}</p>
-                  <p className="text-sm text-slate-500">{new Date(w.date).toLocaleDateString()}</p>
+                  <p className="text-sm text-slate-500">{formatDate(w.date)}</p>
                 </div>
                 <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-slate-600" />
               </div>
@@ -67,14 +67,7 @@ export default function DashboardView({
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h3 className="mb-3 text-base font-semibold">Quick Start</h3>
         <div className="grid gap-2 sm:grid-cols-3">
-          {[
-            "Upper Body",
-            "Lower Body",
-            "Push Day",
-            "Pull Day",
-            "Full Body",
-            "Arms & Shoulders",
-          ].map((t, i) => (
+          {QUICK_START_TEMPLATES.map((t, i) => (
             <button
               key={i}
               className="rounded-xl border border-slate-200 px-3 py-2 text-sm hover:bg-slate-50"
@@ -85,17 +78,5 @@ export default function DashboardView({
         </div>
       </div>
     </section>
-  );
-}
-
-function KpiCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-600">{label}</p>
-        <div className="text-slate-500">{icon}</div>
-      </div>
-      <p className="mt-2 text-xl font-semibold text-slate-900">{value}</p>
-    </div>
   );
 }
