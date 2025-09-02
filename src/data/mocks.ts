@@ -15,8 +15,8 @@ export interface Exercise {
 export const MOCK_WORKOUTS: Workout[] = [
   { id: "w1", name: "Upper A", date: "2025-09-01", volume: 12650, durationMin: 68 },
   { id: "w2", name: "Lower A", date: "2025-08-30", volume: 10210, durationMin: 61 },
-  { id: "w3", name: "Push B",  date: "2025-08-28", volume: 11800, durationMin: 64 },
-  { id: "w4", name: "Pull B",  date: "2025-08-26", volume: 11190, durationMin: 59 },
+  { id: "w3", name: "Push B", date: "2025-08-28", volume: 11800, durationMin: 64 },
+  { id: "w4", name: "Pull B", date: "2025-08-26", volume: 11190, durationMin: 59 },
 ];
 
 export const EXERCISES: Exercise[] = [

@@ -26,16 +26,16 @@ export default function LoggerView({ workoutId, onExit }: LoggerViewProps) {
 
   const muscles = useMemo(
     () => ["All", ...Array.from(new Set(EXERCISES.map((e) => e.muscle)))],
-    []
+    [],
   );
   const filtered = useMemo(
     () =>
       EXERCISES.filter(
         (e) =>
           (filter === "All" || e.muscle === filter) &&
-          e.name.toLowerCase().includes(query.toLowerCase())
+          e.name.toLowerCase().includes(query.toLowerCase()),
       ),
-    [query, filter]
+    [query, filter],
   );
 
   const addSet = (exId: string) => {
@@ -52,15 +52,11 @@ export default function LoggerView({ workoutId, onExit }: LoggerViewProps) {
     ]);
   };
 
-  const updateSet = (
-    id: string,
-    patch: Partial<Pick<SetEntry, "weight" | "reps" | "done">>
-  ) => {
+  const updateSet = (id: string, patch: Partial<Pick<SetEntry, "weight" | "reps" | "done">>) => {
     setSets((prev) => prev.map((s) => (s.id === id ? { ...s, ...patch } : s)));
   };
 
-  const removeSet = (id: string) =>
-    setSets((prev) => prev.filter((s) => s.id !== id));
+  const removeSet = (id: string) => setSets((prev) => prev.filter((s) => s.id !== id));
 
   return (
     <section className="space-y-4">
@@ -111,10 +107,7 @@ export default function LoggerView({ workoutId, onExit }: LoggerViewProps) {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {filtered.map((ex) => (
-          <div
-            key={ex.id}
-            className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-          >
+          <div key={ex.id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-base font-semibold text-slate-900">{ex.name}</p>
@@ -142,8 +135,7 @@ export default function LoggerView({ workoutId, onExit }: LoggerViewProps) {
                       value={s.weight}
                       onChange={(e) =>
                         updateSet(s.id, {
-                          weight:
-                            e.target.value === "" ? "" : Number(e.target.value),
+                          weight: e.target.value === "" ? "" : Number(e.target.value),
                         })
                       }
                       className="w-20 rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm"
@@ -167,9 +159,7 @@ export default function LoggerView({ workoutId, onExit }: LoggerViewProps) {
                       onClick={() => updateSet(s.id, { done: !s.done })}
                       className={[
                         "ml-auto inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs",
-                        s.done
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-slate-200 text-slate-700",
+                        s.done ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-700",
                       ].join(" ")}
                       aria-pressed={s.done}
                     >
@@ -189,9 +179,7 @@ export default function LoggerView({ workoutId, onExit }: LoggerViewProps) {
         ))}
       </div>
 
-      <div
-        className="fixed inset-x-0 bottom-20 flex justify-center sm:bottom-8 mb-[env(safe-area-inset-bottom)]"
-      >
+      <div className="fixed inset-x-0 bottom-20 flex justify-center sm:bottom-8 mb-[env(safe-area-inset-bottom)]">
         <button className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-slate-900/10 hover:bg-slate-800">
           <CheckCircle2 className="h-5 w-5" />
           Complete Workout

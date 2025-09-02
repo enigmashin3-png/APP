@@ -50,10 +50,7 @@ export default function AppShell() {
         )}
         {tab === "logger" && (
           <ErrorBoundary>
-            <LoggerView
-              workoutId={activeWorkoutId}
-              onExit={() => setTab("dashboard")}
-            />
+            <LoggerView workoutId={activeWorkoutId} onExit={() => setTab("dashboard")} />
           </ErrorBoundary>
         )}
       </main>

@@ -11,7 +11,7 @@ export function uuid(): string {
       uuid += "4";
     } else {
       const r = (Math.random() * 16) | 0;
-      uuid += ((i === 19 ? (r & 0x3) | 0x8 : r)).toString(16);
+      uuid += (i === 19 ? (r & 0x3) | 0x8 : r).toString(16);
     }
   }
   return uuid;
