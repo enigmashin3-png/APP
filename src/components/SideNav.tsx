@@ -13,9 +13,9 @@ const items = [
 export default function SideNav() {
   return (
     <nav className="w-full">
-        <div className="mb-4">
-          <Brand />
-        </div>
+      <div className="mb-4">
+        <Brand />
+      </div>
       <ul className="space-y-1">
         {items.map((i) => (
           <li key={i.to}>
