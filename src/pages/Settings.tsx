@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useWorkoutStore } from "../store/workout";
 import { uploadBackup, downloadBackup } from "../lib/sync";
+import { AppearanceSection } from "../features/settings/AppearanceSection";
 
 export default function Settings() {
   const settings = useWorkoutStore((s) => s.settings);
@@ -29,11 +30,13 @@ export default function Settings() {
     setMsg(ok ? "Backup restored." : "Invalid backup file.");
   };
 
-  return (
-    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 space-y-6">
-      <div className="text-lg font-semibold">Settings</div>
+    return (
+      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 space-y-6">
+        <div className="text-lg font-semibold">Settings</div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+        <AppearanceSection />
+
+        <div className="grid gap-3 sm:grid-cols-2">
         <label className="space-y-1">
           <div className="text-sm">Units</div>
           <select
@@ -46,18 +49,6 @@ export default function Settings() {
           </select>
         </label>
 
-        <label className="space-y-1">
-          <div className="text-sm">Theme</div>
-          <select
-            value={settings.theme}
-            onChange={(e) => setSetting("theme", e.target.value as any)}
-            className="h-10 rounded-lg border px-3 border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900"
-          >
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label>
 
         <label className="space-y-1">
           <div className="text-sm">Default rest (seconds)</div>

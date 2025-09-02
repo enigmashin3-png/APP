@@ -1,8 +1,12 @@
 @import "tailwindcss";
+@import "./styles/themes.css";
 
-/* Your custom layers/utilities can go below (optional) */
-/*
-@layer utilities {
-  .debug-outline { outline: 1px solid red; }
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
 }
-*/

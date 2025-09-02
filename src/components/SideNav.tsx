@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { Brand } from "./Brand";
 
 const items = [
   { to: "/dashboard", label: "Dashboard" },
@@ -12,7 +13,9 @@ const items = [
 export default function SideNav() {
   return (
     <nav className="w-full">
-      <div className="mb-4 text-xl font-bold">Lift Legends</div>
+        <div className="mb-4">
+          <Brand />
+        </div>
       <ul className="space-y-1">
         {items.map((i) => (
           <li key={i.to}>
