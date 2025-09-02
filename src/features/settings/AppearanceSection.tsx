@@ -1,4 +1,4 @@
-import { useSettingsStore } from "../../stores/settings";
+import { useSettingsStore, type ThemeName } from "../../stores/settings";
 
 export function AppearanceSection() {
   const theme = useSettingsStore((s) => s.theme);
@@ -11,7 +11,7 @@ export function AppearanceSection() {
       <select
         className="w-full bg-background border border-border rounded-md p-2"
         value={theme}
-        onChange={(e) => setTheme(e.target.value as any)}
+        onChange={(e) => setTheme(e.target.value as ThemeName)}
       >
         <option value="legend">Legend Gold (default)</option>
         <option value="classic">Classic (original colors)</option>
