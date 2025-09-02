@@ -30,13 +30,13 @@ export default function Settings() {
     setMsg(ok ? "Backup restored." : "Invalid backup file.");
   };
 
-    return (
-      <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 space-y-6">
-        <div className="text-lg font-semibold">Settings</div>
+  return (
+    <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 space-y-6">
+      <div className="text-lg font-semibold">Settings</div>
 
-        <AppearanceSection />
+      <AppearanceSection />
 
-        <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2">
         <label className="space-y-1">
           <div className="text-sm">Units</div>
           <select
@@ -48,7 +48,6 @@ export default function Settings() {
             <option value="lb">Pounds (lb)</option>
           </select>
         </label>
-
 
         <label className="space-y-1">
           <div className="text-sm">Default rest (seconds)</div>

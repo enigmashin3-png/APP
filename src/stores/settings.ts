@@ -14,6 +14,6 @@ export const useSettingsStore = create<SettingsState>()(
       theme: "legend",
       setTheme: (t) => set({ theme: t }),
     }),
-    { name: "ll-settings" }
-  )
+    { name: "ll-settings" },
+  ),
 );
