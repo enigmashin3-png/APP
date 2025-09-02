@@ -1,0 +1,26 @@
+/* Default: Legend Gold (gamer/premium) */
+:root,
+.theme-legend {
+  --background: 218 36% 6%; /* near-black navy */
+  --foreground: 0 0% 98%;
+  --card: 218 28% 10%;
+  --border: 218 16% 18%;
+  --primary: 45 68% 52%; /* gold */
+  --primary-foreground: 0 0% 10%;
+  --muted: 218 20% 22%;
+  --muted-foreground: 0 0% 80%;
+  --accent: 45 78% 56%; /* lighter gold */
+}
+
+/* Classic: your current dark + green vibe (kept as an option) */
+.theme-classic {
+  --background: 222 47% 11%; /* slate-900-ish */
+  --foreground: 0 0% 98%;
+  --card: 222 36% 13%;
+  --border: 222 20% 20%;
+  --primary: 142 71% 45%; /* green-500 */
+  --primary-foreground: 0 0% 10%;
+  --muted: 222 20% 20%;
+  --muted-foreground: 0 0% 80%;
+  --accent: 200 98% 50%; /* cyan accent if needed */
+}
