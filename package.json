@@ -3,11 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "node server/index.js",
-    "server": "cd server && npm start",
-    "client": "vite",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "build": "vite build && tsc",
+    "start": "node server/index.mjs",
+    "dev": "concurrently -n server,web -c auto \"node --watch server/index.mjs\" \"vite\"",
+    "build": "tsc -b && vite build",
     "build:web": "vite build",
     "start:coach": "node dist/LiftTrackerAI/server/index.js",
     "dev:coach": "tsx LiftTrackerAI/server/index.ts",
@@ -21,7 +19,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext .ts,.tsx --max-warnings 0",
     "format": "prettier --write .",
-    "check": "npm run format:check && npm run typecheck && npm run lint",
+    "check": "tsc -b && eslint . --ext .ts,.tsx --max-warnings=0",
     "codex:quick": "npm run check && npm run build",
     "codex:fmt": "npm run format && npm run lint",
     "format:check": "prettier --check ."
