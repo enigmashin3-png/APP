@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useWorkoutStore } from "../store/workout";
 import { uploadBackup, downloadBackup } from "../lib/sync";
-import { AppearanceSection } from "../features/settings/AppearanceSection";
+import SettingsAppearance from "../screens/SettingsAppearance";
 
 export default function Settings() {
   const settings = useWorkoutStore((s) => s.settings);
@@ -34,7 +34,7 @@ export default function Settings() {
     <div className="rounded-2xl border border-neutral-200 dark:border-neutral-800 p-4 space-y-6">
       <div className="text-lg font-semibold">Settings</div>
 
-      <AppearanceSection />
+      <SettingsAppearance />
 
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="space-y-1">
