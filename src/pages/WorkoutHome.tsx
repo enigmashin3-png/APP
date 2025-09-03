@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MoreHorizontal, Plus, CalendarDays, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/lift-legends-logo.png";
+import { LOGO_DATA_URI, resolveLogoUrl } from "../branding/logo";
 
 type Template = { id: string; title: string; exercises: string[]; date: string };
 const templates: Template[] = [
@@ -33,10 +33,16 @@ const templates: Template[] = [
 
 export default function WorkoutHome() {
   const navigate = useNavigate();
+  const [logoSrc, setLogoSrc] = useState<string>(LOGO_DATA_URI);
+
+  useEffect(() => {
+    resolveLogoUrl().then(setLogoSrc).catch(() => setLogoSrc(LOGO_DATA_URI));
+  }, []);
+
   return (
     <div className="app">
       <header className="app-header">
-        <img src={logo} alt="Lift Legends" style={{ width: 32, height: 32, opacity: 0.9 }} />
+        <img src={logoSrc} alt="Lift Legends" style={{ width: 32, height: 32, opacity: 0.9 }} />
         <div className="h1">Workout</div>
         <div className="subtle">Quick start</div>
         <div className="container" style={{ padding: "10px 0 0" }}>
