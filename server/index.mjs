@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
+import coach from "./coach.mjs";
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
@@ -9,6 +10,9 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+app.use(express.json({ limit: "1mb" }));
+app.use("/api/coach", coach);
 
 // health
 app.get("/healthz", (_req, res) => res.status(200).json({ ok: true }));
