@@ -1,7 +1,7 @@
 import React from "react";
 import { MoreHorizontal, Plus, CalendarDays, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/lift-legends-logo.svg";
+import logo from "../assets/lift-legends-logo.png";
 
 type Template = { id: string; title: string; exercises: string[]; date: string };
 const templates: Template[] = [
