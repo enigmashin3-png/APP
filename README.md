@@ -49,3 +49,15 @@ startCommand: npm start
 ```
 
 Ensure production environment variables such as `PORT` are set in your hosting environment.
+
+## Mobile (Capacitor) quickstart
+1. `npm i -D @capacitor/cli && npm i @capacitor/core`
+2. `npx cap init "Lift Legends" "com.liftlegends.app"`
+3. `npm run build && npx cap add android && npx cap copy`
+4. Set icon/splash from the base64 logo (convert to PNG) in `android/app/src/main/res/`.
+5. Use `@capacitor/preferences` for storage persistence.
+
+## Desktop (Tauri) quickstart
+1. `npm i -D @tauri-apps/cli @tauri-apps/api`
+2. `npx tauri init` (use dist folder as bundle target)
+3. `npm run build && npx tauri build`
