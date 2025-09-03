@@ -1,26 +1,26 @@
-/* Default: Legend Gold (gamer/premium) */
+/* Default: Brand */
 :root,
-.theme-legend {
+[data-theme="brand"] {
   --background: 218 36% 6%; /* near-black navy */
   --foreground: 0 0% 98%;
   --card: 218 28% 10%;
   --border: 218 16% 18%;
-  --primary: 45 68% 52%; /* gold */
+  --primary: 42 100% 50%;
   --primary-foreground: 0 0% 10%;
   --muted: 218 20% 22%;
   --muted-foreground: 0 0% 80%;
-  --accent: 45 78% 56%; /* lighter gold */
+  --accent: 47 100% 60%;
 }
 
-/* Classic: your current dark + green vibe (kept as an option) */
-.theme-classic {
-  --background: 222 47% 11%; /* slate-900-ish */
+/* Legacy: original colors */
+[data-theme="legacy"] {
+  --background: 222 47% 11%;
   --foreground: 0 0% 98%;
   --card: 222 36% 13%;
   --border: 222 20% 20%;
-  --primary: 142 71% 45%; /* green-500 */
+  --primary: 222 89% 55%;
   --primary-foreground: 0 0% 10%;
   --muted: 222 20% 20%;
   --muted-foreground: 0 0% 80%;
-  --accent: 200 98% 50%; /* cyan accent if needed */
+  --accent: 200 98% 50%;
 }

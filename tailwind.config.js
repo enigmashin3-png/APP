@@ -16,6 +16,16 @@ export default {
           foreground: "hsl(var(--primary-foreground))",
         },
         accent: "hsl(var(--accent))",
+        brand: {
+          50: "hsl(48 100% 97%)",
+          100: "hsl(47 100% 92%)",
+          500: "hsl(42 100% 50%)",
+          600: "hsl(40 96% 40%)",
+          900: "hsl(28 60% 12%)",
+        },
+        legacy: {
+          500: "hsl(222 89% 55%)",
+        },
       },
     },
   },
