@@ -8,10 +8,10 @@ export default defineConfig({
   plugins: [react()],
   pwa: {
     manifest: {
-        icons: [
-          { src: logoPng, sizes: "192x192", type: "image/png" },
-          { src: logoPng, sizes: "512x512", type: "image/png" },
-        ],
+      icons: [
+        { src: logoPng, sizes: "192x192", type: "image/png" },
+        { src: logoPng, sizes: "512x512", type: "image/png" },
+      ],
     },
   },
   test: {
