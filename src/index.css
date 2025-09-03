@@ -12,10 +12,10 @@
 }
 
   :root[data-theme="brand"] {
-    --color-primary: theme('colors.brand.500');
+    --color-primary: var(--color-brand-500);
   }
   :root[data-theme="legacy"] {
-    --color-primary: theme('colors.legacy.500');
+    --color-primary: var(--color-legacy-500);
   }
   .btn-primary {
     @apply bg-[var(--color-primary)] text-white;
