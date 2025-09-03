@@ -3,12 +3,9 @@ import { LOGO_DATA_URI, resolveLogoUrl } from "../branding/logo";
 
 export function Brand({ withText = true }: { withText?: boolean }) {
   const [logoSrc, setLogoSrc] = useState<string>(LOGO_DATA_URI);
-
   useEffect(() => {
-    // Prefer a real PNG in /public if present; otherwise use base64
     resolveLogoUrl().then(setLogoSrc).catch(() => setLogoSrc(LOGO_DATA_URI));
   }, []);
-
   return (
     <div className="flex items-center gap-3">
       <img
@@ -18,10 +15,7 @@ export function Brand({ withText = true }: { withText?: boolean }) {
         draggable={false}
       />
       {withText && (
-        <span
-          className="hidden sm:inline font-semibold tracking-wide"
-          style={{ letterSpacing: ".06em" }}
-        >
+        <span className="hidden sm:inline font-semibold tracking-wide" style={{ letterSpacing: ".06em" }}>
           Lift Legends
         </span>
       )}
