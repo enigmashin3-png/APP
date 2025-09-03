@@ -3,16 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="icon"
-      type="image/png"
-      href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO/+N5cAAAAASUVORK5CYII="
-    />
+    <link id="ll-favicon" rel="icon" type="image/png" href="" />
     <meta name="theme-color" content="#D8B24D" />
     <title>Lift Legends</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script type="module">
+      import { LOGO_DATA_URI } from "/src/assets/logo.ts";
+      const el = document.getElementById("ll-favicon");
+      if (el) el.href = LOGO_DATA_URI;
+    </script>
   </body>
 </html>

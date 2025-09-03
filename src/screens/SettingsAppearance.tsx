@@ -1,4 +1,4 @@
-import { useTheme } from "../store/theme";
+import { useTheme, type Theme } from "../store/theme";
 
 export default function SettingsAppearance() {
   const { theme, setTheme } = useTheme();
@@ -10,7 +10,7 @@ export default function SettingsAppearance() {
         <select
           className="select select-bordered"
           value={theme}
-          onChange={(e) => setTheme(e.target.value as any)}
+          onChange={(e) => setTheme(e.target.value as Theme)}
         >
           <option value="brand">Brand (new)</option>
           <option value="legacy">Legacy</option>
