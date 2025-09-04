@@ -40,15 +40,26 @@ check("Vite tsconfig paths plugin in devDependencies", !!pkg?.devDependencies?.[
 check("`vercel.json` present with static-build", !!(vercel && vercel.builds?.some(b => b.use === "@vercel/static-build")));
 check("`vercel-build` script defined", typeof scripts["vercel-build"] === "string");
 check("Express start script (`start`) present", typeof scripts["start"] === "string");
-check("Dev script runs server + vite (`dev`)", /vite/.test(scripts["dev"]||"") && /node/.test(scripts["dev"]||""));
+check(
+  "Dev script runs server + vite (`dev`)",
+  /vite/.test(scripts["dev"] || "") && (/(node|vercel)/.test(scripts["dev"] || ""))
+);
 check("Playwright installed", hasPlaywright);
 check("E2E scripts present", typeof scripts["test:e2e"] === "string");
 check("Router installed (react-router-dom)", hasRouter);
 check("Appearance screen exists", fs.existsSync(path.join(root, "src/screens/SettingsAppearance.tsx")));
 check("Log screen exists", fs.existsSync(path.join(root, "src/screens/LogWorkout.tsx")));
 check("App routes present", fs.existsSync(path.join(root, "src/AppRoutes.tsx")));
-check("Favicon setter present", fs.existsSync(path.join(root, "src/set-favicon.ts")));
-check("Server ESM entry exists", fs.existsSync(path.join(root, "server/index.mjs")));
+// Favicon strategy: static icons in public/icons
+const icon192 = fs.existsSync(path.join(root, "public/icons/icon-192.png"));
+const icon512 = fs.existsSync(path.join(root, "public/icons/icon-512.png"));
+const html = read("index.html") || "";
+check("PWA icons present (192 & 512)", icon192 && icon512);
+check("index.html links favicon", /rel=[\"']icon[\"']/.test(html));
+// Accept either ESM .mjs or ESM .js (with type:module)
+const hasServerEntry = fs.existsSync(path.join(root, "server/index.mjs")) || fs.existsSync(path.join(root, "server/index.js"));
+const devUsesVercel = /vercel/.test(scripts["dev"]||"");
+check("Server entry optional (or vercel dev)", hasServerEntry || devUsesVercel);
 check("Coach API (serverless or server) exists",
   fs.existsSync(path.join(root, "api/coach.ts")) || fs.existsSync(path.join(root, "server/coach.mjs"))
 );
