@@ -20,6 +20,8 @@ jobs:
         env:
           E2E_BASE_URL: http://localhost:5173
         run: npm run test:e2e
+      - name: Verify repo state
+        run: node scripts/verify.mjs
       - if: github.event_name == 'push'
         uses: amondnet/vercel-action@v21
         with:
