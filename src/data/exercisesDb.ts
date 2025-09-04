@@ -112,7 +112,7 @@ export async function loadDbExercises(): Promise<DbExercise[]> {
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error("Failed loading exercises DB:", e);
-      _cache = []; // don’t crash; UI will show “No matches” or error string
+      _cache = []; // don't crash; UI will show "No matches" or error string
       return [];
     }
   })();
@@ -125,7 +125,8 @@ export function warmLoadDbExercisesIdle() {
     if (!_cache && !_loading) loadDbExercises().catch(() => {});
   };
   // @ts-ignore
-  const ric = window.requestIdleCallback as any;
+  const ric = (window as any).requestIdleCallback as any;
   if (typeof ric === "function") ric(run, { timeout: 3000 });
   else setTimeout(run, 1200);
 }
+

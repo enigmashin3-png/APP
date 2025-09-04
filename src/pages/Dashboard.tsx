@@ -18,7 +18,7 @@ export default function Dashboard() {
         <div className="mb-2 text-lg font-semibold">Today</div>
         {active ? (
           <div className="text-sm opacity-80">
-            Active workout started • {new Date(active.startedAt).toLocaleTimeString()}
+            Active workout started · {new Date(active.startedAt).toLocaleTimeString()}
           </div>
         ) : (
           <button
@@ -70,7 +70,7 @@ export default function Dashboard() {
                   href={`/workouts/${w.id}`}
                   className="block rounded-xl border p-3 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-900/60"
                 >
-                  {new Date(w.startedAt).toLocaleString()} • {w.exercises.length} exercises
+                  {new Date(w.startedAt).toLocaleString()} · {w.exercises.length} exercises
                 </a>
               </li>
             ))}
@@ -80,3 +80,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

@@ -43,7 +43,7 @@ export default function Workouts() {
                         setSelected(
                           match ?? {
                             name: ex.name,
-                            primary: "—",
+                            primary: "Unknown",
                             equipment: [],
                             description: "No description found.",
                           },
@@ -90,7 +90,7 @@ export default function Workouts() {
                   className="flex items-center justify-between rounded-xl border p-3 border-neutral-200 dark:border-neutral-800"
                 >
                   <Link to={`/workouts/${w.id}`} className="font-medium hover:underline">
-                    {new Date(w.startedAt).toLocaleString()} • {w.exercises.length} exercises
+                    {new Date(w.startedAt).toLocaleString()} · {w.exercises.length} exercises
                   </Link>
                   <button
                     onClick={() => repeat(w.id)}
@@ -112,3 +112,4 @@ export default function Workouts() {
     </div>
   );
 }
+

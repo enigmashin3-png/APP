@@ -4,40 +4,40 @@ Lift Legends is a cross-platform workout tracker with an AI coaching service. Th
 
 ## Architecture overview
 
-- **App shell**: Vite + React + TypeScript
-- **State**: Zustand with persistence
-- **Data**: `sql.js` reads `public/workout_exercises.db`
-- **Platforms**: Web, Tauri desktop, and Capacitor mobile
+- App shell: Vite + React + TypeScript
+- State: Zustand with persistence
+- Data: `sql.js` reads `public/workout_exercises.db`
+- Platforms: Web, Tauri desktop, and Capacitor mobile
 
 ## Repository layout
 
-- `src/` – main React application source code
-- `server/` – minimal Express server that serves the production build
-- `LiftTrackerAI/` – AI coach microservice and related client/docs
-- `mobile/` – notes for Android (Capacitor) and Windows (Tauri) builds
-- `src-tauri/` – Tauri configuration for desktop packaging
-- `public/` – static assets such as the bundled SQLite database
+- `src/`: main React application source code
+- `server/`: Express server (static + API)
+- `docs/LiftTrackerAI/`: AI coach demo and related docs
+- `apps/mobile/`: Capacitor (Android) setup
+- `apps/desktop/src-tauri/`: Tauri desktop configuration
+- `public/`: static assets (bundled SQLite database)
 
 ## Local development
 
 1. Copy `.env.example` to `.env` and fill in the values.
 2. Install dependencies with `npm install`.
 3. Start the dev servers with `npm run dev`. This runs the Express server and the web client concurrently.
-4. (Optional) start the AI coach service with `npm run dev:coach`.
+4. Optional: API is available at `/api/coach` (Express locally or `api/coach.ts` on Vercel).
 
 ## Environment variables
 
 The application uses the following variables:
 
-- `GROQ_API_KEY` – key for Groq API
-- `GROQ_MODEL` – model name for AI interactions
-- `PORT` – port used by the development server
+- `GROQ_API_KEY` — key for Groq API
+- `GROQ_MODEL` — model name for AI interactions
+- `PORT` — port used by the development server
 
 ## Build steps
 
-- `npm run check` – typecheck and lint the project
-- `npm run build` – build the web client and TypeScript sources
-- `npm start` – serve the built client with the Express server
+- `npm run check` — typecheck and lint the project
+- `npm run build` — build the web client and TypeScript sources
+- `npm start` — serve the built client with the Express server
 
 ## Deployment
 
@@ -74,3 +74,4 @@ In CI, Playwright installs browsers and runs via the workflow.
 
 ## Production API on Vercel
 This repo includes a serverless function at `api/coach.ts`. On Vercel, your frontend runs as static assets and `/api/coach` proxies AI requests using `GROQ_API_KEY`. Locally, the Express server also exposes `/api/coach` for development parity.
+

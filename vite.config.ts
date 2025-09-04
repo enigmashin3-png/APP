@@ -1,9 +1,10 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tsconfigPaths from "vite-tsconfig-paths";
 import { configDefaults } from "vitest/config";
 
 export default defineConfig(async ({ mode }) => {
-  const plugins = [react()];
+  const plugins = [react(), tsconfigPaths()];
   if (mode !== "test") {
     try {
       const { VitePWA } = await import("vite-plugin-pwa");
@@ -31,6 +32,14 @@ export default defineConfig(async ({ mode }) => {
   }
   return {
     plugins,
+    server: {
+      proxy: {
+        "/api/coach": {
+          target: "http://localhost:5000",
+          changeOrigin: true,
+        },
+      },
+    },
     test: {
       environment: "jsdom",
       setupFiles: "./vitest.setup.ts",

@@ -325,7 +325,7 @@ export default function ActiveWorkout() {
           {/* Exercise History */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Today's Exercises
+              Today’s Exercises
             </h3>
             <div className="space-y-4">
               {Object.entries(exerciseGroups).map(([exerciseId, sets]) => {

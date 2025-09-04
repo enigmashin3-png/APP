@@ -175,7 +175,7 @@ export default function Settings() {
         </div>
         <div className="text-xs opacity-70">
           Stub: uses GET/POST to your URL with header <code>x-sync-key</code>. Keep this disabled if
-          you don’t control the endpoint.
+          you don't control the endpoint.
         </div>
       </div>
 
@@ -185,3 +185,4 @@ export default function Settings() {
     </div>
   );
 }
+

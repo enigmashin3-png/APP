@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
 import dotenv from "dotenv";
+import coach from "./coach.mjs";
 
 dotenv.config();
 
@@ -12,12 +13,18 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// JSON body for API
+app.use(express.json({ limit: "1mb" }));
+
+// API routes
+app.use("/api/coach", coach);
+
+// Health check
+app.get("/healthz", (_req, res) => res.status(200).json({ ok: true }));
+
 // Serve static files from the Vite build output
 const distPath = path.join(__dirname, "../dist");
 app.use(express.static(distPath));
-
-// TODO: add your API routes before the SPA fallback
-// e.g. app.use('/api', apiRouter);
 
 // SPA fallback: send index.html for any GET that isn't handled above
 app.use((req, res, next) => {
