@@ -14,6 +14,12 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm test
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Run E2E
+        env:
+          E2E_BASE_URL: http://localhost:5173
+        run: npm run test:e2e
       - if: github.event_name == 'push'
         uses: amondnet/vercel-action@v21
         with:
