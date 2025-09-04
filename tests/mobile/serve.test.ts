@@ -11,7 +11,7 @@ beforeAll(() => {
   if (!fs.existsSync(distPath)) {
     execSync("npm run build:web", { stdio: "inherit" });
   }
-});
+}, 60000);
 
 describe("Mobile app", () => {
   it("serves built web bundle", async () => {
