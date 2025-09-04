@@ -35,7 +35,7 @@ export default defineConfig(async ({ mode }) => {
       environment: "jsdom",
       setupFiles: "./vitest.setup.ts",
       globals: true,
-      exclude: [...configDefaults.exclude, "LiftTrackerAI/**"],
+      exclude: [...configDefaults.exclude, "LiftTrackerAI/**", "tests/e2e/**"],
     },
   };
 });

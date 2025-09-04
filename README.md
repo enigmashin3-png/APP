@@ -61,3 +61,16 @@ Ensure production environment variables such as `PORT` are set in your hosting e
 1. `npm i -D @tauri-apps/cli @tauri-apps/api`
 2. `npx tauri init` (use dist folder as bundle target)
 3. `npm run build && npx tauri build`
+
+## E2E tests (Playwright)
+Run locally:
+
+```bash
+npm run dev   # in one terminal
+npm run test:e2e
+```
+
+In CI, Playwright installs browsers and runs via the workflow.
+
+## Production API on Vercel
+This repo includes a serverless function at `api/coach.ts`. On Vercel, your frontend runs as static assets and `/api/coach` proxies AI requests using `GROQ_API_KEY`. Locally, the Express server also exposes `/api/coach` for development parity.
