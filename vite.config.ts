@@ -2,6 +2,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { configDefaults } from "vitest/config";
+// Optional Sentry sourcemap upload during build
+let sentryVitePlugin: any;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  sentryVitePlugin = (await import("@sentry/vite-plugin")).sentryVitePlugin;
+} catch {}
 
 export default defineConfig(async ({ mode }) => {
   const plugins = [react(), tsconfigPaths()];
@@ -11,7 +17,14 @@ export default defineConfig(async ({ mode }) => {
       plugins.push(
         VitePWA({
           registerType: "autoUpdate",
+          includeAssets: [
+            "/icons/icon-16.png",
+            "/icons/icon-32.png",
+            "/icons/apple-touch-icon.png",
+            "/offline.html",
+          ],
           workbox: {
+            navigateFallback: "/offline.html",
             navigateFallbackDenylist: [/^\/api\//],
             runtimeCaching: [
               {
@@ -25,6 +38,15 @@ export default defineConfig(async ({ mode }) => {
                 handler: "StaleWhileRevalidate",
                 options: {
                   cacheName: "app-shell",
+                },
+              },
+              {
+                // Fonts
+                urlPattern: ({ request }) => request.destination === "font",
+                handler: "CacheFirst",
+                options: {
+                  cacheName: "fonts",
+                  expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 365 },
                 },
               },
               {
@@ -153,6 +175,25 @@ export default defineConfig(async ({ mode }) => {
           },
         })
       );
+      // Add Sentry plugin if env is configured
+      const hasSentry = !!(process.env.SENTRY_AUTH_TOKEN && process.env.SENTRY_ORG && process.env.SENTRY_PROJECT && sentryVitePlugin);
+      if (hasSentry) {
+        const release =
+          process.env.SENTRY_RELEASE ||
+          process.env.VERCEL_GIT_COMMIT_SHA ||
+          process.env.GITHUB_SHA ||
+          `local-${Date.now()}`;
+        plugins.push(
+          sentryVitePlugin({
+            org: process.env.SENTRY_ORG!,
+            project: process.env.SENTRY_PROJECT!,
+            authToken: process.env.SENTRY_AUTH_TOKEN!,
+            release,
+            sourcemaps: { assets: "./dist/**" },
+            telemetry: false,
+          })
+        );
+      }
     } catch (err) {
       // Optional dependency not installed; continue without PWA support
     }

@@ -24,4 +24,9 @@ jobs:
         run: npm run test -- --reporter=dot
       - name: Repo verifier
         run: node scripts/verify.mjs
-
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Preview smoke tests
+        run: npm run test:e2e:preview
+      - name: Dependency audit (non-blocking)
+        run: npm audit --omit=dev --audit-level=moderate || true

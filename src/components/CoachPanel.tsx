@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { useWorkoutStore } from "../store/workout";
 import { volumeForWorkout } from "../utils/stats";
+import CopyRequestId from "./CopyRequestId";
 
 export default function CoachPanel() {
   const active = useWorkoutStore((s) => s.activeWorkout);
@@ -50,6 +51,7 @@ export default function CoachPanel() {
           tips.map((t, i) => <li key={i}>{t}</li>)
         )}
       </ul>
+      <CopyRequestId />
     </aside>
   );
 }

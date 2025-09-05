@@ -41,6 +41,7 @@ type Settings = {
   barWeightKg: number;
   syncUrl?: string;
   syncKey?: string;
+  coachStream?: boolean;
 };
 
 type ExportShape = {
@@ -100,6 +101,9 @@ export const useWorkoutStore = create<State>()(
         barWeightKg: 20,
         syncUrl: "",
         syncKey: "",
+        coachStream: (typeof window !== 'undefined' && (window as any)?.VITE_COACH_STREAM_DEFAULT !== undefined)
+          ? Boolean((window as any).VITE_COACH_STREAM_DEFAULT)
+          : Boolean((import.meta as any)?.env?.VITE_COACH_STREAM_DEFAULT) || false,
       },
 
       ensureActive: () => {
@@ -268,7 +272,7 @@ export const useWorkoutStore = create<State>()(
     }),
     {
       name: "liftlegends-v1",
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => localStorage),
       migrate: (state: any, fromVersion: number) => {
         const s = state?.state ?? state;
@@ -281,6 +285,11 @@ export const useWorkoutStore = create<State>()(
           if (s.settings) {
             if (typeof s.settings.syncUrl === "undefined") s.settings.syncUrl = "";
             if (typeof s.settings.syncKey === "undefined") s.settings.syncKey = "";
+          }
+        }
+        if (fromVersion < 5) {
+          if (s.settings && typeof s.settings.coachStream === "undefined") {
+            s.settings.coachStream = false;
           }
         }
         return state;
