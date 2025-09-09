@@ -52,7 +52,8 @@ The Express app (`server/index.js`) can also serve `dist/` if you prefer a Node 
 
 ## Mobile (Capacitor)
 1. `npm run build`
-2. `cd apps/mobile && npx cap sync && npx cap open android`
+2. `npx cap sync android`
+3. `npx cap open android`
 
 ## Desktop (Tauri)
 1. `npm run build`
@@ -76,4 +77,3 @@ Icons and screenshots are generated from `public/branding/logo.png` using:
 ```bash
 npm run assets:from-logo
 ```
-

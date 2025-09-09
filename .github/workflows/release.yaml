@@ -41,14 +41,13 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx cap sync android
-        working-directory: apps/mobile
       - run: ./gradlew assembleRelease bundleRelease
-        working-directory: apps/mobile/android
+        working-directory: android
       - uses: softprops/action-gh-release@v2
         with:
           files: |
-            apps/mobile/android/app/build/outputs/apk/release/*.apk
-            apps/mobile/android/app/build/outputs/bundle/release/*.aab
+            android/app/build/outputs/apk/release/*.apk
+            android/app/build/outputs/bundle/release/*.aab
 
   ios:
     needs: desktop

@@ -18,8 +18,7 @@ The Tauri configuration (`apps/desktop/src-tauri/tauri.conf.json`) points `distD
 
 1. Run `npm run build` at the repository root.
 2. Install Android Studio/SDK/Java 17 and the Capacitor CLI (`npm install @capacitor/cli @capacitor/android`).
-3. `cd apps/mobile`.
-4. Copy the built assets with `npx cap sync`.
-5. Open the project in Android Studio using `npx cap open android` and build your APK/AAB.
+3. Copy the built assets with `npx cap sync android`.
+4. Open the project in Android Studio using `npx cap open android` and build your APK/AAB.
 
-`capacitor.config.ts` sets `webDir` to `../dist`, so the mobile wrapper ships the compiled web assets.
+`capacitor.config.ts` sets `webDir` to `dist`, so the Android wrapper at `android/` ships the compiled web assets.
