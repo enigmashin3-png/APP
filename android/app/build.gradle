@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "com.lift.legends"
-    compileSdk rootProject.ext.compileSdkVersion
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.lift.legends"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -21,6 +21,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    // Ensure Android Studio builds use Java 17 (matches AGP 8.x requirements)
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
@@ -54,13 +59,7 @@ try {
     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
 }
 
-// Ensure Android Studio builds use Java 17 (matches AGP 8.x requirements)
-android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-}
+// (compileOptions configured above in the main android block)
 
 // Fail fast with a clear message if Capacitor web assets are missing
 tasks.register("verifyWebAssets") {
