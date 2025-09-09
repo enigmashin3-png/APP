@@ -3,11 +3,12 @@ import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { configDefaults } from "vitest/config";
 // Optional Sentry sourcemap upload during build
-let sentryVitePlugin: any;
+let sentryVitePlugin: ((opts: Record<string, unknown>) => unknown) | undefined;
 try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   sentryVitePlugin = (await import("@sentry/vite-plugin")).sentryVitePlugin;
-} catch {}
+} catch (_err) {
+  // Sentry plugin is optional in local/dev environments
+}
 
 export default defineConfig(async ({ mode }) => {
   const plugins = [react(), tsconfigPaths()];
@@ -68,7 +69,7 @@ export default defineConfig(async ({ mode }) => {
                 name: "Lift Legends",
                 short_name: "LiftLegends",
                 description:
-                  "Lift Legends — log workouts, track PRs, browse exercises, and get AI coaching to progress faster.",
+                  "Lift Legends - log workouts, track PRs, browse exercises, and get AI coaching to progress faster.",
               },
             },
             {
@@ -77,7 +78,7 @@ export default defineConfig(async ({ mode }) => {
                 name: "Lift Legends",
                 short_name: "LiftLegends",
                 description:
-                  "Lift Legends — registra entrenamientos, controla récords, explora ejercicios y recibe coaching de IA.",
+                  "Lift Legends - registra entrenamientos, controla records, explora ejercicios y recibe coaching de IA.",
               },
             },
           ],
@@ -85,7 +86,7 @@ export default defineConfig(async ({ mode }) => {
             name: "Lift Legends",
             short_name: "LiftLegends",
             description:
-              "Lift Legends — log workouts, track PRs, browse exercises, and get AI coaching to progress faster.",
+              "Lift Legends - log workouts, track PRs, browse exercises, and get AI coaching to progress faster.",
             lang: "en-US",
             dir: "ltr",
             start_url: "/",

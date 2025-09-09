@@ -55,7 +55,7 @@ const icon192 = fs.existsSync(path.join(root, "public/icons/icon-192.png"));
 const icon512 = fs.existsSync(path.join(root, "public/icons/icon-512.png"));
 const html = read("index.html") || "";
 check("PWA icons present (192 & 512)", icon192 && icon512);
-check("index.html links favicon", /rel=[\"']icon[\"']/.test(html));
+check("index.html links favicon", /rel=["']icon["']/.test(html));
 // Accept either ESM .mjs or ESM .js (with type:module)
 const hasServerEntry = fs.existsSync(path.join(root, "server/index.mjs")) || fs.existsSync(path.join(root, "server/index.js"));
 const devUsesVercel = /vercel/.test(scripts["dev"]||"");

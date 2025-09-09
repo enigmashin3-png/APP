@@ -1,6 +1,6 @@
 # Lift Legends
 
-Lift Legends is a cross‑platform workout tracker with an AI coaching service. The app targets web, desktop (Tauri), and mobile (Capacitor) from a single React/TypeScript codebase.
+Lift Legends is a cross-platform workout tracker with an AI coaching service. The app targets web, desktop (Tauri), and mobile (Capacitor) from a single React/TypeScript codebase.
 
 ## Architecture
 
@@ -8,15 +8,15 @@ Lift Legends is a cross‑platform workout tracker with an AI coaching service. 
 - State: Zustand with persistence
 - Data: `sql.js` reads `public/workout_exercises.db`
 - API: Vercel serverless function at `api/coach.ts` (production and dev)
-- Optional server: Express app (`server/index.js`) for serving built assets locally or in non‑Vercel environments
+- Optional server: Express app (`server/index.js`) for serving built assets locally or in non-Vercel environments
 
 ## Layout
 
-- `src/` — React application
-- `api/` — Vercel serverless functions
-- `server/` — Express app (no API routes; static + SPA fallback)
-- `apps/` — Native shells (Tauri + Capacitor)
-- `public/` — static assets (icons, screenshots, SQLite DB)
+- `src/` – React application
+- `api/` – Vercel serverless functions
+- `server/` – Express app (no API routes; static + SPA fallback)
+- `apps/` – Native shells (Tauri + Capacitor)
+- `public/` – static assets (icons, screenshots, SQLite DB)
 
 ## Local development
 
@@ -30,17 +30,17 @@ API is available at `/api/coach` in both dev and production.
 
 ## Environment variables
 
-- `GROQ_API_KEY` — Groq API key
-- `GROQ_MODEL` — default model
-- `GROQ_ALLOWED_MODELS` — comma‑separated allowlist
-- `COACH_MAX_MESSAGES`, `COACH_MAX_CONTENT_LEN`, `COACH_RPM` — validation and rate limits
-- `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` — optional distributed rate limiting
+- `GROQ_API_KEY` – Groq API key
+- `GROQ_MODEL` – default model
+- `GROQ_ALLOWED_MODELS` – comma-separated allowlist
+- `COACH_MAX_MESSAGES`, `COACH_MAX_CONTENT_LEN`, `COACH_RPM` – validation and rate limits
+- `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` – optional distributed rate limiting
 
 ## Build and preview
 
-- `npm run check` — typecheck + lint
-- `npm run build` — build the web client
-- `npm run preview` — serve built assets via Vite preview
+- `npm run check` – typecheck + lint
+- `npm run build` – build the web client
+- `npm run preview` – serve built assets via Vite preview
 
 The Express app (`server/index.js`) can also serve `dist/` if you prefer a Node server.
 

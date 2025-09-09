@@ -14,8 +14,9 @@ describe('CoachBodySchema', () => {
   });
 
   it('rejects invalid roles', () => {
-    const r = CoachBodySchema.safeParse({ messages: [{ role: 'systemX' as any, content: 'x' }] });
+    // Pass as unknown to avoid using any; schema should reject it
+    const invalid = { messages: [{ role: 'systemX', content: 'x' }] } as unknown;
+    const r = CoachBodySchema.safeParse(invalid);
     expect(r.success).toBe(false);
   });
 });
-

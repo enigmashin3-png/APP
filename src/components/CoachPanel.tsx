@@ -14,7 +14,7 @@ export default function CoachPanel() {
 
     // Tip 1: rest suggestion
     out.push(
-      `Default rest is ${settings.defaultRestSec}s. Increase to 120–180s for heavy compounds.`,
+      `Default rest is ${settings.defaultRestSec}s. Increase to 120-180s for heavy compounds.`,
     );
 
     // Tip 2: volume spike check vs 7-day avg of last 3 sessions
@@ -34,7 +34,7 @@ export default function CoachPanel() {
       e.sets.some((s) => s.done && (!s.weight || !s.reps)),
     );
     if (hasMissing)
-      out.push("Some completed sets are missing weight or reps — fill them for accurate stats.");
+      out.push("Some completed sets are missing weight or reps - fill them for accurate stats.");
 
     return out;
   }, [active, history, settings]);
@@ -46,7 +46,7 @@ export default function CoachPanel() {
       <div className="text-lg font-semibold mb-2">Coach</div>
       <ul className="list-disc pl-5 space-y-2 text-sm">
         {tips.length === 0 ? (
-          <li>All good. Keep going! 💪</li>
+          <li>All good. Keep going!</li>
         ) : (
           tips.map((t, i) => <li key={i}>{t}</li>)
         )}
@@ -55,3 +55,4 @@ export default function CoachPanel() {
     </aside>
   );
 }
+

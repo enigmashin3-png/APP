@@ -23,7 +23,9 @@ try {
       environment: process.env.VERCEL_ENV || process.env.NODE_ENV || 'development',
     });
   }
-} catch {}
+} catch (_err) {
+  // Sentry is optional; ignore init failures
+}
 
 function isOriginAllowed(origin: string | null): string | null {
   const allow = (process.env.COACH_ALLOWED_ORIGINS || '')
@@ -48,14 +50,15 @@ function corsHeaders(origin: string | null) {
   } as Record<string, string>;
 }
 
-function sanitizeMessages(input: any): Msg[] {
+function sanitizeMessages(input: unknown): Msg[] {
   if (!Array.isArray(input)) return [];
+  const arr: ReadonlyArray<unknown> = input;
   const out: Msg[] = [];
-  for (const m of input.slice(-MAX_MESSAGES)) {
-    const role: Role | undefined = (['system', 'user', 'assistant'] as Role[]).includes(m?.role)
-      ? m.role
+  for (const m of arr.slice(-MAX_MESSAGES) as ReadonlyArray<{ role?: unknown; content?: unknown }>) {
+    const role: Role | undefined = (['system', 'user', 'assistant'] as Role[]).includes(m?.role as Role)
+      ? (m?.role as Role)
       : undefined;
-    const content = typeof m?.content === 'string' ? m.content.slice(0, MAX_CONTENT_LEN) : '';
+    const content = typeof m?.content === 'string' ? (m.content as string).slice(0, MAX_CONTENT_LEN) : '';
     if (role && content) out.push({ role, content });
   }
   return out;
@@ -68,11 +71,12 @@ async function upstashIncr(key: string, ttlSeconds: number): Promise<number | nu
   const headers = { Authorization: `Bearer ${token}` } as Record<string, string>;
   const enc = encodeURIComponent(key);
   const r = await fetch(`${base}/incr/${enc}`, { headers, cache: 'no-store' });
-  const j = (await r.json()) as any;
-  if (j?.result === 1) {
+  const j: unknown = await r.json();
+  const result = (j as { result?: unknown })?.result;
+  if (result === 1) {
     await fetch(`${base}/expire/${enc}/${ttlSeconds}`, { headers, cache: 'no-store' });
   }
-  return typeof j?.result === 'number' ? j.result : null;
+  return typeof result === 'number' ? (result as number) : null;
 }
 
 export default async function handler(req: Request): Promise<Response> {
@@ -146,7 +150,7 @@ export default async function handler(req: Request): Promise<Response> {
   }
 
   // Helper to fetch with timeout/retries (non-streaming only)
-  async function fetchWithRetry(body: any) {
+  async function fetchWithRetry(body: { model: string; messages: Msg[]; stream?: boolean }) {
     const tries = 2;
     const timeoutMs = Number(process.env.COACH_TIMEOUT_MS || 15000);
     for (let i = 0; i < tries; i++) {
@@ -216,8 +220,9 @@ export default async function handler(req: Request): Promise<Response> {
       status,
       headers: { ...baseHeaders, 'X-Request-Id': reqId, 'X-RateLimit-Limit': String(limit), 'X-RateLimit-Remaining': String(remaining) },
     });
-  } catch (e: any) {
-    console.error('coach error', e?.message || e);
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.error('coach error', msg);
     try {
       SentryEdge.withScope?.((scope) => {
         scope.setTag('reqId', reqId);
@@ -225,7 +230,9 @@ export default async function handler(req: Request): Promise<Response> {
         scope.setContext('coach', { messages: messages.length, ip });
         SentryEdge.captureException(e);
       });
-    } catch {}
+    } catch (_err) {
+      // Ignore Sentry capture errors in edge
+    }
     return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
       status: 500,
       headers: { ...baseHeaders, 'X-Request-Id': reqId },

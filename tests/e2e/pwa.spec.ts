@@ -8,10 +8,10 @@ test('manifest and icons are available', async ({ request, page, baseURL }) => {
   // Manifest fetch
   const mres = await request.get('/manifest.webmanifest');
   expect(mres.ok()).toBeTruthy();
-  const manifest = await mres.json();
+  const manifest: { icons?: Array<{ src?: string }> } = await mres.json();
   expect(Array.isArray(manifest.icons)).toBeTruthy();
-  const has192 = manifest.icons.some((i: any) => /icon-192/.test(i.src));
-  const has512 = manifest.icons.some((i: any) => /icon-512/.test(i.src));
+  const has192 = (manifest.icons || []).some((i: { src?: string }) => /icon-192/.test(i.src || ''));
+  const has512 = (manifest.icons || []).some((i: { src?: string }) => /icon-512/.test(i.src || ''));
   expect(has192 && has512).toBeTruthy();
 
   // Icons fetch
@@ -20,4 +20,3 @@ test('manifest and icons are available', async ({ request, page, baseURL }) => {
   const i512 = await request.get('/icons/icon-512.png');
   expect(i512.ok()).toBeTruthy();
 });
-

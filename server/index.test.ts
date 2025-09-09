@@ -9,7 +9,6 @@ describe("Static bundle server", () => {
   it("serves index.html from dist", async () => {
     if (!fs.existsSync(distPath)) {
       // Build the app if dist is missing
-      // eslint-disable-next-line no-console
       console.log("Building web bundle for test...");
       await import("node:child_process").then(({ execSync }) => {
         execSync("npm run build:web", { stdio: "inherit" });

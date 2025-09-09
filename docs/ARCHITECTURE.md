@@ -1,9 +1,9 @@
 # Architecture Overview
 
-**App shell**: Vite + React + TypeScript  
-**State**: Zustand (persisted)  
-**Data**: `sql.js` reading `public/workout_exercises.db`  
-**Platforms**: Web, Tauri (desktop), Capacitor (mobile)
+App shell: Vite + React + TypeScript
+State: Zustand (persisted)
+Data: `sql.js` reading `public/workout_exercises.db`
+Platforms: Web, Tauri (desktop), Capacitor (mobile)
 
 ## Directories
 
@@ -19,6 +19,7 @@
 
 ## Build
 
-- `npm run check` — typecheck + lint
-- `npm run build` — production bundle
+- `npm run check` – typecheck + lint
+- `npm run build` – production bundle
 - GitHub Actions runs on every PR
+
