@@ -68,9 +68,9 @@ const missing = checks.filter(c => !c.ok);
 const pad = (s, n=40) => (s + " ".repeat(n)).slice(0, n);
 console.log("\n=== Lift Legends Repo Verifier ===\n");
 for (const c of checks) {
-  console.log(`${pad(c.label)} ${c.ok ? "✅" : "❌"} ${c.ok ? "" : (c.extra||"")}`);
+  console.log(`${pad(c.label)} ${c.ok ? "?." : "?"} ${c.ok ? "" : (c.extra||"")}`);
 }
-console.log("\nSummary:", missing.length === 0 ? "All good ✅" : `${missing.length} issues ❌`);
+console.log("\nSummary:", missing.length === 0 ? "All good ?." : `${missing.length} issues ?`);
 if (missing.length) {
   console.log("\nFix Hints:");
   for (const m of missing) {
@@ -97,4 +97,3 @@ if (missing.length) {
   }
 }
 console.log("\nTip: If Codex showed 'no diffs available', it likely means these items already exist or files differ from expected contexts.\n");
-
