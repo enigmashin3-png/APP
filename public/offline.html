@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lift Legends — Offline</title>
+    <title>Lift Legends - Offline</title>
     <meta name="robots" content="noindex" />
     <link rel="icon" href="/icons/icon-32.png" />
     <style>
@@ -12,6 +12,7 @@
       h1 { margin: 0 0 8px; color:#D8B24D }
       p { margin: 0 0 8px }
       small { color:#9CA3AF }
+      button { background:#D8B24D;color:#0C0F14;border:none;padding:8px 12px;border-radius:6px;cursor:pointer }
     </style>
   </head>
   <body>
@@ -19,6 +20,7 @@
       <h1>You're Offline</h1>
       <p>The network appears unavailable. You can still browse cached screens; changes will sync when back online.</p>
       <p><a href="/" style="color:#D8B24D">Return to home</a></p>
+      <p><button onclick="location.reload()">Try again</button></p>
       <small>Lift Legends</small>
     </div>
   </body>

@@ -12,8 +12,9 @@ export async function uploadBackup(
     });
     if (!res.ok) return { ok: false, msg: `HTTP ${res.status}` };
     return { ok: true, msg: "Uploaded" };
-  } catch (e: any) {
-    return { ok: false, msg: e?.message || "Network error" };
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : 'Network error';
+    return { ok: false, msg };
   }
 }
 
@@ -30,7 +31,8 @@ export async function downloadBackup(
     if (!res.ok) return { ok: false, msg: `HTTP ${res.status}` };
     const text = await res.text();
     return { ok: true, msg: "Downloaded", json: text };
-  } catch (e: any) {
-    return { ok: false, msg: e?.message || "Network error" };
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : 'Network error';
+    return { ok: false, msg };
   }
 }

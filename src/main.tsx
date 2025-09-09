@@ -4,6 +4,7 @@ import App from "./App";
 import { Sentry } from "./sentry.client";
 import "./index.css";
 import ThemeProvider from "./components/ThemeProvider";
+import { BrowserRouter } from "react-router-dom";
 
 const Fallback = () => (
   <div style={{ padding: 24 }}>
@@ -14,14 +15,16 @@ const Fallback = () => (
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ThemeProvider>
-      {Sentry?.ErrorBoundary ? (
-        <Sentry.ErrorBoundary fallback={<Fallback />}>
+    <BrowserRouter>
+      <ThemeProvider>
+        {Sentry?.ErrorBoundary ? (
+          <Sentry.ErrorBoundary fallback={<Fallback />}>
+            <App />
+          </Sentry.ErrorBoundary>
+        ) : (
           <App />
-        </Sentry.ErrorBoundary>
-      ) : (
-        <App />
-      )}
-    </ThemeProvider>
+        )}
+      </ThemeProvider>
+    </BrowserRouter>
   </React.StrictMode>,
 );

@@ -1,3 +1,13 @@
+type SpeechResultEvent = { results?: Array<Array<{ transcript?: string }>> };
+type SpeechRecognitionCtor = new () => {
+  lang: string;
+  interimResults: boolean;
+  maxAlternatives: number;
+  onresult: (e: SpeechResultEvent) => void;
+  onend: () => void;
+  start: () => void;
+};
+
 export function isVoiceSupported() {
   return (
     typeof window !== "undefined" &&
@@ -6,13 +16,19 @@ export function isVoiceSupported() {
 }
 
 export function startDictation(onText: (text: string) => void, onEnd?: () => void) {
-  const SR: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+  const ctor = (window as unknown as Record<string, unknown>).SpeechRecognition as
+    | SpeechRecognitionCtor
+    | undefined;
+  const webkitCtor = (window as unknown as Record<string, unknown>).webkitSpeechRecognition as
+    | SpeechRecognitionCtor
+    | undefined;
+  const SR = ctor || webkitCtor;
   if (!SR) return false;
   const rec = new SR();
   rec.lang = "en-US";
   rec.interimResults = false;
   rec.maxAlternatives = 1;
-  rec.onresult = (e: any) => {
+  rec.onresult = (e: SpeechResultEvent) => {
     const text = e.results?.[0]?.[0]?.transcript ?? "";
     onText(text);
   };
