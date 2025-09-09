@@ -41,6 +41,7 @@ type Settings = {
   barWeightKg: number;
   syncUrl?: string;
   syncKey?: string;
+  coachStream?: boolean;
 };
 
 type ExportShape = {
@@ -100,6 +101,11 @@ export const useWorkoutStore = create<State>()(
         barWeightKg: 20,
         syncUrl: "",
         syncKey: "",
+        coachStream:
+          (typeof window !== 'undefined' &&
+            (window as unknown as Record<string, unknown>)?.VITE_COACH_STREAM_DEFAULT !== undefined)
+            ? Boolean((window as unknown as Record<string, unknown>).VITE_COACH_STREAM_DEFAULT)
+            : Boolean((import.meta as unknown as { env?: Record<string, unknown> })?.env?.VITE_COACH_STREAM_DEFAULT) || false,
       },
 
       ensureActive: () => {
@@ -156,7 +162,11 @@ export const useWorkoutStore = create<State>()(
 
       toggleFavoriteExercise: (name) => {
         const fav = new Set(get().favorites);
-        fav.has(name) ? fav.delete(name) : fav.add(name);
+        if (fav.has(name)) {
+          fav.delete(name);
+        } else {
+          fav.add(name);
+        }
         set({ favorites: Array.from(fav) });
       },
 
@@ -268,14 +278,16 @@ export const useWorkoutStore = create<State>()(
     }),
     {
       name: "liftlegends-v1",
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => localStorage),
-      migrate: (state: any, fromVersion: number) => {
-        const s = state?.state ?? state;
-        if (!s) return state;
+      migrate: (state: unknown, fromVersion: number) => {
+        const container = (state as { state?: unknown }) ?? {};
+        const s = (container.state ?? state) as { settings?: Record<string, unknown> } | undefined;
+        if (!s) return state as unknown;
         if (fromVersion < 3) {
-          if (s.settings && typeof s.settings.barWeightKg === "undefined")
+          if (s.settings && typeof s.settings.barWeightKg === "undefined") {
             s.settings.barWeightKg = 20;
+          }
         }
         if (fromVersion < 4) {
           if (s.settings) {
@@ -283,7 +295,12 @@ export const useWorkoutStore = create<State>()(
             if (typeof s.settings.syncKey === "undefined") s.settings.syncKey = "";
           }
         }
-        return state;
+        if (fromVersion < 5) {
+          if (s.settings && typeof s.settings.coachStream === "undefined") {
+            s.settings.coachStream = false;
+          }
+        }
+        return state as unknown;
       },
     },
   ),

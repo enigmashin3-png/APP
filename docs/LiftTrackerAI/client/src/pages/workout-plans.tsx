@@ -153,7 +153,7 @@ export default function WorkoutPlans() {
           <div className="mb-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Your Plans</h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Custom workout programs you've created
+              Custom workout programs you have created
             </p>
           </div>
 

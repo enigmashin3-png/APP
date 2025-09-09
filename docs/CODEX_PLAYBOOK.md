@@ -15,21 +15,21 @@ Use Conventional-like messages: `feat(...)`, `fix(...)`, `chore(...)`, etc.
 Prefer this structure for patches:
 
 1. `git checkout -b <branch>`
-2. One or more `applypatch << 'PATCH'` blocks
+2. One or more apply_patch blocks
 3. `git add -A && git commit -m "<summary>"`
 4. `npm run check` (typecheck + lint)
 5. `npm run build`
 
 ## File layout anchors
 
-- `src/components/` — dumb/presentational components
-- `src/pages/` — route-level pages
-- `src/store/` — zustand store and slices
-- `src/utils/` — pure utilities (unit tested first)
-- `src/lib/` — platform bindings (tauri/capacitor/theme/units)
-- `src/data/` — DB access/loaders (sql.js), constants
-- `src/hooks/` — React hooks only (no side effects at import time)
-- `src/targets/` — platform-specific UI (e.g., `tauri/Titlebar.tsx`)
+- `src/components/` – dumb/presentational components
+- `src/pages/` – route-level pages
+- `src/store/` – zustand store and slices
+- `src/utils/` – pure utilities (unit tested first)
+- `src/lib/` – platform bindings (tauri/capacitor/theme/units)
+- `src/data/` – DB access/loaders (sql.js), constants
+- `src/hooks/` – React hooks only (no side effects at import time)
+- `src/targets/` – platform-specific UI (e.g., `tauri/Titlebar.tsx`)
 
 ## Guardrails
 
@@ -42,3 +42,4 @@ Prefer this structure for patches:
 - Screenshots for UI touches
 - No ESLint errors, `npm run check` passes
 - No breaking changes to exported types without note in PR
+

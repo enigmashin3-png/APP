@@ -154,3 +154,13 @@ function showExerciseForm() {
     }
 }
 
+// Expose functions for inline HTML handlers in demo pages
+window.addExercise = addExercise;
+window.removeExercise = removeExercise;
+window.saveWorkout = saveWorkout;
+window.clearWorkout = clearWorkout;
+window.toggleExerciseForm = toggleExerciseForm;
+window.showExerciseForm = showExerciseForm;
+window.hideExerciseForm = hideExerciseForm;
+window.loadWorkout = loadWorkout;
+

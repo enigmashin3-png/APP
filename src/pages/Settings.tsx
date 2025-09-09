@@ -85,6 +85,21 @@ export default function Settings() {
       </div>
 
       <div className="space-y-3">
+        <div className="text-lg font-semibold">AI Coach</div>
+        <label className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            checked={!!settings.coachStream}
+            onChange={(e) => setSetting("coachStream", e.target.checked)}
+          />
+          <span>Stream responses</span>
+        </label>
+        <div className="text-xs opacity-70">
+          Streams partial tokens for faster perceived responses. Requires stable network.
+        </div>
+      </div>
+
+      <div className="space-y-3">
         <div className="text-lg font-semibold">Backup</div>
         <div className="flex flex-wrap gap-2">
           <button
@@ -175,7 +190,7 @@ export default function Settings() {
         </div>
         <div className="text-xs opacity-70">
           Stub: uses GET/POST to your URL with header <code>x-sync-key</code>. Keep this disabled if
-          you don’t control the endpoint.
+          you don't control the endpoint.
         </div>
       </div>
 

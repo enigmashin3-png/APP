@@ -4,3 +4,5 @@
 dist/
 **/dist/
 node_modules/
+Oracle_JDK-24/
+*.tsbuildinfo

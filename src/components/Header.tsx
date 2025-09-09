@@ -1,4 +1,4 @@
-import { LOGO_DATA_URI } from "@/assets/logo";
+import { LOGO_DATA_URI } from "@/branding/logo";
 
 export function Header() {
   return (

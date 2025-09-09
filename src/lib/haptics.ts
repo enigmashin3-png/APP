@@ -5,17 +5,23 @@ export async function hapticTap() {
   if (!Capacitor.isNativePlatform()) return;
   try {
     await Haptics.impact({ style: ImpactStyle.Light });
-  } catch {}
+  } catch (_err) {
+    // ignore haptics errors on unsupported devices
+  }
 }
 export async function hapticSuccess() {
   if (!Capacitor.isNativePlatform()) return;
   try {
     await Haptics.notification({ type: NotificationType.Success });
-  } catch {}
+  } catch (_err) {
+    // ignore haptics errors on unsupported devices
+  }
 }
 export async function hapticError() {
   if (!Capacitor.isNativePlatform()) return;
   try {
     await Haptics.notification({ type: NotificationType.Error });
-  } catch {}
+  } catch (_err) {
+    // ignore haptics errors on unsupported devices
+  }
 }
