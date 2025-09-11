@@ -8,12 +8,17 @@ export type SetEntry = {
   rpe?: number;
   done?: boolean;
   restEndAt?: number | null;
+  warmup?: boolean;
 };
 
 export type ExerciseEntry = {
   id: string;
   name: string;
   sets: SetEntry[];
+  // Optional per-exercise settings/metadata
+  restSec?: number;
+  note?: string;
+  supersetId?: string;
 };
 
 export type Workout = {
@@ -63,7 +68,16 @@ type State = {
   // actions
   ensureActive: () => void;
   addExercise: (name: string) => void;
-  addSet: (exId: string) => void;
+  addExerciseAndGetId: (name: string) => string;
+  removeExercise: (exId: string) => void;
+  replaceExercise: (exId: string, name: string) => void;
+  setExercise: (exId: string, data: Partial<ExerciseEntry>) => void;
+  addSet: (exId: string, warmup?: boolean) => void;
+  addWarmupSets: (exId: string, count?: number) => void;
+  deleteSet: (exId: string, setId: string) => void;
+  moveExercise: (exId: string, dir: 'up' | 'down') => void;
+  moveSet: (exId: string, setId: string, dir: 'up' | 'down') => void;
+  updateSet: (exId: string, setId: string, payload: Partial<SetEntry>) => void;
   completeSet: (exId: string, setId: string, payload: Partial<SetEntry>) => void;
   finishWorkout: (notes?: string) => void;
 
@@ -118,20 +132,109 @@ export const useWorkoutStore = create<State>()(
         const s = get();
         if (!s.activeWorkout) return;
         const recents = [name, ...s.recents.filter((x) => x !== name)].slice(0, 12);
-        const ex: ExerciseEntry = { id: uid(), name, sets: [] };
+        const ex: ExerciseEntry = { id: uid(), name, sets: [], restSec: s.settings.defaultRestSec };
         set({
           recents,
           activeWorkout: { ...s.activeWorkout, exercises: [ex, ...s.activeWorkout.exercises] },
         });
       },
 
-      addSet: (exId) => {
+      addExerciseAndGetId: (name) => {
+        const s = get();
+        if (!s.activeWorkout) return "";
+        const recents = [name, ...s.recents.filter((x) => x !== name)].slice(0, 12);
+        const id = uid();
+        const ex: ExerciseEntry = { id, name, sets: [], restSec: s.settings.defaultRestSec };
+        set({
+          recents,
+          activeWorkout: { ...s.activeWorkout, exercises: [ex, ...s.activeWorkout.exercises] },
+        });
+        return id;
+      },
+
+      removeExercise: (exId) => {
+        const w = get().activeWorkout;
+        if (!w) return;
+        set({ activeWorkout: { ...w, exercises: w.exercises.filter((e) => e.id !== exId) } });
+      },
+
+      replaceExercise: (exId, name) => {
+        const w = get().activeWorkout;
+        if (!w) return;
+        const exercises = w.exercises.map((e) => (e.id === exId ? { ...e, name } : e));
+        set({ activeWorkout: { ...w, exercises } });
+      },
+
+      setExercise: (exId, data) => {
+        const w = get().activeWorkout;
+        if (!w) return;
+        const exercises = w.exercises.map((e) => (e.id === exId ? { ...e, ...data } : e));
+        set({ activeWorkout: { ...w, exercises } });
+      },
+
+      addSet: (exId, warmup = false) => {
         const w = get().activeWorkout;
         if (!w) return;
         const exercises = w.exercises.map((e) =>
           e.id === exId
-            ? { ...e, sets: [...e.sets, { id: uid(), done: false, restEndAt: null }] }
+            ? { ...e, sets: [...e.sets, { id: uid(), done: false, restEndAt: null, warmup }] }
             : e,
+        );
+        set({ activeWorkout: { ...w, exercises } });
+      },
+
+      addWarmupSets: (exId, count = 2) => {
+        const w = get().activeWorkout;
+        if (!w) return;
+        const warmups = Array.from({ length: count }).map(() => ({ id: uid(), done: false, restEndAt: null, warmup: true } as SetEntry));
+        const exercises = w.exercises.map((e) => (e.id === exId ? { ...e, sets: [...e.sets, ...warmups] } : e));
+        set({ activeWorkout: { ...w, exercises } });
+      },
+
+      deleteSet: (exId, setId) => {
+        const w = get().activeWorkout;
+        if (!w) return;
+        const exercises = w.exercises.map((e) =>
+          e.id === exId ? { ...e, sets: e.sets.filter((s) => s.id !== setId) } : e,
+        );
+        set({ activeWorkout: { ...w, exercises } });
+      },
+
+      moveExercise: (exId, dir) => {
+        const w = get().activeWorkout;
+        if (!w) return;
+        const idx = w.exercises.findIndex((e) => e.id === exId);
+        if (idx < 0) return;
+        const arr = [...w.exercises];
+        const newIdx = dir === 'up' ? Math.max(0, idx - 1) : Math.min(arr.length - 1, idx + 1);
+        if (newIdx === idx) return;
+        const [ex] = arr.splice(idx, 1);
+        arr.splice(newIdx, 0, ex);
+        set({ activeWorkout: { ...w, exercises: arr } });
+      },
+
+      moveSet: (exId, setId, dir) => {
+        const w = get().activeWorkout;
+        if (!w) return;
+        const exercises = w.exercises.map((e) => {
+          if (e.id !== exId) return e;
+          const idx = e.sets.findIndex((s) => s.id === setId);
+          if (idx < 0) return e;
+          const arr = [...e.sets];
+          const newIdx = dir === 'up' ? Math.max(0, idx - 1) : Math.min(arr.length - 1, idx + 1);
+          if (newIdx === idx) return e;
+          const [st] = arr.splice(idx, 1);
+          arr.splice(newIdx, 0, st);
+          return { ...e, sets: arr };
+        });
+        set({ activeWorkout: { ...w, exercises } });
+      },
+
+      updateSet: (exId, setId, payload) => {
+        const w = get().activeWorkout;
+        if (!w) return;
+        const exercises = w.exercises.map((e) =>
+          e.id === exId ? { ...e, sets: e.sets.map((s) => (s.id === setId ? { ...s, ...payload } : s)) } : e,
         );
         set({ activeWorkout: { ...w, exercises } });
       },
@@ -139,7 +242,9 @@ export const useWorkoutStore = create<State>()(
       completeSet: (exId, setId, payload) => {
         const w = get().activeWorkout;
         if (!w) return;
-        const restEndAt = Date.now() + get().settings.defaultRestSec * 1000;
+        const ex = w.exercises.find((e) => e.id === exId);
+        const restSec = (ex?.restSec as number | undefined) ?? get().settings.defaultRestSec;
+        const restEndAt = Date.now() + restSec * 1000;
         const exercises = w.exercises.map((e) =>
           e.id === exId
             ? {
@@ -278,11 +383,11 @@ export const useWorkoutStore = create<State>()(
     }),
     {
       name: "liftlegends-v1",
-      version: 5,
+      version: 6,
       storage: createJSONStorage(() => localStorage),
       migrate: (state: unknown, fromVersion: number) => {
         const container = (state as { state?: unknown }) ?? {};
-        const s = (container.state ?? state) as { settings?: Record<string, unknown> } | undefined;
+        const s = (container.state ?? state) as { settings?: Record<string, unknown>; activeWorkout?: any } | undefined;
         if (!s) return state as unknown;
         if (fromVersion < 3) {
           if (s.settings && typeof s.settings.barWeightKg === "undefined") {
@@ -298,6 +403,16 @@ export const useWorkoutStore = create<State>()(
         if (fromVersion < 5) {
           if (s.settings && typeof s.settings.coachStream === "undefined") {
             s.settings.coachStream = false;
+          }
+        }
+        if (fromVersion < 6) {
+          // Ensure new fields exist
+          const w = (s as any).activeWorkout as Workout | undefined;
+          if (w) {
+            w.exercises = (w.exercises || []).map((e: any) => ({
+              restSec: (e.restSec ?? (s.settings?.defaultRestSec as number | undefined)) as number | undefined,
+              ...e,
+            }));
           }
         }
         return state as unknown;

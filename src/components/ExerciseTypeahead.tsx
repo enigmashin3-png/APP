@@ -1,5 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDebounce } from "../hooks/useDebounce";
+import { useDbExercises } from "../hooks/useDbExercises";
+import exercisesData from "../../data/exercises.json";
 
 type Exercise = { id?: number | string; name: string; muscle?: string; equipment?: string };
 
@@ -26,30 +28,49 @@ export default function ExerciseTypeahead({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const debounced = useDebounce(value, 150);
+  const { fuse } = useDbExercises();
+
+  // Fallback dataset from the bundled JSON (used if DB search isn't ready)
+  const fallbackList = useMemo<Exercise[]>(
+    () =>
+      (exercisesData as any[]).map((r) => ({
+        id: r.id ?? r.name,
+        name: String(r.name),
+        muscle: r.muscle ? String(r.muscle) : undefined,
+        equipment: r.equipment ? String(r.equipment) : undefined,
+      })),
+    [],
+  );
 
   useEffect(() => {
-    if (!debounced?.trim()) {
+    const q = debounced?.trim();
+    if (!q) {
       setItems([]);
       setOpen(false);
       return;
     }
-    const controller = new AbortController();
-    const q = encodeURIComponent(debounced.trim());
-    fetch(`/api/exercises?q=${q}&limit=${limit}`, { signal: controller.signal })
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then((data: Exercise[]) => {
-        setItems(data);
-        setOpen(true);
-        setHighlight(0);
-      })
-      .catch((e) => {
-        console.error("typeahead fetch failed:", e);
-      });
-    return () => controller.abort();
-  }, [debounced, limit]);
+    if (fuse) {
+      const results = fuse
+        .search(q)
+        .slice(0, limit)
+        .map((r) => ({ id: r.item.id, name: r.item.name, muscle: r.item.primary }));
+      setItems(results);
+      setOpen(results.length > 0);
+      setHighlight(0);
+      return;
+    }
+
+    // Fallback to local JSON when DB search isn't available
+    const ql = q.toLowerCase();
+    const filtered = fallbackList
+      .filter((e) =>
+        e.name.toLowerCase().includes(ql) || (e.muscle ? e.muscle.toLowerCase().includes(ql) : false),
+      )
+      .slice(0, limit);
+    setItems(filtered);
+    setOpen(filtered.length > 0);
+    setHighlight(0);
+  }, [debounced, limit, fuse]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!open) return;

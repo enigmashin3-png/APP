@@ -17,7 +17,8 @@ import NotFound from "./pages/NotFound";
 export function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      {/* Make Workout the default landing to match the mock */}
+      <Route path="/" element={<WorkoutHome />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/workouts" element={<Workouts />} />
       <Route path="/workout" element={<WorkoutHome />} />
@@ -34,4 +35,3 @@ export function AppRoutes() {
     </Routes>
   );
 }
-
