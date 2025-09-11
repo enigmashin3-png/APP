@@ -4,9 +4,9 @@
   --text: #e6edf6; /* primary text */
   --muted: #9fb3c8; /* secondary text */
   --border: #223040;
-  --primary: #2b7fff; /* buttons, accents */
-  --primary-600: #2b6fe6;
-  --primary-300: #5cc0ff;
+  --primary: #d8b24d; /* buttons, accents (gold) */
+  --primary-600: #b88f2d;
+  --primary-300: #f1d98a;
   --success: #3bd27f;
   --danger: #ff6574;
   --radius: 14px;
@@ -144,8 +144,8 @@ body {
 .badge {
   display: inline-block;
   padding: 4px 8px;
-  background: rgba(44, 127, 255, 0.12);
-  border: 1px solid rgba(44, 127, 255, 0.35);
+  background: rgba(216, 178, 77, 0.12);
+  border: 1px solid rgba(216, 178, 77, 0.35);
   border-radius: 999px;
   color: var(--primary-300);
   font-size: 12px;

@@ -5,6 +5,7 @@ import { Sentry } from "./sentry.client";
 import "./index.css";
 import ThemeProvider from "./components/ThemeProvider";
 import { BrowserRouter } from "react-router-dom";
+import { warmLoadDbExercisesIdle } from "./data/exercisesDb";
 
 // Android: handle hardware back button and deep link routing when running under Capacitor
 // This is safe in web/desktop; it no-ops if the plugin/env isn't present.
@@ -64,3 +65,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     </BrowserRouter>
   </React.StrictMode>,
 );
+
+// Warm-load the exercises DB in the background so typeahead is ready quickly
+warmLoadDbExercisesIdle();

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MoreHorizontal, Plus, CalendarDays, Search } from "lucide-react";
+import { MoreHorizontal, Plus, CalendarDays, Search, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { LOGO_DATA_URI, resolveLogoUrl } from "../branding/logo";
 
@@ -42,11 +42,21 @@ export default function WorkoutHome() {
   return (
     <div className="app">
       <header className="app-header">
-        <img src={logoSrc} alt="Lift Legends" style={{ width: 32, height: 32, opacity: 0.9 }} />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <img src={logoSrc} alt="Lift Legends" style={{ width: 32, height: 32, opacity: 0.9 }} />
+          <div style={{ display: "flex", gap: 10 }}>
+            <button className="icon-btn" title="Search">
+              <Search size={18} />
+            </button>
+            <button className="icon-btn" title="Pro">
+              <Crown size={18} />
+            </button>
+          </div>
+        </div>
         <div className="h1">Workout</div>
         <div className="subtle">Quick start</div>
         <div className="container" style={{ padding: "10px 0 0" }}>
-          <button className="quick" onClick={() => navigate("/workout/new")}>
+          <button className="quick" onClick={() => navigate("/workout/session")}>
             START AN EMPTY WORKOUT
           </button>
         </div>

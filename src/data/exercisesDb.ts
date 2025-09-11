@@ -20,6 +20,29 @@ export type DbExercise = {
 let _cache: DbExercise[] | null = null;
 let _loading: Promise<DbExercise[]> | null = null;
 
+const LS_KEY = "exdb-v2";
+
+function readLocalCache(): DbExercise[] | null {
+  try {
+    if (typeof window === "undefined") return null;
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { list?: DbExercise[] } | null;
+    if (!parsed || !Array.isArray(parsed.list)) return null;
+    return parsed.list;
+  } catch {
+    return null;
+  }
+}
+function writeLocalCache(list: DbExercise[]) {
+  try {
+    if (typeof window === "undefined") return;
+    localStorage.setItem(LS_KEY, JSON.stringify({ list }));
+  } catch {
+    // ignore
+  }
+}
+
 function listish(v: any): string[] {
   if (!v) return [];
   if (Array.isArray(v)) return v.map((x) => String(x).trim()).filter(Boolean);
@@ -41,6 +64,15 @@ function normalizeRow(row: Record<string, any>): DbExercise {
     imageUrl: row.image_url ?? row.image ?? row.thumbnail ?? undefined,
     images: listish(row.images ?? row.gallery),
   };
+}
+
+function isLikelyStepName(name: string): boolean {
+  const n = name.trim();
+  if (n.length > 80) return true;
+  const words = n.split(/\s+/).length;
+  if (words > 10 && /[.!?]$/.test(n)) return true; // sentence-like
+  if (/^(Start|Place|Slowly|Stop|Pull|Hold)\b/i.test(n) && words > 6) return true;
+  return false;
 }
 
 async function openDb(bytes: Uint8Array) {
@@ -80,6 +112,12 @@ async function queryAll(dbBytes: Uint8Array, q: string): Promise<Record<string, 
 
 async function bestEffortRead(dbBytes: Uint8Array): Promise<DbExercise[]> {
   const shapes = [
+    // Preferred: join body_parts and equipment, and clamp overly long names that look like steps
+    `SELECT e.id, e.name, COALESCE(e.targeted_muscle, bp.name) AS primary, eq.name AS equipment, e.additional_information AS description, NULL as tags, NULL as gif_url, NULL as image_url, NULL as images
+     FROM exercises e
+     LEFT JOIN body_parts bp ON bp.id = e.body_part_id
+     LEFT JOIN equipment eq ON eq.id = e.equipment_id
+     WHERE e.name IS NOT NULL AND length(e.name) <= 80`,
     `SELECT id, name, primary_muscle AS primary, equipment, description, tags, gif_url, image_url, images FROM exercises`,
     `SELECT id, name, muscle AS primary, equipment, description, tags, gif_url, image_url, images FROM exercises`,
     `SELECT id, name, primary AS primary, equipment, instructions AS description, tags FROM exercise`,
@@ -92,6 +130,7 @@ async function bestEffortRead(dbBytes: Uint8Array): Promise<DbExercise[]> {
       return rows
         .filter((r) => r.name)
         .map(normalizeRow)
+        .filter((e) => !isLikelyStepName(e.name))
         .sort((a, b) => a.name.localeCompare(b.name));
   }
   return [];
@@ -100,6 +139,29 @@ async function bestEffortRead(dbBytes: Uint8Array): Promise<DbExercise[]> {
 export async function loadDbExercises(): Promise<DbExercise[]> {
   if (_cache) return _cache;
   if (_loading) return _loading;
+
+  // Serve from localStorage immediately if available; refresh in background
+  const local = readLocalCache();
+  if (local && local.length) {
+    _cache = local;
+    // kick off a background refresh
+    _loading = (async () => {
+      try {
+        const resp = await fetch("/workout_exercises.db");
+        if (!resp.ok) throw new Error(`fetch workout_exercises.db: HTTP ${resp.status}`);
+        const bytes = new Uint8Array(await resp.arrayBuffer());
+        const list = await bestEffortRead(bytes);
+        _cache = list;
+        writeLocalCache(list);
+        return list;
+      } catch (e) {
+        console.error("Failed loading exercises DB (bg refresh):", e);
+        return _cache ?? [];
+      }
+    })();
+    return Promise.resolve(local);
+  }
+
   _loading = (async () => {
     try {
       // DB must live under /public
@@ -108,6 +170,7 @@ export async function loadDbExercises(): Promise<DbExercise[]> {
       const bytes = new Uint8Array(await resp.arrayBuffer());
       const list = await bestEffortRead(bytes);
       _cache = list;
+      writeLocalCache(list);
       return list;
     } catch (e) {
       // eslint-disable-next-line no-console
@@ -129,4 +192,3 @@ export function warmLoadDbExercisesIdle() {
   if (typeof ric === "function") ric(run, { timeout: 3000 });
   else setTimeout(run, 1200);
 }
-
