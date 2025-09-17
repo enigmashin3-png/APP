@@ -13,6 +13,23 @@ def versionCodeFromPkg = vMajor * 10000 + vMinor * 100 + vPatch
 android {
     namespace "com.lift.legends"
     compileSdkVersion rootProject.ext.compileSdkVersion
+    // Conditional release signing from environment variables
+    def keystorePath = System.getenv("ANDROID_SIGNING_KEYSTORE")
+    def keystorePassword = System.getenv("ANDROID_SIGNING_STORE_PASSWORD")
+    def keyAlias = System.getenv("ANDROID_SIGNING_KEY_ALIAS")
+    def keyPassword = System.getenv("ANDROID_SIGNING_KEY_PASSWORD")
+    def hasSigning = keystorePath && keystorePassword && keyAlias && keyPassword
+
+    signingConfigs {
+        if (hasSigning) {
+            release {
+                storeFile file(keystorePath)
+                storePassword keystorePassword
+                keyAlias keyAlias
+                keyPassword keyPassword
+            }
+        }
+    }
     defaultConfig {
         applicationId "com.lift.legends"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -32,6 +49,11 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (hasSigning) {
+                signingConfig signingConfigs.release
+            } else {
+                logger.lifecycle("[android] Release signing not configured; producing an unsigned APK. Set ANDROID_SIGNING_* env vars.")
+            }
         }
     }
     // Compile with Java 17 for AGP 8.x compatibility
