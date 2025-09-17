@@ -11,11 +11,28 @@ import { warmLoadDbExercisesIdle } from "./data/exercisesDb";
 // This is safe in web/desktop; it no-ops if the plugin/env isn't present.
 ;(async () => {
   try {
-    const [{ Capacitor }, { App }] = await Promise.all([
+    const [
+      { Capacitor },
+      { App },
+      { StatusBar, Style },
+      { Keyboard, KeyboardResize },
+    ] = await Promise.all([
       import("@capacitor/core"),
       import("@capacitor/app"),
+      import("@capacitor/status-bar"),
+      import("@capacitor/keyboard"),
     ]);
     if (!Capacitor.isNativePlatform()) return;
+
+    // Status bar and keyboard behavior (Android)
+    try {
+      await StatusBar.setStyle({ style: Style.Light });
+      await StatusBar.setBackgroundColor({ color: "#0C0F14" });
+      await StatusBar.setOverlaysWebView({ overlay: false });
+    } catch {}
+    try {
+      await Keyboard.setResizeMode({ mode: KeyboardResize.Native });
+    } catch {}
 
     // Back button: go back if possible, otherwise exit app
     App.addListener("backButton", ({ canGoBack }) => {

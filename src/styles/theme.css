@@ -113,7 +113,8 @@ body {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
-  padding-bottom: 80px; /* leave room for tabs */
+  /* leave room for tabs + safe area */
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 .card {
   background: var(--panel);
@@ -165,7 +166,8 @@ body {
 .tabs-inner {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  padding: 10px 8px 14px;
+  /* bottom padding accounts for gesture nav/rounded corners */
+  padding: 10px 8px calc(14px + env(safe-area-inset-bottom));
 }
 .tab {
   display: flex;
