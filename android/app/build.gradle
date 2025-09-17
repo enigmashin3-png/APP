@@ -1,5 +1,15 @@
 apply plugin: 'com.android.application'
 
+// Derive Android versionName/versionCode from package.json
+def pkgJson = new groovy.json.JsonSlurper().parseText(file('../package.json').text)
+def versionNameFromPkg = (pkgJson.version ?: '1.0.0') as String
+def verParts = versionNameFromPkg.tokenize('.')
+def vMajor = verParts.size() > 0 ? verParts[0].toInteger() : 1
+def vMinor = verParts.size() > 1 ? verParts[1].toInteger() : 0
+def vPatch = verParts.size() > 2 ? verParts[2].toInteger() : 0
+// e.g., 1.2.3 -> 10203
+def versionCodeFromPkg = vMajor * 10000 + vMinor * 100 + vPatch
+
 android {
     namespace "com.lift.legends"
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -7,8 +17,8 @@ android {
         applicationId "com.lift.legends"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode versionCodeFromPkg
+        versionName versionNameFromPkg
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -18,14 +28,16 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Optimize release builds
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    // Compile with Java 21 (ensure Gradle JDK is set to 21)
+    // Compile with Java 17 for AGP 8.x compatibility
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
@@ -42,6 +54,8 @@ dependencies {
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
+    implementation project(':capacitor-status-bar')
+    implementation project(':capacitor-keyboard')
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"

@@ -49,3 +49,9 @@ You can also run the Gradle task from Android Studio:
 - After pulling JS plugin changes (e.g., adding `@capacitor/app`), run: `npm install && npx cap sync android`.
 - If build fails with missing web assets, run: `npm run build && npx cap sync android` and re-sync Gradle.
 - Gradle is tuned for Studio: Java 17 compile options, parallel + caching enabled in `android/gradle.properties`.
+
+### Status bar & keyboard
+
+- Plugins included: `@capacitor/status-bar`, `@capacitor/keyboard`.
+- The app sets a dark background and light status bar text, and uses native keyboard resize (`adjustResize`).
+- If plugins are out of sync, run: `npm install && npx cap sync android`.
