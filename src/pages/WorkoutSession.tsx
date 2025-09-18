@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Settings as SettingsIcon, FileText, PlusCircle, TimerReset, RotateCcw, Link2 as LinkIcon, Info, XCircle, ArrowUp, ArrowDown, Trash2 } from "lucide-react";
+import { Settings as SettingsIcon, FileText, PlusCircle, TimerReset, RotateCcw, Link2 as LinkIcon, Info, XCircle, ArrowUp, ArrowDown, Trash2, ChevronLeft, Timer, Play } from "lucide-react";
 import ExercisePicker from "../components/ExercisePicker";
 import CountdownTimer from "../components/CountdownTimer";
 import Modal from "../components/Modal";
@@ -77,7 +77,7 @@ export default function WorkoutSession() {
 
   return (
     <div className="container" style={{ paddingTop: 16 }}>
-      {/* Top bar */}
+      {/* Top bar - back, timer toggle, center time, finish */}
       <div
         style={{
           position: "sticky",
@@ -85,16 +85,50 @@ export default function WorkoutSession() {
           zIndex: 10,
           background: "var(--bg, transparent)",
           padding: "8px 0",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
         }}
       >
-        <div style={{ width: 48 }} />
-        <div style={{ fontVariantNumeric: "tabular-nums" }}>{format(elapsed)}</div>
-        <button onClick={finish} style={{ color: "#3b82f6", fontWeight: 600, letterSpacing: 0.3 }}>
-          FINISH
-        </button>
+        <div style={{ display: "grid", gridTemplateColumns: "auto 1fr auto", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <button
+              onClick={() => navigate("/workout")}
+              title="Back"
+              style={{
+                height: 40,
+                width: 40,
+                borderRadius: 12,
+                border: "1px solid rgba(255,255,255,0.08)",
+                background: "#111827",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              onClick={() => setRunning((r) => !r)}
+              title={running ? "Pause timer" : "Resume timer"}
+              style={{
+                height: 40,
+                width: 40,
+                borderRadius: 12,
+                border: "1px solid rgba(255,255,255,0.08)",
+                background: "#111827",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {running ? <Timer size={18} /> : <Play size={18} />}
+            </button>
+          </div>
+          <div style={{ textAlign: "center", fontVariantNumeric: "tabular-nums" }}>{format(elapsed)}</div>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <button onClick={finish} style={{ color: "#3b82f6", fontWeight: 600, letterSpacing: 0.3 }}>
+              FINISH
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Header */}
@@ -234,11 +268,11 @@ export default function WorkoutSession() {
 
       {!isEmpty && (
         <div style={{ marginTop: 32, display: "grid", gap: 16 }}>
-          <button onClick={() => setShowPicker(true)} style={{ alignSelf: "center", color: "#2563eb", letterSpacing: 1 }}>
-            Add Exercise
+          <button onClick={() => setShowPicker(true)} style={{ alignSelf: "center", color: "#2563eb", letterSpacing: 2, fontWeight: 700 }}>
+            ADD EXERCISE
           </button>
-          <button onClick={cancel} style={{ alignSelf: "center", color: "#ef4444", letterSpacing: 1 }}>
-            Cancel Workout
+          <button onClick={cancel} style={{ alignSelf: "center", color: "#ef4444", letterSpacing: 2, fontWeight: 700 }}>
+            CANCEL WORKOUT
           </button>
         </div>
       )}
