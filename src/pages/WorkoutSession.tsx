@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Settings as SettingsIcon, FileText, PlusCircle, TimerReset, RotateCcw, Link2 as LinkIcon, Info, XCircle, ArrowUp, ArrowDown, Trash2, ChevronLeft, Timer, Play } from "lucide-react";
+import { hapticTap } from "../lib/haptics";
 import ExercisePicker from "../components/ExercisePicker";
 import CountdownTimer from "../components/CountdownTimer";
 import Modal from "../components/Modal";
@@ -106,23 +107,28 @@ export default function WorkoutSession() {
               <ChevronLeft size={18} />
             </button>
             <button
-              onClick={() => setRunning((r) => !r)}
+              onClick={() => {
+                hapticTap();
+                setRunning((r) => !r);
+              }}
               title={running ? "Pause timer" : "Resume timer"}
               style={{
                 height: 40,
-                width: 40,
+                padding: "0 10px",
                 borderRadius: 12,
                 border: "1px solid rgba(255,255,255,0.08)",
                 background: "#111827",
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
+                gap: 8,
               }}
             >
               {running ? <Timer size={18} /> : <Play size={18} />}
+              <span style={{ fontVariantNumeric: "tabular-nums" }}>{format(elapsed)}</span>
             </button>
           </div>
-          <div style={{ textAlign: "center", fontVariantNumeric: "tabular-nums" }}>{format(elapsed)}</div>
+          <div />
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <button onClick={finish} style={{ color: "#3b82f6", fontWeight: 600, letterSpacing: 0.3 }}>
               FINISH
