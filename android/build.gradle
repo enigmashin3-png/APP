@@ -1,5 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+import org.gradle.api.tasks.compile.JavaCompile
+
 buildscript {
 
     repositories {
@@ -7,8 +9,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // Android Gradle Plugin (compatible with Gradle 8.9)
-        classpath 'com.android.tools.build:gradle:8.7.2'
+        // Android Gradle Plugin (compatible with Gradle 8.13)
+        classpath 'com.android.tools.build:gradle:8.12.3'
         classpath 'com.google.gms:google-services:4.4.2'
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -41,5 +43,52 @@ tasks.register("capSyncAndroid", Exec) {
         commandLine "cmd", "/c", "npm", "run", "android:sync"
     } else {
         commandLine "npm", "run", "android:sync"
+    }
+}
+
+subprojects { subproject ->
+    subproject.tasks.withType(JavaCompile).configureEach { task ->
+        def cleanedArgs = []
+        def skipNext = false
+        task.options.compilerArgs.each { arg ->
+            if (skipNext) {
+                skipNext = false
+            } else if (arg == '--release') {
+                skipNext = true
+            } else if (arg.startsWith('--release=')) {
+                // skip inline --release=XX
+            } else {
+                cleanedArgs += arg
+            }
+        }
+        task.options.compilerArgs.clear()
+        task.options.compilerArgs.addAll(cleanedArgs)
+        task.sourceCompatibility = JavaVersion.VERSION_17.toString()
+        task.targetCompatibility = JavaVersion.VERSION_17.toString()
+    }
+
+    subproject.afterEvaluate {
+        def androidExtension = subproject.extensions.findByName('android')
+        if (androidExtension) {
+            androidExtension.compileOptions {
+                sourceCompatibility JavaVersion.VERSION_17
+                targetCompatibility JavaVersion.VERSION_17
+            }
+        }
+    }
+}
+
+
+
+// Build + copy web assets into the native project
+tasks.register("prepareWebAssets", Exec) {
+    group = "capacitor"
+    description = "Runs 'npm run android:copy' at the repo root"
+    workingDir rootProject.projectDir.parentFile
+    def isWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
+    if (isWindows) {
+        commandLine "cmd", "/c", "npm", "run", "android:copy"
+    } else {
+        commandLine "npm", "run", "android:copy"
     }
 }

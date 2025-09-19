@@ -14,7 +14,9 @@
     "screenshots:from-logo": "node scripts/screenshots-from-logo.mjs",
     "assets:from-logo": "npm run icons:from-logo && npm run screenshots:from-logo",
     "android:add": "npx cap add android",
-    "android:sync": "npm run build && npx cap sync android",
+    "build:native": "cross-env BUILD_TARGET=native tsc -b && vite build",
+    "android:sync": "npm run build:native && npx cap sync android",
+    "android:copy": "npm run build:native && npx cap copy android",
     "android:open": "npx cap open android",
     "android:dev": "npx cap run android -l --external",
     "android:assemble": "npm run android:sync && cd android && ./gradlew :app:assembleRelease",
@@ -91,6 +93,7 @@
     "@vitejs/plugin-react": "^5.0.1",
     "autoprefixer": "^10.4.21",
     "concurrently": "^9.2.1",
+    "cross-env": "^7.0.3",
     "eslint": "^9.34.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -114,3 +117,4 @@
     "vitest": "^3.2.4"
   }
 }
+

@@ -1,18 +1,51 @@
 apply plugin: 'com.android.application'
 
-// Derive Android versionName/versionCode from package.json
-def pkgJson = new groovy.json.JsonSlurper().parseText(file('../package.json').text)
-def versionNameFromPkg = (pkgJson.version ?: '1.0.0') as String
-def verParts = versionNameFromPkg.tokenize('.')
-def vMajor = verParts.size() > 0 ? verParts[0].toInteger() : 1
-def vMinor = verParts.size() > 1 ? verParts[1].toInteger() : 0
-def vPatch = verParts.size() > 2 ? verParts[2].toInteger() : 0
-// e.g., 1.2.3 -> 10203
-def versionCodeFromPkg = vMajor * 10000 + vMinor * 100 + vPatch
+// Derive Android versionName/versionCode from package.json (if available)
+def versionNameFromPkg = '1.0.0'
+def versionCodeFromPkg = 10000
+try {
+    // Common locations in Capacitor/Hybrid apps relative to the app module
+    def pkgCandidates = [
+        file('../package.json'),      // android/package.json
+        file('../../package.json')    // projectRoot/package.json
+    ]
+    def pkgFile = pkgCandidates.find { it.exists() }
+    if (pkgFile) {
+        def pkgJson = new groovy.json.JsonSlurper().parseText(pkgFile.text)
+        versionNameFromPkg = (pkgJson.version ?: '1.0.0') as String
+        def parts = versionNameFromPkg.tokenize('.')
+        def maj = parts.size() > 0 ? parts[0].toInteger() : 1
+        def min = parts.size() > 1 ? parts[1].toInteger() : 0
+        def pat = parts.size() > 2 ? parts[2].toInteger() : 0
+        // e.g., 1.2.3 -> 10203
+        versionCodeFromPkg = maj * 10000 + min * 100 + pat
+    } else {
+        logger.lifecycle("[android] package.json not found in ../ or ../../; using default version 1.0.0")
+    }
+} catch (Exception e) {
+    logger.lifecycle("[android] Failed to read package.json: ${e.message}; using default version 1.0.0")
+}
 
 android {
     namespace "com.lift.legends"
     compileSdkVersion rootProject.ext.compileSdkVersion
+    // Conditional release signing from environment variables
+    def keystorePath = System.getenv("ANDROID_SIGNING_KEYSTORE")
+    def keystorePassword = System.getenv("ANDROID_SIGNING_STORE_PASSWORD")
+    def keyAlias = System.getenv("ANDROID_SIGNING_KEY_ALIAS")
+    def keyPassword = System.getenv("ANDROID_SIGNING_KEY_PASSWORD")
+    def hasSigning = keystorePath && keystorePassword && keyAlias && keyPassword
+
+    signingConfigs {
+        if (hasSigning) {
+            release {
+                storeFile file(keystorePath)
+                storePassword keystorePassword
+                keyAlias keyAlias
+                keyPassword keyPassword
+            }
+        }
+    }
     defaultConfig {
         applicationId "com.lift.legends"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -32,6 +65,11 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (hasSigning) {
+                signingConfig signingConfigs.release
+            } else {
+                logger.lifecycle("[android] Release signing not configured; producing an unsigned APK. Set ANDROID_SIGNING_* env vars.")
+            }
         }
     }
     // Compile with Java 17 for AGP 8.x compatibility
@@ -75,17 +113,34 @@ try {
 
 // (compileOptions configured above in the main android block)
 
+// Ensure Capacitor's generated compileOptions (which may set Java 21)
+// do not override our intended Java 17 toolchain. Defining this block
+// after applying capacitor.build.gradle enforces Java 17.
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
 // Fail fast with a clear message if Capacitor web assets are missing
 tasks.register("verifyWebAssets") {
     doLast {
         def publicDir = file('src/main/assets/public')
         def indexHtml = file('src/main/assets/public/index.html')
         if (!publicDir.exists() || !indexHtml.exists()) {
-            throw new GradleException("Capacitor web assets missing. Run: npm run build && npx cap sync android")
+            throw new GradleException("Capacitor web assets missing. Run: npm run android:copy (or npm run android:sync)")
         }
     }
 }
 
+def prepareWebAssetsTask = rootProject.tasks.named("prepareWebAssets")
+
 tasks.matching { it.name == 'preBuild' }.all {
-    it.dependsOn("verifyWebAssets")
+    dependsOn prepareWebAssetsTask
+    dependsOn("verifyWebAssets")
+}
+
+tasks.named("verifyWebAssets").configure {
+    mustRunAfter prepareWebAssetsTask
 }

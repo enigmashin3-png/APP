@@ -43,6 +43,19 @@ You can also run the Gradle task from Android Studio:
 - Custom scheme is enabled: `com.lift.legends://...` opens the app.
 - Adjust host-based App Links later by adding an HTTPS intent-filter when you have a domain.
 
+### Android App Links (HTTPS)
+
+1. Replace `example.com` with your domain in `android/app/src/main/AndroidManifest.xml:1` under the HTTPS intent-filter.
+2. Host `public/.well-known/assetlinks.json` at `https://<your-domain>/.well-known/assetlinks.json`.
+   - Update `package_name` if needed (current: `com.lift.legends`).
+   - Replace `REPLACE_WITH_SHA256_CERT_FINGERPRINT` with your release signing cert fingerprint. If using Play App Signing, use the Play-provided SHA256 certificate.
+3. Rebuild and install the app, then visit an HTTPS link on your domain to verify auto-verification (`autoVerify=true`).
+
+Tip: You can get the keystore fingerprint via:
+```bash
+keytool -list -v -keystore /path/to/your.keystore -alias <alias> -storepass <pass> -keypass <pass>
+```
+
 ## Android Studio tips
 
 - Use JDK 17: Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JDK: "Embedded JDK 17" or a local JDK 17.
@@ -55,3 +68,16 @@ You can also run the Gradle task from Android Studio:
 - Plugins included: `@capacitor/status-bar`, `@capacitor/keyboard`.
 - The app sets a dark background and light status bar text, and uses native keyboard resize (`adjustResize`).
 - If plugins are out of sync, run: `npm install && npx cap sync android`.
+
+### Release signing (env-driven)
+
+- Configure environment variables before building a signed release:
+  - `ANDROID_SIGNING_KEYSTORE` – absolute path to keystore
+  - `ANDROID_SIGNING_STORE_PASSWORD` – keystore password
+  - `ANDROID_SIGNING_KEY_ALIAS` – key alias
+  - `ANDROID_SIGNING_KEY_PASSWORD` – key password
+- If not set, the build produces an unsigned release APK/AAB (for Play, a signed build is required).
+
+### Native build PWA gating
+
+- Native builds set `BUILD_TARGET=native` (via `npm run android:sync`) to skip PWA service worker for the embedded WebView.

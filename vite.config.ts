@@ -11,8 +11,9 @@ try {
 }
 
 export default defineConfig(async ({ mode }) => {
+  const isNative = process.env.BUILD_TARGET === 'native';
   const plugins = [react(), tsconfigPaths()];
-  if (mode !== "test") {
+  if (mode !== "test" && !isNative) {
     try {
       const { VitePWA } = await import("vite-plugin-pwa");
       plugins.push(
