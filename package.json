@@ -16,6 +16,7 @@
     "android:add": "npx cap add android",
     "build:native": "cross-env BUILD_TARGET=native tsc -b && vite build",
     "android:sync": "npm run build:native && npx cap sync android",
+    "android:copy": "npm run build:native && npx cap copy android",
     "android:open": "npx cap open android",
     "android:dev": "npx cap run android -l --external",
     "android:assemble": "npm run android:sync && cd android && ./gradlew :app:assembleRelease",
@@ -116,3 +117,4 @@
     "vitest": "^3.2.4"
   }
 }
+
